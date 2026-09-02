@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#29235C">
+<title>Or+ · Alumnos</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Or+">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Mulish:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#29235C; --navy-alto:#1B1740; --oro:#C99B52; --oro-suave:#F0E2C9;
+  --fondo:#F2F2F6; --blanco:#FFFFFF; --tinta:#1E1B33; --suave:#6E6A85;
+  --linea:#E2E1EA; --verde:#3E7C5A; --verde-suave:#E4F0E9; --alerta:#B4532F;
+  --radio:14px; --sombra:0 1px 2px rgba(30,27,51,.06), 0 6px 20px rgba(30,27,51,.05);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--fondo); color:var(--tinta);
+  font-family:'Mulish',system-ui,sans-serif; font-size:15px; line-height:1.5;
+  padding-bottom:calc(72px + env(safe-area-inset-bottom));
+}
+h1,h2,h3,.cond{font-family:'Barlow Condensed',sans-serif;font-weight:600;letter-spacing:.01em;margin:0}
+.mono{font-family:'IBM Plex Mono',monospace}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input,textarea,select{font-family:inherit;font-size:16px}
+:focus-visible{outline:2.5px solid var(--oro);outline-offset:2px;border-radius:6px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- Acceso ---------- */
+#acceso{
+  position:fixed;inset:0;background:var(--navy);color:#fff;z-index:60;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:32px 26px calc(32px + env(safe-area-inset-bottom));overflow-y:auto;
+}
+.escudo{width:88px;height:88px;border-radius:21px;display:block;margin-bottom:24px;
+  box-shadow:0 8px 26px rgba(0,0,0,.32)}
+#acceso .mas{display:inline-block;width:.62em;height:.46em;margin-left:.06em;vertical-align:.06em}
+#acceso .marca{margin:6px 0 0;font-size:14px;color:#B9B4D6;font-weight:600;letter-spacing:.04em}
+#acceso h1{font-size:34px;line-height:1.05;font-weight:700;max-width:9ch}
+#acceso .sub{color:#8F89B4;margin:18px 0 34px;font-size:14.5px;max-width:32ch}
+.campo{margin-bottom:16px}
+.campo label{display:block;font-size:13px;color:#B9B4D6;margin-bottom:7px;font-weight:600}
+.campo input{
+  width:100%;padding:14px 16px;border-radius:11px;border:1.5px solid rgba(255,255,255,.22);
+  background:rgba(255,255,255,.07);color:#fff;
+}
+.campo input::placeholder{color:rgba(255,255,255,.35)}
+.campo input:focus{border-color:var(--oro);background:rgba(255,255,255,.12);outline:none}
+#codigo{font-family:'IBM Plex Mono',monospace;font-size:23px;letter-spacing:.22em;text-transform:uppercase}
+#pin{font-family:'IBM Plex Mono',monospace;font-size:23px;letter-spacing:.5em}
+.btn-oro{
+  width:100%;background:var(--oro);color:#25200F;font-weight:700;
+  padding:15px;border-radius:11px;margin-top:12px;font-size:16px;
+}
+.btn-oro:disabled{opacity:.55}
+#acceso .pie{margin-top:26px;font-size:13px;color:#8F89B4;line-height:1.6}
+.error{
+  background:rgba(255,255,255,.1);border-left:3px solid var(--oro);
+  padding:11px 13px;border-radius:0 9px 9px 0;font-size:13.5px;margin-bottom:16px;
+}
+
+/* ---------- Encabezado ---------- */
+header{
+  background:var(--navy);color:#fff;
+  padding:calc(16px + env(safe-area-inset-top)) 20px 18px;
+}
+header .saludo{font-size:13px;color:#B9B4D6;font-weight:600}
+header h2{font-size:25px;font-weight:600;margin-top:2px}
+header .fecha{font-size:13.5px;color:#B9B4D6;margin-top:4px;text-transform:capitalize}
+
+/* ---------- Estructura ---------- */
+main{padding:18px 16px 24px;max-width:640px;margin:0 auto}
+.vista{display:none}
+.vista.on{display:block}
+.rotulo{font-size:12.5px;font-weight:700;color:var(--suave);margin:26px 0 10px;letter-spacing:.02em}
+.rotulo:first-child{margin-top:0}
+.tarjeta{background:var(--blanco);border-radius:var(--radio);box-shadow:var(--sombra);padding:16px;margin-bottom:12px}
+.vacio{
+  border:1.5px dashed var(--linea);border-radius:var(--radio);
+  padding:24px 18px;text-align:center;color:var(--suave);font-size:14px;
+}
+
+/* ---------- Agenda del día ---------- */
+.agenda{position:relative;padding-left:64px}
+.agenda::before{content:'';position:absolute;left:55px;top:8px;bottom:12px;width:1.5px;background:var(--linea)}
+.bloque{position:relative;margin-bottom:14px}
+.bloque .hora{
+  position:absolute;left:-64px;top:15px;width:44px;text-align:right;
+  font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--suave);font-weight:500;
+}
+.bloque::after{
+  content:'';position:absolute;left:-11px;top:21px;width:9px;height:9px;
+  border-radius:50%;background:var(--linea);border:2px solid var(--fondo);
+}
+.bloque .caja{background:var(--blanco);border-radius:var(--radio);box-shadow:var(--sombra);padding:14px 16px}
+.bloque .materia{font-family:'Barlow Condensed',sans-serif;font-size:21px;font-weight:600;line-height:1.15}
+.bloque .maestro{font-size:13.5px;color:var(--suave);margin-top:3px}
+.bloque .tema{
+  font-size:14px;margin-top:9px;padding-top:9px;border-top:1px solid var(--linea);color:#443E6B;
+}
+.bloque.ahora::after{background:var(--oro);width:13px;height:13px;left:-13px;top:19px}
+.bloque.ahora .caja{background:var(--navy);color:#fff;box-shadow:0 8px 26px rgba(41,35,92,.28)}
+.bloque.ahora .maestro{color:#B9B4D6}
+.bloque.ahora .tema{border-top-color:rgba(255,255,255,.18);color:#E4E1F2}
+.bloque.ahora .hora{color:var(--oro);font-weight:600}
+.marca-ahora{
+  display:inline-block;font-size:11px;font-weight:700;color:var(--oro);
+  letter-spacing:.06em;margin-bottom:5px;
+}
+.bloque.pasado{opacity:.5}
+
+/* ---------- Avisos ---------- */
+.aviso{
+  background:var(--oro-suave);border-radius:var(--radio);padding:14px 16px;margin-bottom:10px;
+}
+.aviso h3{font-size:19px;margin-bottom:3px}
+.aviso p{margin:0;font-size:14px;color:#4A4020}
+.aviso .cuando{font-size:12px;color:#8A7440;margin-top:6px;font-family:'IBM Plex Mono',monospace}
+
+/* ---------- Avance ---------- */
+.plan{background:var(--navy);color:#fff;border-radius:var(--radio);padding:20px;margin-bottom:12px}
+.plan .et{font-size:11.5px;font-weight:700;color:var(--oro);letter-spacing:.06em;margin-bottom:8px}
+.plan .txt{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:600;line-height:1.2}
+.plan .pie{font-size:13px;color:#B9B4D6;margin-top:12px;padding-top:12px;
+  border-top:1px solid rgba(255,255,255,.18);line-height:1.5}
+.bloque .tarea{font-size:13.5px;margin-top:7px;color:var(--oro)}
+.bloque.ahora .tarea{color:var(--oro)}
+.cifras{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.cifra{background:var(--blanco);border-radius:var(--radio);box-shadow:var(--sombra);padding:16px}
+.cifra .n{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:700;line-height:1;color:var(--navy)}
+.cifra .q{font-size:13px;color:var(--suave);margin-top:5px;line-height:1.35}
+.bejina{
+  background:var(--blanco);border-radius:var(--radio);box-shadow:var(--sombra);
+  padding:14px 16px;margin-bottom:9px;border-left:3px solid var(--oro);
+}
+.bejina .cab{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.bejina .mat{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:600}
+.bejina .cuando{font-size:12px;color:var(--suave);font-family:'IBM Plex Mono',monospace;white-space:nowrap}
+.bejina .res{font-size:14.5px;margin-top:5px;font-weight:600;color:var(--verde)}
+.bejina .obs{font-size:13.5px;color:var(--suave);margin-top:4px}
+
+/* ---------- Horario ---------- */
+.dias{display:flex;gap:7px;overflow-x:auto;padding-bottom:10px;margin-bottom:6px;scrollbar-width:none}
+.dias::-webkit-scrollbar{display:none}
+.dia-chip{
+  padding:9px 15px;border-radius:999px;background:var(--blanco);border:1.5px solid var(--linea);
+  font-weight:600;font-size:14px;white-space:nowrap;color:var(--suave);
+}
+.dia-chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.fila-horario{
+  display:flex;gap:14px;padding:13px 16px;background:var(--blanco);
+  border-radius:var(--radio);box-shadow:var(--sombra);margin-bottom:9px;
+}
+.fila-horario .h{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--suave);min-width:44px;padding-top:2px}
+.fila-horario .m{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:600;line-height:1.2}
+.fila-horario .d{font-size:13px;color:var(--suave)}
+.prox{padding:11px 0;border-bottom:1px solid var(--linea);display:flex;gap:12px}
+.prox:last-child{border-bottom:0}
+.prox .f{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--suave);min-width:74px;padding-top:2px}
+.prox .t strong{display:block;font-size:14.5px}
+.prox .t span{font-size:13.5px;color:var(--suave)}
+
+/* ---------- Registro y metas ---------- */
+.botones-reg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.btn-reg{
+  background:var(--blanco);border:1.5px solid var(--linea);border-radius:var(--radio);
+  padding:17px 14px;text-align:left;box-shadow:var(--sombra);
+}
+.btn-reg strong{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:600;display:block}
+.btn-reg span{font-size:12.5px;color:var(--suave)}
+.btn-reg:active{border-color:var(--oro)}
+.btn-reg.hecho{background:var(--verde-suave);border-color:#BEDCC9}
+.btn-reg.hecho span{color:var(--verde);font-weight:600}
+.meta{
+  display:flex;gap:13px;align-items:flex-start;background:var(--blanco);
+  border-radius:var(--radio);box-shadow:var(--sombra);padding:14px 16px;margin-bottom:9px;
+}
+.meta .caja-check{
+  width:23px;height:23px;border:2px solid var(--linea);border-radius:7px;
+  flex-shrink:0;margin-top:1px;display:grid;place-items:center;
+}
+.meta.ok .caja-check{background:var(--verde);border-color:var(--verde)}
+.meta.ok .txt{text-decoration:line-through;color:var(--suave)}
+.meta .txt{font-size:14.5px;flex:1}
+.meta .cuando{font-size:12px;color:var(--suave);font-family:'IBM Plex Mono',monospace;margin-top:3px}
+
+/* ---------- Dirección ---------- */
+.msg{background:var(--blanco);border-radius:var(--radio);box-shadow:var(--sombra);padding:15px 16px;margin-bottom:11px}
+.msg .cab{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:7px}
+.msg .tipo{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:600}
+.msg .cuando{font-size:12px;color:var(--suave);font-family:'IBM Plex Mono',monospace;white-space:nowrap}
+.msg .cuerpo{font-size:14.5px}
+.msg .respuesta{
+  margin-top:11px;padding:12px 14px;background:var(--fondo);
+  border-radius:10px;border-left:3px solid var(--navy);font-size:14px;
+}
+.msg .respuesta em{display:block;font-style:normal;font-size:12px;color:var(--suave);font-weight:600;margin-bottom:4px}
+.etiqueta{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--fondo);color:var(--suave)}
+.etiqueta.leida{background:var(--oro-suave);color:#7A6428}
+.etiqueta.respondida{background:var(--verde-suave);color:var(--verde)}
+
+/* ---------- Formularios ---------- */
+.form-campo{margin-bottom:12px}
+.form-campo label{display:block;font-size:13px;font-weight:600;color:var(--suave);margin-bottom:6px}
+.form-campo select,.form-campo textarea,.form-campo input[type=text],.form-campo input[type=number]{
+  width:100%;padding:12px 14px;border:1.5px solid var(--linea);border-radius:11px;background:var(--blanco);
+}
+.form-campo textarea{min-height:96px;resize:vertical}
+.form-campo select:focus,.form-campo textarea:focus,.form-campo input:focus{border-color:var(--navy);outline:none}
+.btn-navy{background:var(--navy);color:#fff;width:100%;padding:14px;border-radius:11px;font-weight:700}
+.btn-navy:disabled{opacity:.5}
+.btn-texto{color:var(--navy);font-weight:600;font-size:14px;text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- Navegación ---------- */
+nav{
+  position:fixed;left:0;right:0;bottom:0;background:var(--blanco);
+  border-top:1px solid var(--linea);display:flex;z-index:40;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+nav button{flex:1;padding:9px 2px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--suave)}
+nav button.on{color:var(--navy)}
+nav button.on svg{stroke:var(--navy)}
+nav svg{width:22px;height:22px;stroke:var(--suave);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+nav .et{font-size:10.5px;font-weight:600}
+nav button .punto{
+  position:absolute;top:7px;margin-left:19px;width:7px;height:7px;
+  border-radius:50%;background:var(--oro);
+}
+
+/* ---------- Varios ---------- */
+.cargando{text-align:center;padding:44px 20px;color:var(--suave);font-size:14px}
+.aviso-linea{
+  background:#FBEEE8;color:var(--alerta);border-radius:11px;padding:11px 14px;
+  font-size:13.5px;margin-bottom:14px;
+}
+.brindis{
+  background:var(--navy);color:#fff;border-radius:var(--radio);padding:20px;
+  text-align:center;margin-bottom:12px;
+}
+.brindis strong{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:600;display:block}
+.brindis span{font-size:13.5px;color:#B9B4D6}
+.aviso-flotante{
+  position:fixed;left:16px;right:16px;bottom:calc(84px + env(safe-area-inset-bottom));
+  background:var(--navy);color:#fff;padding:13px 16px;border-radius:12px;
+  font-size:14px;z-index:50;box-shadow:0 10px 30px rgba(30,27,51,.3);
+}
+</style>
+</head>
+<body>
+
+<!-- =============== ACCESO =============== -->
+<section id="acceso">
+  <img class="escudo" src="logo-tile.png" alt="Or+ · Metivta Or Barak">
+  <h1>Or<svg class="mas" viewBox="0 0 34 24" aria-hidden="true"><rect x="12" y="0" width="10" height="14" fill="#C99B52"/><rect x="0" y="14" width="34" height="10" fill="#C99B52"/></svg></h1>
+  <p class="marca">Metivta Or Barak</p>
+  <p class="sub">Entra con el código y el PIN que te dio la dirección.</p>
+  <div id="errorAcceso"></div>
+  <div class="campo">
+    <label for="codigo">Tu código</label>
+    <input id="codigo" type="text" inputmode="text" autocomplete="off"
+           autocapitalize="characters" maxlength="8" placeholder="ABC123">
+  </div>
+  <div class="campo">
+    <label for="pin">Tu PIN</label>
+    <input id="pin" type="password" inputmode="numeric" autocomplete="off"
+           maxlength="6" placeholder="••••">
+  </div>
+  <button class="btn-oro" id="btnEntrar">Entrar</button>
+  <p class="pie">Después de entrar, tu sesión queda guardada 30 días en este teléfono.<br>
+     Si olvidaste tu PIN, pídelo en la dirección.</p>
+</section>
+
+<!-- =============== APP =============== -->
+<header id="cabecera" hidden>
+  <div class="saludo" id="saludo">Baruj haba</div>
+  <h2 id="nombreAlumno"></h2>
+  <div class="fecha" id="fechaHoy"></div>
+</header>
+
+<main id="app" hidden>
+
+  <!-- HOY -->
+  <section class="vista on" id="v-hoy">
+    <div id="hoyCuerpo" class="cargando">Cargando tu día…</div>
+  </section>
+
+  <!-- AVANCE -->
+  <section class="vista" id="v-avance">
+    <div id="avanceCuerpo" class="cargando">Cargando tu avance…</div>
+  </section>
+
+  <!-- HORARIO -->
+  <section class="vista" id="v-horario">
+    <div id="horarioCuerpo" class="cargando">Cargando el horario…</div>
+  </section>
+
+  <!-- YO -->
+  <section class="vista" id="v-yo">
+    <div class="rotulo">Registra lo que estudiaste hoy</div>
+    <div class="botones-reg" id="botonesReg"></div>
+    <div class="rotulo">Mis metas</div>
+    <div id="listaMetas"></div>
+    <div class="tarjeta">
+      <div class="form-campo">
+        <label for="nuevaMeta">Una meta nueva</label>
+        <input id="nuevaMeta" type="text" maxlength="120" placeholder="Ej. Terminar el perek antes de Rosh Jodesh">
+      </div>
+      <button class="btn-navy" id="btnMeta">Guardar meta</button>
+    </div>
+  </section>
+
+  <!-- DIRECCIÓN -->
+  <section class="vista" id="v-direccion">
+    <div class="tarjeta">
+      <div class="form-campo">
+        <label for="tipoSol">Qué necesitas</label>
+        <select id="tipoSol">
+          <option>Permiso</option>
+          <option>Pregunta</option>
+          <option>Reportar algo</option>
+          <option>Quiero hablar con alguien</option>
+        </select>
+      </div>
+      <div class="form-campo">
+        <label for="msgSol">Escríbelo aquí</label>
+        <textarea id="msgSol" maxlength="800" placeholder="Cuéntanos con tus palabras."></textarea>
+      </div>
+      <button class="btn-navy" id="btnEnviar">Enviar a la dirección</button>
+    </div>
+    <div class="rotulo">Lo que has enviado</div>
+    <div id="listaSol" class="cargando">Cargando…</div>
+  </section>
+
+</main>
+
+<nav id="nav" hidden>
+  <button data-v="hoy" class="on">
+    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M8 2.5v2.5M16 2.5v2.5M3 10h18"/></svg>
+    <span class="et">Hoy</span>
+  </button>
+  <button data-v="avance">
+    <svg viewBox="0 0 24 24"><path d="M4 19V10M10 19V5M16 19v-6M22 19H2"/></svg>
+    <span class="et">Mi avance</span>
+  </button>
+  <button data-v="horario">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+    <span class="et">Horario</span>
+  </button>
+  <button data-v="yo">
+    <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 016.5 3H19v18H6.5A2.5 2.5 0 014 18.5z"/><path d="M9 8h6M9 12h4"/></svg>
+    <span class="et">Mi bitácora</span>
+  </button>
+  <button data-v="direccion">
+    <svg viewBox="0 0 24 24"><path d="M21 11.5a8 8 0 01-8.5 8L4 21l1.5-6A8 8 0 1121 11.5z"/></svg>
+    <span class="et">Dirección</span>
+  </button>
+</nav>
+
+<script>
+/* ======================================================
+   CONFIGURACIÓN — cambia estas dos líneas
+   ====================================================== */
+const API_URL = 'https://script.google.com/macros/s/AKfycbwwf7g-2dS1I3EyQugckgnA2hjRreo8LhAx6CDbVhgT8BFWOFNcYKM1W5coKtuI5qpuQg/exec';
+const APP_KEY = 'crh,eusa';   // idéntica a AL.APP_KEY en Apps Script
+
+/* ====================================================== */
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = t => String(t == null ? '' : t)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+const guarda = (k,v) => { try{ localStorage.setItem('ob_'+k, JSON.stringify(v)); }catch(e){} };
+const lee    = k => { try{ return JSON.parse(localStorage.getItem('ob_'+k)); }catch(e){ return null; } };
+const borra  = k => { try{ localStorage.removeItem('ob_'+k); }catch(e){} };
+
+let TOKEN = lee('token') || '';
+let cacheAvance = null, cacheHorario = null, cacheSol = null, metasActuales = [], regHoy = [];
+
+async function api(accion, extra) {
+  const p = new URLSearchParams(Object.assign({ accion, key: APP_KEY, token: TOKEN }, extra || {}));
+  const r = await fetch(API_URL + '?' + p.toString(), { method: 'GET', redirect: 'follow' });
+  if (!r.ok) throw new Error('No hay conexión con el servidor');
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.error || 'Algo salió mal');
+  return d;
+}
+
+function flotante(texto) {
+  const n = document.createElement('div');
+  n.className = 'aviso-flotante';
+  n.textContent = texto;
+  document.body.appendChild(n);
+  setTimeout(() => n.remove(), 2600);
+}
+
+/* ---------------- Acceso ---------------- */
+$('#codigo').addEventListener('input', e => {
+  e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+});
+$('#pin').addEventListener('input', e => {
+  e.target.value = e.target.value.replace(/\D/g, '');
+});
+$('#pin').addEventListener('keydown', e => { if (e.key === 'Enter') entrar(); });
+$('#btnEntrar').addEventListener('click', entrar);
+
+async function entrar() {
+  const btn = $('#btnEntrar');
+  const codigo = $('#codigo').value.trim();
+  const pin = $('#pin').value.trim();
+  $('#errorAcceso').innerHTML = '';
+  if (!codigo || !pin) {
+    $('#errorAcceso').innerHTML = '<div class="error">Escribe tu código y tu PIN.</div>';
+    return;
+  }
+  btn.disabled = true; btn.textContent = 'Entrando…';
+  try {
+    const d = await api('al_login', { codigo, pin });
+    TOKEN = d.token;
+    guarda('token', TOKEN);
+    guarda('nombre', d.nombre);
+    abrirApp();
+  } catch (e) {
+    $('#errorAcceso').innerHTML = '<div class="error">' + esc(e.message) + '</div>';
+    $('#pin').value = '';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Entrar';
+  }
+}
+
+function cerrarSesion() {
+  api('al_salir').catch(() => {});
+  borra('token'); TOKEN = '';
+  location.reload();
+}
+
+function abrirApp() {
+  $('#acceso').style.display = 'none';
+  $('#cabecera').hidden = false;
+  $('#app').hidden = false;
+  $('#nav').hidden = false;
+  cargarHoy();
+}
+
+/* ---------------- Navegación ---------------- */
+$$('#nav button').forEach(b => {
+  b.addEventListener('click', () => {
+    $$('#nav button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    const v = b.dataset.v;
+    $$('.vista').forEach(s => s.classList.remove('on'));
+    $('#v-' + v).classList.add('on');
+    window.scrollTo(0, 0);
+    if (v === 'avance'   && !cacheAvance)  cargarAvance();
+    if (v === 'horario'  && !cacheHorario) cargarHorario();
+    if (v === 'direccion'&& !cacheSol)     cargarSolicitudes();
+  });
+});
+
+/* ---------------- Hoy ---------------- */
+const TIPOS_REG = [
+  { t: 'Kriá',     d: 'Leí hoy' },
+  { t: 'Jazará',   d: 'Repasé' },
+  { t: 'Mishnayot',d: 'Antes de Tefilá' },
+  { t: 'Jevruta',  d: 'Estudié en pareja' }
+];
+
+async function cargarHoy() {
+  try {
+    const d = await api('al_inicio');
+    guarda('cacheHoy', d);
+    pintarHoy(d);
+  } catch (e) {
+    const cache = lee('cacheHoy');
+    if (String(e.message).indexOf('Sesión') === 0) { borra('token'); location.reload(); return; }
+    if (cache) {
+      pintarHoy(cache);
+      $('#hoyCuerpo').insertAdjacentHTML('afterbegin',
+        '<div class="aviso-linea">Sin conexión. Estás viendo la última información guardada.</div>');
+    } else {
+      $('#hoyCuerpo').innerHTML = '<div class="vacio">No pudimos cargar tu día.<br>Revisa tu conexión y vuelve a abrir la app.</div>';
+    }
+  }
+}
+
+function pintarHoy(d) {
+  $('#nombreAlumno').textContent = (d.nombre || '').split(' ')[0] || 'Alumno';
+  $('#fechaHoy').textContent = d.dia + ', ' + d.fecha;
+  regHoy = d.registroHoy || [];
+  metasActuales = d.metas || [];
+
+  let h = '';
+
+  (d.avisos || []).forEach(a => {
+    h += '<div class="aviso"><h3>' + esc(a.titulo) + '</h3><p>' + esc(a.mensaje) + '</p>' +
+         (a.fecha ? '<div class="cuando">' + esc(a.fecha) + '</div>' : '') + '</div>';
+  });
+
+  if (d.especial && d.especial.sinClases) {
+    h += '<div class="brindis"><strong>' + esc(d.especial.titulo || 'Hoy no hay clases') + '</strong>' +
+         '<span>No hay seder hoy. Nos vemos el próximo día de clases.</span></div>';
+  } else {
+    if (d.especial && d.especial.titulo) {
+      h += '<div class="aviso"><h3>' + esc(d.especial.titulo) + '</h3><p>Hoy sí hay clases, con este motivo especial.</p></div>';
+    }
+    const clases = d.clases || [];
+    if (!clases.length) {
+      h += '<div class="vacio">No hay clases cargadas para hoy.</div>';
+    } else {
+      const ahora = new Date();
+      const min = ahora.getHours() * 60 + ahora.getMinutes();
+      const aMin = s => { const m = /^(\d{1,2}):(\d{2})/.exec(s || ''); return m ? (+m[1]) * 60 + (+m[2]) : null; };
+      const temaDe = mat =>
+        (d.temas || []).find(x => (x.materia || '').toLowerCase() === (mat || '').toLowerCase()) || {};
+      h += '<div class="agenda">';
+      clases.forEach(c => {
+        const ini = aMin(c.inicio), fin = aMin(c.fin);
+        const esAhora = ini !== null && fin !== null && min >= ini && min < fin;
+        const pasado = fin !== null && min >= fin;
+        const t = temaDe(c.materia);
+        h += '<div class="bloque' + (esAhora ? ' ahora' : '') + (pasado ? ' pasado' : '') + '">' +
+             '<div class="hora">' + esc(c.inicio || '') + '</div><div class="caja">' +
+             (esAhora ? '<div class="marca-ahora">Ahora</div>' : '') +
+             '<div class="materia">' + esc(c.materia || 'Clase') + '</div>' +
+             (c.maestro ? '<div class="maestro">' + esc(c.maestro) + (c.lugar ? ' · ' + esc(c.lugar) : '') + '</div>' : '') +
+             (t.tema  ? '<div class="tema">' + esc(t.tema) + '</div>' : '') +
+             (t.tarea ? '<div class="tarea">Tarea: ' + esc(t.tarea) + '</div>' : '') +
+             '</div></div>';
+      });
+      h += '</div>';
+    }
+  }
+
+  if (metasActuales.length) {
+    h += '<div class="rotulo">Tus metas abiertas</div>';
+    metasActuales.slice(0, 3).forEach(m => {
+      h += '<div class="tarjeta" style="padding:13px 16px;font-size:14.5px">' + esc(m.meta) + '</div>';
+    });
+  }
+
+  h += '<div style="text-align:center;margin-top:26px">' +
+       '<button class="btn-texto" id="btnSalir">Cerrar sesión</button></div>';
+
+  $('#hoyCuerpo').innerHTML = h;
+  $('#btnSalir').addEventListener('click', cerrarSesion);
+  pintarRegistro();
+  pintarMetas();
+}
+
+/* ---------------- Avance ---------------- */
+async function cargarAvance() {
+  try {
+    const d = await api('al_avance');
+    cacheAvance = d;
+    guarda('cacheAvance', d);
+    pintarAvance(d);
+  } catch (e) {
+    const c = lee('cacheAvance');
+    if (c) pintarAvance(c);
+    else $('#avanceCuerpo').innerHTML = '<div class="vacio">No pudimos cargar tu avance ahora.</div>';
+  }
+}
+
+function pintarAvance(d) {
+  let h = '';
+  if (d.meta || d.programa) {
+    const pie = [d.programa, d.tutor ? 'Tutor: ' + d.tutor : ''].filter(Boolean).map(esc).join(' · ');
+    h += '<div class="plan">' +
+         (d.meta ? '<div class="et">TU META DEL CICLO</div><div class="txt">' + esc(d.meta) + '</div>'
+                 : '<div class="et">TU PROGRAMA</div><div class="txt">' + esc(d.programa) + '</div>') +
+         (pie && d.meta ? '<div class="pie">' + pie + '</div>' : '') + '</div>';
+  }
+
+  const a = d.asistencia || {};
+  h += '<div class="cifras">' +
+       '<div class="cifra"><div class="n">' + (a.presentes || 0) + '</div>' +
+       '<div class="q">días que viniste en ' + esc(a.mes || 'este mes') + '</div></div>' +
+       '<div class="cifra"><div class="n">' + (a.racha || 0) + '</div>' +
+       '<div class="q">días seguidos sin faltar</div></div>' +
+       '<div class="cifra"><div class="n">' + (d.bejinotTotal || 0) + '</div>' +
+       '<div class="q">bejinot presentadas</div></div>' +
+       '<div class="cifra"><div class="n">' + (d.sesionesRegistradas || 0) + '</div>' +
+       '<div class="q">estudios que registraste</div></div>' +
+       '</div>';
+
+  h += '<div class="rotulo">Tus bejinot</div>';
+  if (!(d.bejinot || []).length) {
+    h += '<div class="vacio">Todavía no tienes bejinot registradas.<br>Aparecerán aquí en cuanto presentes la primera.</div>';
+  } else {
+    d.bejinot.forEach(b => {
+      h += '<div class="bejina"><div class="cab">' +
+           '<div class="mat">' + esc(b.materia || 'Bejiná') + (b.tipo ? ' · ' + esc(b.tipo) : '') + '</div>' +
+           '<div class="cuando">' + esc(b.fecha) + '</div></div>' +
+           (b.resultado ? '<div class="res">' + esc(b.resultado) + '</div>' : '') +
+           (b.nota ? '<div class="obs">' + esc(b.nota) + '</div>' : '') + '</div>';
+    });
+  }
+  $('#avanceCuerpo').innerHTML = h;
+}
+
+/* ---------------- Horario ---------------- */
+async function cargarHorario() {
+  try {
+    const d = await api('al_horario');
+    cacheHorario = d;
+    guarda('cacheHorario', d);
+    pintarHorario(d);
+  } catch (e) {
+    const c = lee('cacheHorario');
+    if (c) pintarHorario(c);
+    else $('#horarioCuerpo').innerHTML = '<div class="vacio">No pudimos cargar el horario ahora.</div>';
+  }
+}
+
+function pintarHorario(d) {
+  const hoyNom = d.dias[Math.min(new Date().getDay(), 5)] || d.dias[0];
+  let h = '<div class="dias">';
+  d.dias.forEach(dia => {
+    h += '<button class="dia-chip' + (dia === hoyNom ? ' on' : '') + '" data-dia="' + esc(dia) + '">' +
+         esc(dia.slice(0, 3)) + '</button>';
+  });
+  h += '</div><div id="filasHorario"></div>';
+
+  h += '<div class="rotulo">Lo que sigue en el temario</div><div class="tarjeta">';
+  if (!(d.proximos || []).length) {
+    h += '<div style="color:var(--suave);font-size:14px">Todavía no hay temas cargados para los próximos días.</div>';
+  } else {
+    d.proximos.forEach(p => {
+      h += '<div class="prox"><div class="f">' + esc(p.fecha) + '</div><div class="t">' +
+           '<strong>' + esc(p.materia) + '</strong><span>' + esc(p.tema || 'Por definir') +
+           (p.tarea ? ' · tarea: ' + esc(p.tarea) : '') + '</span></div></div>';
+    });
+  }
+  h += '</div>';
+  $('#horarioCuerpo').innerHTML = h;
+
+  const pintarDia = dia => {
+    const lista = (d.semana || {})[dia] || [];
+    $('#filasHorario').innerHTML = lista.length
+      ? lista.map(c =>
+          '<div class="fila-horario"><div class="h">' + esc(c.inicio || '') + '</div><div>' +
+          '<div class="m">' + esc(c.materia || '') + '</div>' +
+          (c.maestro ? '<div class="d">' + esc(c.maestro) + '</div>' : '') + '</div></div>'
+        ).join('')
+      : '<div class="vacio">No hay clases cargadas para ' + esc(dia) + '.</div>';
+  };
+  pintarDia(hoyNom);
+  $$('.dia-chip').forEach(b => b.addEventListener('click', () => {
+    $$('.dia-chip').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    pintarDia(b.dataset.dia);
+  }));
+}
+
+/* ---------------- Mi bitácora ---------------- */
+function pintarRegistro() {
+  $('#botonesReg').innerHTML = TIPOS_REG.map(x => {
+    const hecho = regHoy.some(r => (r.tipo || '').toLowerCase() === x.t.toLowerCase());
+    return '<button class="btn-reg' + (hecho ? ' hecho' : '') + '" data-tipo="' + esc(x.t) + '">' +
+           '<strong>' + esc(x.t) + '</strong><span>' + (hecho ? 'Registrado hoy' : esc(x.d)) + '</span></button>';
+  }).join('');
+  $$('#botonesReg .btn-reg').forEach(b => b.addEventListener('click', () => registrar(b.dataset.tipo, b)));
+}
+
+async function registrar(tipo, btn) {
+  btn.disabled = true;
+  try {
+    const d = await api('al_registrar', { tipo });
+    regHoy = d.registroHoy || regHoy;
+    pintarRegistro();
+    flotante(tipo + ' registrado. Bien hecho.');
+  } catch (e) {
+    flotante('No se pudo guardar: ' + e.message);
+    btn.disabled = false;
+  }
+}
+
+function pintarMetas() {
+  const abiertas = metasActuales;
+  $('#listaMetas').innerHTML = abiertas.length
+    ? abiertas.map(m =>
+        '<div class="meta' + (m.estado === 'Cumplida' ? ' ok' : '') + '" data-id="' + esc(m.id) + '">' +
+        '<div class="caja-check">' + (m.estado === 'Cumplida'
+          ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"><path d="M4 12l6 6L20 6"/></svg>'
+          : '') + '</div>' +
+        '<div style="flex:1"><div class="txt">' + esc(m.meta) + '</div>' +
+        '<div class="cuando">desde ' + esc(m.fecha) + '</div></div></div>'
+      ).join('')
+    : '<div class="vacio">Aún no tienes metas.<br>Escribe una abajo: algo concreto que quieras lograr.</div>';
+
+  $$('#listaMetas .meta').forEach(el => el.addEventListener('click', async () => {
+    const id = el.dataset.id;
+    const m = metasActuales.find(x => x.id === id);
+    if (!m || m.estado === 'Cumplida') return;
+    try {
+      const d = await api('al_meta_estado', { id_meta: id, estado: 'Cumplida' });
+      metasActuales = (d.metas || []).filter(x => x.estado !== 'Cumplida');
+      pintarMetas();
+      flotante('Meta cumplida.');
+    } catch (e) { flotante('No se pudo guardar: ' + e.message); }
+  }));
+}
+
+$('#btnMeta').addEventListener('click', async () => {
+  const txt = $('#nuevaMeta').value.trim();
+  if (!txt) return;
+  const b = $('#btnMeta'); b.disabled = true;
+  try {
+    const d = await api('al_meta_nueva', { meta: txt });
+    metasActuales = (d.metas || []).filter(x => x.estado !== 'Cumplida');
+    $('#nuevaMeta').value = '';
+    pintarMetas();
+    flotante('Meta guardada.');
+  } catch (e) { flotante('No se pudo guardar: ' + e.message); }
+  finally { b.disabled = false; }
+});
+
+/* ---------------- Dirección ---------------- */
+async function cargarSolicitudes() {
+  try {
+    const d = await api('al_solicitudes');
+    cacheSol = d;
+    pintarSolicitudes(d.solicitudes || []);
+  } catch (e) {
+    $('#listaSol').innerHTML = '<div class="vacio">No pudimos cargar tus mensajes ahora.</div>';
+  }
+}
+
+function pintarSolicitudes(lista) {
+  $('#listaSol').innerHTML = lista.length
+    ? lista.map(s => {
+        const cl = s.estado === 'Respondida' ? 'respondida' : (s.estado === 'Leída' ? 'leida' : '');
+        return '<div class="msg"><div class="cab"><div class="tipo">' + esc(s.tipo) + '</div>' +
+               '<div class="cuando">' + esc(s.fecha) + '</div></div>' +
+               '<div class="cuerpo">' + esc(s.mensaje) + '</div>' +
+               (s.respuesta
+                 ? '<div class="respuesta"><em>Respuesta de la dirección</em>' + esc(s.respuesta) + '</div>'
+                 : '<div style="margin-top:9px"><span class="etiqueta ' + cl + '">' + esc(s.estado) + '</span></div>') +
+               '</div>';
+      }).join('')
+    : '<div class="vacio">Todavía no has enviado nada.</div>';
+}
+
+$('#btnEnviar').addEventListener('click', async () => {
+  const mensaje = $('#msgSol').value.trim();
+  if (mensaje.length < 5) { flotante('Escribe un poco más de detalle.'); return; }
+  const b = $('#btnEnviar'); b.disabled = true; b.textContent = 'Enviando…';
+  try {
+    const d = await api('al_solicitar', { tipo: $('#tipoSol').value, mensaje });
+    $('#msgSol').value = '';
+    pintarSolicitudes(d.solicitudes || []);
+    flotante('Enviado. La dirección lo verá pronto.');
+  } catch (e) { flotante('No se pudo enviar: ' + e.message); }
+  finally { b.disabled = false; b.textContent = 'Enviar a la dirección'; }
+});
+
+/* ---------------- Arranque ---------------- */
+if (TOKEN) abrirApp();
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+</script>
+</body>
+</html>
