@@ -496,6 +496,14 @@ function pintarHoy(d) {
 
   let h = '';
 
+  if (d.sinMaterias) {
+    h += '<div class="aviso-linea">No apareces inscrito en ninguna materia. ' +
+         'Avísale a la direcci\u00f3n para que te den de alta.</div>';
+  } else if (d.horarioVencido) {
+    h += '<div class="aviso-linea">El horario de la metivt\u00e1 est\u00e1 vencido. ' +
+         'Esto es lo que te tocaba la \u00faltima vez; avisa en la direcci\u00f3n.</div>';
+  }
+
   (d.avisos || []).forEach(a => {
     h += '<div class="aviso"><h3>' + esc(a.titulo) + '</h3><p>' + esc(a.mensaje) + '</p>' +
          (a.fecha ? '<div class="cuando">' + esc(a.fecha) + '</div>' : '') + '</div>';
@@ -510,7 +518,9 @@ function pintarHoy(d) {
     }
     const clases = d.clases || [];
     if (!clases.length) {
-      h += '<div class="vacio">No hay clases cargadas para hoy.</div>';
+      h += '<div class="vacio">No hay clases cargadas para hoy.<br>' +
+           'Si deber\u00edas tener clase, av\u00edsale a la direcci\u00f3n: ' +
+           'es la hoja de horarios, no t\u00fa.</div>';
     } else {
       const ahora = new Date();
       const min = ahora.getHours() * 60 + ahora.getMinutes();
@@ -579,7 +589,8 @@ function pintarAvance(d) {
   const a = d.asistencia || {};
   h += '<div class="cifras">' +
        '<div class="cifra"><div class="n">' + (a.presentes || 0) + '</div>' +
-       '<div class="q">días que viniste en ' + esc(a.mes || 'este mes') + '</div></div>' +
+       '<div class="q">' + (a.total ? 'd\u00edas que viniste en ' + esc(a.mes || 'este mes')
+         : 'a\u00fan no se pasa lista en ' + esc(a.mes || 'este mes')) + '</div></div>' +
        '<div class="cifra"><div class="n">' + (a.racha || 0) + '</div>' +
        '<div class="q">días seguidos sin faltar</div></div>' +
        '<div class="cifra"><div class="n">' + (d.bejinotTotal || 0) + '</div>' +
@@ -628,7 +639,8 @@ function pintarHorario(d) {
 
   h += '<div class="rotulo">Lo que sigue en el temario</div><div class="tarjeta">';
   if (!(d.proximos || []).length) {
-    h += '<div style="color:var(--suave);font-size:14px">Todavía no hay temas cargados para los próximos días.</div>';
+    h += '<div style="color:var(--suave);font-size:14px">Todav\u00eda no hay temas cargados ' +
+         'para los pr\u00f3ximos d\u00edas. La direcci\u00f3n todav\u00eda no publica esta parte del temario.</div>';
   } else {
     d.proximos.forEach(p => {
       h += '<div class="prox"><div class="f">' + esc(p.fecha) + '</div><div class="t">' +
@@ -647,7 +659,8 @@ function pintarHorario(d) {
           '<div class="m">' + esc(c.materia || '') + '</div>' +
           (c.maestro ? '<div class="d">' + esc(c.maestro) + '</div>' : '') + '</div></div>'
         ).join('')
-      : '<div class="vacio">No hay clases cargadas para ' + esc(dia) + '.</div>';
+      : '<div class="vacio">No hay clases cargadas para ' + esc(dia) + '.<br>' +
+          'Puede que ese d\u00eda no te toque, o que falte capturarlo.</div>';
   };
   pintarDia(hoyNom);
   $$('.dia-chip').forEach(b => b.addEventListener('click', () => {
