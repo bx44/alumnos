@@ -5,7 +5,7 @@
    de CACHE. Si no lo haces, los teléfonos seguirán mostrando
    la versión vieja.
    ============================================================ */
-const CACHE = 'orbarak-alumnos-v8';
+const CACHE = 'orbarak-alumnos-v9';
 
 const ARCHIVOS = [
   './',
