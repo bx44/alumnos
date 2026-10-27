@@ -42,7 +42,9 @@ var INV_JUEGOS = [
     nombre: 'Hexterra',
     linea: 'Coloniza islas por turnos. El tablero en una pantalla y las cartas en cada teléfono.',
     jugadores: 'De 2 a 4, cada quien en su teléfono',
-    url: 'https://bx44.github.io/hexterra/',
+    // Ruta relativa = se juega dentro de Or+, en una capa a pantalla completa.
+    // Una direccion que empiece con http se abriria aparte, en otra pestana.
+    url: './juegos/hexterra/',
     listo: true
   },
   {

@@ -251,6 +251,15 @@ nav button .punto{
   font-size:14px;z-index:50;box-shadow:0 10px 30px rgba(30,27,51,.3);
 }
 
+#jugador{position:fixed;inset:0;z-index:70;background:var(--navy);display:none;
+  flex-direction:column}
+#jugador.on{display:flex}
+#jugador .barra{display:flex;align-items:center;gap:12px;padding:calc(8px + env(safe-area-inset-top)) 14px 8px;
+  background:var(--navy);color:#fff;flex-shrink:0}
+#jugador .barra button{color:#fff;font-size:15px;font-weight:600;padding:6px 4px}
+#jugador .barra span{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:600}
+#jugador iframe{flex:1;width:100%;border:0;background:#fff}
+
 .avisos{background:var(--blanco);border-radius:var(--radio);box-shadow:var(--sombra);
   padding:16px;margin-top:14px}
 .avisos h3{font-size:19px;margin-bottom:5px}
@@ -378,6 +387,14 @@ nav button .punto{
   </section>
 
 </main>
+
+<section id="jugador" aria-hidden="true">
+  <div class="barra">
+    <button id="salirJuego">‹ Salir</button>
+    <span id="tituloJuego"></span>
+  </div>
+  <iframe id="marcoJuego" title="Juego" allow="fullscreen; autoplay"></iframe>
+</section>
 
 <nav id="nav" hidden>
   <button data-v="hoy" class="on">
@@ -933,10 +950,15 @@ async function cargarJuegos() {
     h += '<div class="vacio">Todavía no hay juegos publicados.</div>';
   } else {
     juegos.forEach(j => {
+      // Direccion relativa = vive dentro de Or+. Con http se abre aparte.
+      const dentro = !/^https?:/i.test(j.url || '');
       h += '<div class="juego"><h3>' + esc(j.nombre) + '</h3>' +
            '<p>' + esc(j.linea) + '</p>' +
            '<div class="quien">' + esc(j.jugadores) + '</div>' +
-           '<a href="' + esc(j.url) + '" target="_blank" rel="noopener">Jugar</a></div>';
+           (dentro
+             ? '<a href="#" class="abrir-juego" data-url="' + esc(j.url) + '" data-nombre="' + esc(j.nombre) + '">Jugar</a>'
+             : '<a href="' + esc(j.url) + '" target="_blank" rel="noopener">Jugar</a>') +
+           '</div>';
     });
     h += '<div class="vacio" style="margin-top:4px;text-align:left">Para jugar con otros se ' +
          'comparte un código de sala. Compártelo solo con quien quieras que entre: ' +
@@ -944,6 +966,10 @@ async function cargarJuegos() {
   }
 
   $('#juegosCuerpo').innerHTML = h;
+  $$('#juegosCuerpo .abrir-juego').forEach(a => a.addEventListener('click', ev => {
+    ev.preventDefault();
+    abrirJuego(a.dataset.url, a.dataset.nombre);
+  }));
   if (MODO === 'invitado') {
     $('#btnConCodigo').addEventListener('click', () => location.reload());
   }
@@ -981,6 +1007,32 @@ function marcarReto(letra, acerto, pista, previo, correcta) {
   if (pista) partes.push(esc(pista));
   $('#cierreReto').innerHTML = '<div class="cierre">' + partes.join(' ') + '</div>';
 }
+
+/* ---------------- Jugar dentro de la app ----------------
+   El juego se carga en una capa a pantalla completa. Al salir se vacia el
+   marco a proposito: asi la partida se cierra de verdad y no se queda
+   corriendo en segundo plano comiendo bateria. */
+function abrirJuego(url, nombre) {
+  $('#tituloJuego').textContent = nombre || '';
+  $('#marcoJuego').src = url;
+  const capa = $('#jugador');
+  capa.classList.add('on');
+  capa.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarJuego() {
+  const capa = $('#jugador');
+  capa.classList.remove('on');
+  capa.setAttribute('aria-hidden', 'true');
+  $('#marcoJuego').src = 'about:blank';
+  document.body.style.overflow = '';
+}
+
+$('#salirJuego').addEventListener('click', cerrarJuego);
+window.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && $('#jugador').classList.contains('on')) cerrarJuego();
+});
 
 /* ---------------- Dirección ---------------- */
 async function cargarSolicitudes() {

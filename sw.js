@@ -15,7 +15,8 @@ const ARCHIVOS = [
   './icon-512.png',
   './icon-512-maskable.png',
   './apple-touch-icon.png',
-  './logo-tile.png'
+  './logo-tile.png',
+  './juegos/hexterra/'
 ];
 
 self.addEventListener('install', e => {
