@@ -227,7 +227,7 @@ nav button{flex:1;padding:9px 2px 8px;display:flex;flex-direction:column;align-i
 nav button.on{color:var(--navy)}
 nav button.on svg{stroke:var(--navy)}
 nav svg{width:22px;height:22px;stroke:var(--suave);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-nav .et{font-size:10.5px;font-weight:600}
+nav .et{font-size:10px;font-weight:600}
 nav button .punto{
   position:absolute;top:7px;margin-left:19px;width:7px;height:7px;
   border-radius:50%;background:var(--oro);
@@ -250,6 +250,33 @@ nav button .punto{
   background:var(--navy);color:#fff;padding:13px 16px;border-radius:12px;
   font-size:14px;z-index:50;box-shadow:0 10px 30px rgba(30,27,51,.3);
 }
+
+/* ---------- Juegos y reto ---------- */
+.reto{background:var(--navy);color:#fff;border-radius:var(--radio);padding:20px;margin-bottom:14px}
+.reto .et{font-size:11.5px;font-weight:700;color:var(--oro);letter-spacing:.06em;margin-bottom:9px}
+.reto .preg{font-family:'Barlow Condensed',sans-serif;font-size:23px;font-weight:600;line-height:1.25}
+.opcion{display:flex;gap:11px;align-items:flex-start;width:100%;text-align:left;
+  background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.18);
+  border-radius:11px;padding:13px 14px;margin-top:9px;color:#fff;font-size:14.5px}
+.opcion .letra{font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--oro);flex-shrink:0}
+.opcion:disabled{opacity:.5}
+.opcion.bien{background:rgba(62,124,90,.35);border-color:var(--verde)}
+.opcion.mal{background:rgba(180,83,47,.3);border-color:var(--alerta)}
+.reto .cierre{margin-top:14px;padding-top:13px;border-top:1px solid rgba(255,255,255,.18);
+  font-size:14px;color:#E4E1F2;line-height:1.55}
+.juego{background:var(--blanco);border-radius:var(--radio);box-shadow:var(--sombra);
+  padding:16px;margin-bottom:11px}
+.juego h3{font-size:21px;margin-bottom:4px}
+.juego p{margin:0;font-size:14px;color:var(--suave);line-height:1.5}
+.juego .quien{font-size:12.5px;color:var(--suave);font-family:'IBM Plex Mono',monospace;margin-top:7px}
+.juego a{display:inline-block;margin-top:12px;background:var(--navy);color:#fff;
+  padding:11px 20px;border-radius:11px;font-weight:700;font-size:14.5px;text-decoration:none}
+.btn-invitado{width:100%;background:transparent;color:#B9B4D6;border:1.5px solid rgba(255,255,255,.22);
+  padding:13px;border-radius:11px;margin-top:10px;font-size:15px}
+.cinta-invitado{background:var(--oro-suave);color:#4A4020;border-radius:var(--radio);
+  padding:13px 15px;margin-bottom:14px;font-size:13.5px;line-height:1.55}
+.cinta-invitado button{color:var(--navy);font-weight:700;text-decoration:underline;
+  text-underline-offset:3px;margin-top:6px;display:block;font-size:13.5px}
 </style>
 </head>
 <body>
@@ -272,7 +299,9 @@ nav button .punto{
            maxlength="6" placeholder="••••">
   </div>
   <button class="btn-oro" id="btnEntrar">Entrar</button>
-  <p class="pie">Después de entrar, tu sesión queda guardada 30 días en este teléfono.<br>
+  <button class="btn-invitado" id="btnInvitado">Entrar como invitado</button>
+  <p class="pie">Como invitado puedes jugar y contestar el reto de la semana.<br>
+     Lo de la metivtá —tus clases, tu avance— pide código.<br><br>Después de entrar, tu sesión queda guardada 30 días en este teléfono.<br>
      Si olvidaste tu PIN, pídelo en la dirección.</p>
 </section>
 
@@ -315,6 +344,11 @@ nav button .punto{
     </div>
   </section>
 
+  <!-- JUEGOS Y RETO -->
+  <section class="vista" id="v-juegos">
+    <div id="juegosCuerpo" class="cargando">Cargando…</div>
+  </section>
+
   <!-- DIRECCIÓN -->
   <section class="vista" id="v-direccion">
     <div class="tarjeta">
@@ -346,7 +380,7 @@ nav button .punto{
   </button>
   <button data-v="avance">
     <svg viewBox="0 0 24 24"><path d="M4 19V10M10 19V5M16 19v-6M22 19H2"/></svg>
-    <span class="et">Mi avance</span>
+    <span class="et">Avance</span>
   </button>
   <button data-v="horario">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
@@ -354,7 +388,11 @@ nav button .punto{
   </button>
   <button data-v="yo">
     <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 016.5 3H19v18H6.5A2.5 2.5 0 014 18.5z"/><path d="M9 8h6M9 12h4"/></svg>
-    <span class="et">Mi bitácora</span>
+    <span class="et">Bitácora</span>
+  </button>
+  <button data-v="juegos">
+    <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="4"/><path d="M7 11v3M5.5 12.5h3M16 12h.01M18.5 14h.01"/></svg>
+    <span class="et">Juegos</span>
   </button>
   <button data-v="direccion">
     <svg viewBox="0 0 24 24"><path d="M21 11.5a8 8 0 01-8.5 8L4 21l1.5-6A8 8 0 1121 11.5z"/></svg>
@@ -380,7 +418,8 @@ const lee    = k => { try{ return JSON.parse(localStorage.getItem('ob_'+k)); }ca
 const borra  = k => { try{ localStorage.removeItem('ob_'+k); }catch(e){} };
 
 let TOKEN = lee('token') || '';
-let cacheAvance = null, cacheHorario = null, cacheSol = null, metasActuales = [], regHoy = [];
+let cacheAvance = null, cacheHorario = null, cacheSol = null, cacheJuegos = null,
+    metasActuales = [], regHoy = [];
 
 async function api(accion, extra) {
   const p = new URLSearchParams(Object.assign({ accion, key: APP_KEY, token: TOKEN }, extra || {}));
@@ -439,13 +478,44 @@ function cerrarSesion() {
   location.reload();
 }
 
+/* MODO decide quién está adentro. 'invitado' no tiene token, y como todo lo
+   demás de la app exige token en el servidor, no hay nada que esconder a mano:
+   un invitado no alcanza Dirección, ni avance, ni horario, aunque forzara la
+   interfaz. Lo único que se oculta aquí son las pestañas, por claridad. */
+let MODO = 'alumno';
+
 function abrirApp() {
+  MODO = 'alumno';
   $('#acceso').style.display = 'none';
   $('#cabecera').hidden = false;
   $('#app').hidden = false;
   $('#nav').hidden = false;
   cargarHoy();
 }
+
+function abrirInvitado() {
+  MODO = 'invitado';
+  TOKEN = '';
+  $('#acceso').style.display = 'none';
+  $('#cabecera').hidden = false;
+  $('#app').hidden = false;
+  $('#nav').hidden = false;
+
+  $('#saludo').textContent = 'Baruj haba';
+  $('#nombreAlumno').textContent = 'Invitado';
+  $('#fechaHoy').textContent = 'El reto de la semana y los juegos';
+
+  $$('#nav button').forEach(b => {
+    const esJuegos = b.dataset.v === 'juegos';
+    b.hidden = !esJuegos;
+    b.classList.toggle('on', esJuegos);
+  });
+  $$('.vista').forEach(x => x.classList.remove('on'));
+  $('#v-juegos').classList.add('on');
+  cargarJuegos();
+}
+
+$('#btnInvitado').addEventListener('click', abrirInvitado);
 
 /* ---------------- Navegación ---------------- */
 $$('#nav button').forEach(b => {
@@ -459,6 +529,7 @@ $$('#nav button').forEach(b => {
     if (v === 'avance'   && !cacheAvance)  cargarAvance();
     if (v === 'horario'  && !cacheHorario) cargarHorario();
     if (v === 'direccion'&& !cacheSol)     cargarSolicitudes();
+    if (v === 'juegos'   && !cacheJuegos)  cargarJuegos();
   });
 });
 
@@ -732,6 +803,93 @@ $('#btnMeta').addEventListener('click', async () => {
   } catch (e) { flotante('No se pudo guardar: ' + e.message); }
   finally { b.disabled = false; }
 });
+
+/* ---------------- Juegos y reto ----------------
+   El reto y la lista de juegos son las únicas llamadas que el servidor
+   contesta sin token. La respuesta correcta nunca llega aquí: se manda la
+   opción elegida y el servidor dice si atinó. */
+async function cargarJuegos() {
+  let reto = { hay: false }, juegos = [];
+  try {
+    const r = await Promise.all([api('al_reto'), api('al_juegos')]);
+    reto = r[0]; juegos = r[1].juegos || [];
+    cacheJuegos = true;
+  } catch (e) {
+    $('#juegosCuerpo').innerHTML = '<div class="vacio">No pudimos cargar esto ahora.</div>';
+    return;
+  }
+
+  let h = '';
+  if (MODO === 'invitado') {
+    h += '<div class="cinta-invitado">Estás como invitado. Puedes jugar y contestar el reto; ' +
+         'tu respuesta no se guarda en ningún lado.' +
+         '<button id="btnConCodigo">Entrar con mi código</button></div>';
+  }
+
+  if (reto.hay) {
+    h += '<div class="reto" id="bloqueReto" data-semana="' + esc(reto.semana) + '">' +
+         '<div class="et">RETO DE LA SEMANA</div>' +
+         '<div class="preg">' + esc(reto.pregunta) + '</div>' +
+         '<div id="opciones">' +
+         reto.opciones.map(o =>
+           '<button class="opcion" data-letra="' + esc(o.letra) + '">' +
+           '<span class="letra">' + esc(o.letra) + '</span><span>' + esc(o.texto) + '</span></button>'
+         ).join('') + '</div><div id="cierreReto"></div></div>';
+  }
+
+  h += '<div class="rotulo">Para jugar</div>';
+  if (!juegos.length) {
+    h += '<div class="vacio">Todavía no hay juegos publicados.</div>';
+  } else {
+    juegos.forEach(j => {
+      h += '<div class="juego"><h3>' + esc(j.nombre) + '</h3>' +
+           '<p>' + esc(j.linea) + '</p>' +
+           '<div class="quien">' + esc(j.jugadores) + '</div>' +
+           '<a href="' + esc(j.url) + '" target="_blank" rel="noopener">Jugar</a></div>';
+    });
+    h += '<div class="vacio" style="margin-top:4px;text-align:left">Para jugar con otros se ' +
+         'comparte un código de sala. Compártelo solo con quien quieras que entre: ' +
+         'cualquiera que lo tenga puede unirse.</div>';
+  }
+
+  $('#juegosCuerpo').innerHTML = h;
+  if (MODO === 'invitado') {
+    $('#btnConCodigo').addEventListener('click', () => location.reload());
+  }
+
+  if (reto.hay) {
+    if (reto.yaContesto) {
+      marcarReto(reto.yaContesto.respuesta, reto.yaContesto.acerto, '', true);
+    } else {
+      $$('#opciones .opcion').forEach(b =>
+        b.addEventListener('click', () => responderReto(b.dataset.letra)));
+    }
+  }
+}
+
+async function responderReto(letra) {
+  $$('#opciones .opcion').forEach(b => b.disabled = true);
+  try {
+    const d = await api('al_reto_responder', { opcion: letra });
+    marcarReto(letra, d.acerto, d.pista, false, d.correcta);
+  } catch (e) {
+    $$('#opciones .opcion').forEach(b => b.disabled = false);
+    flotante('No se pudo enviar: ' + e.message);
+  }
+}
+
+function marcarReto(letra, acerto, pista, previo, correcta) {
+  $$('#opciones .opcion').forEach(b => {
+    b.disabled = true;
+    if (b.dataset.letra === letra) b.classList.add(acerto ? 'bien' : 'mal');
+    if (!acerto && correcta && b.dataset.letra === correcta) b.classList.add('bien');
+  });
+  const partes = [];
+  if (previo) partes.push(acerto ? 'Ya lo contestaste, y le atinaste.' : 'Ya lo contestaste esta semana.');
+  else partes.push(acerto ? 'Correcto.' : 'No era esa.');
+  if (pista) partes.push(esc(pista));
+  $('#cierreReto').innerHTML = '<div class="cierre">' + partes.join(' ') + '</div>';
+}
 
 /* ---------------- Dirección ---------------- */
 async function cargarSolicitudes() {
