@@ -72,7 +72,8 @@ header{
 }
 header .saludo{font-size:13px;color:#B9B4D6;font-weight:600}
 header h2{font-size:25px;font-weight:600;margin-top:2px}
-header .fecha{font-size:13.5px;color:#B9B4D6;margin-top:4px;text-transform:capitalize}
+header .fecha{font-size:13.5px;color:#B9B4D6;margin-top:4px}
+header .fecha.dia{text-transform:capitalize}
 
 /* ---------- Estructura ---------- */
 main{padding:18px 16px 24px;max-width:640px;margin:0 auto}
@@ -224,6 +225,7 @@ nav{
   padding-bottom:env(safe-area-inset-bottom);
 }
 nav button{flex:1;padding:9px 2px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--suave)}
+nav button[hidden]{display:none}
 nav button.on{color:var(--navy)}
 nav button.on svg{stroke:var(--navy)}
 nav svg{width:22px;height:22px;stroke:var(--suave);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
@@ -538,6 +540,7 @@ function abrirInvitado() {
 
   $('#saludo').textContent = 'Baruj haba';
   $('#nombreAlumno').textContent = 'Invitado';
+  $('#fechaHoy').className = 'fecha';
   $('#fechaHoy').textContent = 'El reto de la semana y los juegos';
 
   $$('#nav button').forEach(b => {
@@ -596,6 +599,7 @@ async function cargarHoy() {
 
 function pintarHoy(d) {
   $('#nombreAlumno').textContent = (d.nombre || '').split(' ')[0] || 'Alumno';
+  $('#fechaHoy').className = 'fecha dia';
   $('#fechaHoy').textContent = d.dia + ', ' + d.fecha;
   regHoy = d.registroHoy || [];
   metasActuales = d.metas || [];
