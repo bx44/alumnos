@@ -5,7 +5,7 @@
    de CACHE. Si no lo haces, los teléfonos seguirán mostrando
    la versión vieja.
    ============================================================ */
-const CACHE = 'orbarak-alumnos-v4';
+const CACHE = 'orbarak-alumnos-v3';
 
 const ARCHIVOS = [
   './',
@@ -70,5 +70,54 @@ self.addEventListener('fetch', e => {
       }
       return r;
     }).catch(() => hit))
+  );
+});
+
+
+/* ============================================================
+   Avisos al celular
+
+   El aviso lo dibuja aqui Or+, no Firebase: asi se ve como la app
+   y no como una notificacion generica. El mensaje viene en 'data',
+   nunca en 'notification', justo para que Firebase no lo dibuje solo.
+
+   Lo que llega aqui aparece en la pantalla bloqueada, donde lo puede
+   leer cualquiera que tenga el telefono en la mano. Por eso el backend
+   nunca manda calificaciones ni faltas: solo avisos y textos neutros.
+   ============================================================ */
+
+self.addEventListener('push', e => {
+  let d = {};
+  try {
+    const bruto = e.data ? e.data.json() : {};
+    d = bruto.data || bruto || {};
+  } catch (err) {
+    d = { titulo: 'Or+', cuerpo: e.data ? e.data.text() : '' };
+  }
+
+  const titulo = d.titulo || 'Or+';
+  const opciones = {
+    body: d.cuerpo || '',
+    icon: './icon-192.png',
+    badge: './icon-192.png',
+    lang: 'es',
+    tag: d.tag || 'or-mas',
+    renotify: false,
+    data: { ruta: d.ruta || './' }
+  };
+  e.waitUntil(self.registration.showNotification(titulo, opciones));
+});
+
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  const destino = new URL((e.notification.data && e.notification.data.ruta) || './',
+                          self.location.origin).href;
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(abiertas => {
+      for (const c of abiertas) {
+        if (c.url.indexOf(self.location.origin) === 0 && 'focus' in c) return c.focus();
+      }
+      return self.clients.openWindow ? self.clients.openWindow(destino) : null;
+    })
   );
 });

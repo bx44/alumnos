@@ -251,6 +251,12 @@ nav button .punto{
   font-size:14px;z-index:50;box-shadow:0 10px 30px rgba(30,27,51,.3);
 }
 
+.avisos{background:var(--blanco);border-radius:var(--radio);box-shadow:var(--sombra);
+  padding:16px;margin-top:14px}
+.avisos h3{font-size:19px;margin-bottom:5px}
+.avisos p{margin:0 0 12px;font-size:14px;color:var(--suave);line-height:1.5}
+.avisos .ok{color:var(--verde);font-weight:600;font-size:14px}
+
 /* ---------- Juegos y reto ---------- */
 .reto{background:var(--navy);color:#fff;border-radius:var(--radio);padding:20px;margin-bottom:14px}
 .reto .et{font-size:11.5px;font-weight:700;color:var(--oro);letter-spacing:.06em;margin-bottom:9px}
@@ -404,8 +410,20 @@ nav button .punto{
 /* ======================================================
    CONFIGURACIÓN — cambia estas dos líneas
    ====================================================== */
+/* Avisos al celular. Mientras vapidKey siga vacio, el interruptor no
+   aparece y la app funciona igual que hoy. Los datos salen de Firebase:
+   Configuracion del proyecto para el bloque firebase, y Cloud Messaging ->
+   Certificados push web para la vapidKey. */
+const AVISOS = {
+  vapidKey: '',
+  firebase: {
+    apiKey: '', authDomain: '', projectId: '',
+    messagingSenderId: '', appId: ''
+  }
+};
+
 const API_URL = 'https://script.google.com/macros/s/AKfycbwwf7g-2dS1I3EyQugckgnA2hjRreo8LhAx6CDbVhgT8BFWOFNcYKM1W5coKtuI5qpuQg/exec';
-const APP_KEY = 'crh,uesa';   // idéntica a la APP_KEY de Codigo-API.gs
+const APP_KEY = 'crh,eusa';   // idéntica a AL.APP_KEY en Apps Script
 
 /* ====================================================== */
 const $  = s => document.querySelector(s);
@@ -624,11 +642,14 @@ function pintarHoy(d) {
     });
   }
 
+  h += '<div id="cajaAvisos"></div>';
+
   h += '<div style="text-align:center;margin-top:26px">' +
        '<button class="btn-texto" id="btnSalir">Cerrar sesión</button></div>';
 
   $('#hoyCuerpo').innerHTML = h;
   $('#btnSalir').addEventListener('click', cerrarSesion);
+  pintarAvisos();
   pintarRegistro();
   pintarMetas();
 }
@@ -803,6 +824,76 @@ $('#btnMeta').addEventListener('click', async () => {
   } catch (e) { flotante('No se pudo guardar: ' + e.message); }
   finally { b.disabled = false; }
 });
+
+/* ---------------- Avisos al celular ----------------
+   No se pide permiso al abrir la app. Un permiso que se pide antes de que
+   la persona entienda para que sirve se niega, y una vez negado el navegador
+   ya no vuelve a preguntar. Por eso el interruptor vive aqui y espera. */
+function avisosConfigurados() {
+  return !!(AVISOS.vapidKey && AVISOS.firebase && AVISOS.firebase.projectId);
+}
+
+function pintarAvisos() {
+  const caja = $('#cajaAvisos');
+  if (!caja || MODO !== 'alumno' || !avisosConfigurados()) return;
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
+
+  const permiso = Notification.permission;
+  if (permiso === 'denied') {
+    caja.innerHTML = '<div class="avisos"><h3>Avisos</h3>' +
+      '<p>Bloqueaste los avisos para esta app. Se vuelven a permitir desde los ' +
+      'ajustes del navegador, en la sección de notificaciones.</p></div>';
+    return;
+  }
+  if (permiso === 'granted' && lee('avisos')) {
+    caja.innerHTML = '<div class="avisos"><h3>Avisos</h3>' +
+      '<p class="ok">Encendidos en este teléfono.</p>' +
+      '<button class="btn-texto" id="btnAvisosNo">Apagarlos</button></div>';
+    $('#btnAvisosNo').addEventListener('click', apagarAvisos);
+    return;
+  }
+  caja.innerHTML = '<div class="avisos"><h3>¿Te avisamos?</h3>' +
+    '<p>Te llega un mensaje cuando la dirección publica algo. Nada de ' +
+    'calificaciones ni faltas: para eso entras tú.</p>' +
+    '<button class="btn-navy" id="btnAvisosSi">Encender avisos</button></div>';
+  $('#btnAvisosSi').addEventListener('click', encenderAvisos);
+}
+
+async function encenderAvisos() {
+  const b = $('#btnAvisosSi');
+  if (b) { b.disabled = true; b.textContent = 'Un momento…'; }
+  try {
+    const permiso = await Notification.requestPermission();
+    if (permiso !== 'granted') { pintarAvisos(); return; }
+
+    // El SDK se baja solo cuando alguien dice que sí: quien no use avisos
+    // no carga nada de esto.
+    const [{ initializeApp }, { getMessaging, getToken }] = await Promise.all([
+      import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'),
+      import('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js')
+    ]);
+    const reg = await navigator.serviceWorker.ready;
+    const ficha = await getToken(getMessaging(initializeApp(AVISOS.firebase)), {
+      vapidKey: AVISOS.vapidKey, serviceWorkerRegistration: reg
+    });
+    if (!ficha) throw new Error('el navegador no entregó registro');
+
+    await api('al_push_registrar', { ficha });
+    guarda('avisos', ficha);
+    pintarAvisos();
+    flotante('Avisos encendidos.');
+  } catch (e) {
+    pintarAvisos();
+    flotante('No se pudieron encender: ' + e.message);
+  }
+}
+
+async function apagarAvisos() {
+  try { await api('al_push_baja', { ficha: lee('avisos') || '' }); } catch (e) {}
+  borra('avisos');
+  pintarAvisos();
+  flotante('Avisos apagados en este teléfono.');
+}
 
 /* ---------------- Juegos y reto ----------------
    El reto y la lista de juegos son las únicas llamadas que el servidor

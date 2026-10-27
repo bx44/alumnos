@@ -73,6 +73,10 @@ function apiAlumnos(p) {
       case 'al_reto':           return alReto(p);
       case 'al_reto_responder': return alRetoResponder(p);
       case 'al_juegos':         return alJuegos(p);
+      // Avisos al celular. Viven en Codigo-Push.gs y sí piden token:
+      // un invitado no recibe avisos y no se guarda nada de su teléfono.
+      case 'al_push_registrar': return alPushRegistrar(p);
+      case 'al_push_baja':      return alPushBaja(p);
       default: return { ok: false, error: 'Acción no reconocida.' };
     }
   } catch (err) {
