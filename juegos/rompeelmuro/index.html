@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1B1740">
+<title>Rompe el muro</title>
+<style>
+:root{
+  --fondo:#141026; --cielo:#1B1740; --navy:#29235C; --oro:#C99B52;
+  --tinta:#F2F1F7; --suave:#8F89B4; --ladrillo:#B5643C; --piedra:#3A3558;
+  --peligro:#C4483A; --verde:#4E9B57;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;
+  -webkit-user-select:none;user-select:none;touch-action:manipulation}
+html,body{height:100%;overflow:hidden;background:var(--fondo);color:var(--tinta);
+  font-family:'Trebuchet MS',system-ui,sans-serif}
+#todo{position:fixed;inset:0;display:flex;flex-direction:column}
+
+#marcador{display:flex;align-items:center;gap:10px;padding:calc(6px + env(safe-area-inset-top)) 12px 6px;
+  font-size:13px;color:var(--suave);flex-shrink:0}
+#marcador b{color:var(--oro);font-weight:700}
+#marcador .crece{flex:1}
+#marcador button{background:none;border:0;color:var(--suave);font-size:17px;padding:4px 8px;cursor:pointer}
+
+#lienzo{flex:1;width:100%;display:block;image-rendering:pixelated;background:var(--cielo);min-height:0}
+
+#mandos{display:flex;justify-content:space-between;align-items:flex-end;
+  padding:10px 14px calc(14px + env(safe-area-inset-bottom));gap:10px;flex-shrink:0}
+.grupo{display:flex;gap:10px}
+.tecla{width:62px;height:62px;border-radius:16px;border:2px solid #403a66;
+  background:#241f42;color:var(--tinta);font-size:20px;font-weight:700;
+  display:grid;place-items:center;cursor:pointer}
+.tecla:active,.tecla.presionada{background:var(--navy);border-color:var(--oro)}
+.tecla.romper{background:#3a2518;border-color:#6b4328;color:var(--oro);font-size:13px;line-height:1.1}
+
+#capa{position:absolute;inset:0;display:none;place-items:center;padding:24px;
+  background:rgba(20,16,38,.93);text-align:center;z-index:5}
+#capa.on{display:grid}
+#capa h1{font-size:30px;color:var(--oro);margin-bottom:6px;letter-spacing:.02em}
+#capa h2{font-size:21px;margin-bottom:10px}
+#capa p{color:var(--suave);font-size:14.5px;line-height:1.6;max-width:30ch;margin:0 auto 18px}
+#capa .boton{background:var(--oro);color:#241a08;border:0;border-radius:12px;
+  padding:13px 26px;font-size:16px;font-weight:700;cursor:pointer}
+#capa .secundario{background:none;color:var(--suave);border:0;padding:12px;
+  font-size:14px;margin-top:6px;cursor:pointer;text-decoration:underline}
+.tiempos{font-size:13px;color:var(--suave);margin-top:14px;font-family:ui-monospace,monospace}
+</style>
+</head>
+<body>
+
+<div id="todo">
+  <div id="marcador">
+    <span>Nivel <b id="mNivel">1</b></span>
+    <span id="mTiempo">0:00</span>
+    <span class="crece"></span>
+    <span id="mRecord"></span>
+    <button id="bSonido" title="Sonido">♪</button>
+    <button id="bReiniciar" title="Reiniciar nivel">↻</button>
+  </div>
+  <canvas id="lienzo"></canvas>
+  <div id="mandos">
+    <div class="grupo">
+      <button class="tecla" id="tIzq">◀</button>
+      <button class="tecla" id="tDer">▶</button>
+    </div>
+    <div class="grupo">
+      <button class="tecla romper" id="tRomper">ROMPER</button>
+      <button class="tecla" id="tSaltar">▲</button>
+    </div>
+  </div>
+  <div id="capa"></div>
+</div>
+
+<script>
+/* ===========================================================
+   ROMPE EL MURO — Or Barak
+   Un archivo, sin dependencias, se juega sin señal.
+
+   CÓMO AGREGAR NIVELES
+   Cada nivel es una lista de 12 renglones de 20 caracteres:
+     .  aire          #  piedra (no se rompe)
+     =  ladrillo (se rompe)       ^  púas
+     P  dónde empiezas            D  la puerta
+   Agrega otro bloque al final de NIVELES y ya está. No hay que
+   tocar nada más: el juego cuenta los niveles solo.
+   =========================================================== */
+
+const NIVELES = [
+  [ // 1 — caminar
+    "....................",
+    "....................",
+    "....................",
+    "....................",
+    "....................",
+    "....................",
+    "..P..............D..",
+    "####################",
+    "####################",
+    "####################",
+    "####################",
+    "####################"
+  ],
+  [ // 2 — saltar el hueco
+    "....................",
+    "....................",
+    "....................",
+    "....................",
+    "....................",
+    "....................",
+    "..P..............D..",
+    "#######..###########",
+    "#######..###########",
+    "#######..###########",
+    "#######..###########",
+    "#######..###########"
+  ],
+  [ // 3 — el primer muro
+    "....................",
+    "....................",
+    "....................",
+    "....................",
+    "..........=.........",
+    "..........=.........",
+    "..P.......=......D..",
+    "####################",
+    "####################",
+    "####################",
+    "####################",
+    "####################"
+  ],
+  [ // 4 — romper el piso
+    "....................",
+    "....................",
+    "..P.................",
+    "#####===############",
+    "....................",
+    "....................",
+    ".................D..",
+    "####################",
+    "####################",
+    "####################",
+    "####################",
+    "####################"
+  ],
+  [ // 5 — las puas
+    "....................",
+    "....................",
+    "....................",
+    "....................",
+    ".........==.........",
+    ".........==.........",
+    "..P......==......D..",
+    "#####^^#####^^######",
+    "####################",
+    "####################",
+    "####################",
+    "####################"
+  ],
+  [ // 6 — subir y romper
+    "....................",
+    "............=.D.....",
+    "...........#########",
+    "..........#.........",
+    ".........#..........",
+    "........#...........",
+    "..P.....#...........",
+    "#########^^^^^^^^^^#",
+    "####################",
+    "####################",
+    "####################",
+    "####################"
+  ],
+  [ // 7 — el pasillo
+    "....................",
+    "....................",
+    "....................",
+    "....=....=....=.....",
+    "..P.=....=....=..D..",
+    "####################",
+    "####################",
+    "####################",
+    "####################",
+    "####################",
+    "####################",
+    "####################"
+  ],
+  [ // 8 — la torre
+    "..............=D....",
+    ".............#######",
+    "...........##.......",
+    ".........##.........",
+    ".......##...........",
+    ".....##.............",
+    "..P##...............",
+    "#####^^^^^^^^^^^^^^#",
+    "####################",
+    "####################",
+    "####################",
+    "####################"
+  ],
+  [ // 9 — caer con cuidado
+    "....................",
+    "..P.................",
+    "#####==#############",
+    "....................",
+    "....................",
+    "..........=.........",
+    "..........=......D..",
+    "####^^####==########",
+    "####################",
+    "####################",
+    "####################",
+    "####################"
+  ],
+  [ // 10 — todo junto
+    "....................",
+    "................=.D.",
+    "...............#####",
+    ".............##.....",
+    "...........##.......",
+    ".........##.........",
+    "..P..=..............",
+    "########^^^^^^^^^^^#",
+    "####################",
+    "####################",
+    "####################",
+    "####################"
+  ]
+];
+
+const ANCHO = 20, ALTO = 12, LOSA = 16;
+const W = ANCHO * LOSA, H = ALTO * LOSA;
+
+// Física. Estos números se sintieron bien probando; si el salto queda corto,
+// sube SALTO (es negativo, así que más negativo salta más alto).
+const GRAVEDAD = 0.42, SALTO = -6.6, PASO = 0.85, TOPE = 2.0, FRENO = 0.78;
+const GRACIA = 6;      // cuadros de perdón después de dejar el piso
+const MEMORIA = 7;     // cuadros que se recuerda el botón de salto
+
+const lienzo = document.getElementById('lienzo');
+const ctx = lienzo.getContext('2d');
+const capa = document.getElementById('capa');
+
+let mapa = [], jugador = null, nivel = 0, cuadros = 0, corriendo = false;
+let particulas = [], sacudida = 0, sonido = false, muerto = 0, ganado = 0;
+const tecla = { izq: false, der: false, saltar: false, romper: false };
+let memSalto = 0, memRomper = 0;
+
+/* ---------- Guardado local ---------- */
+const guardar = (k, v) => { try { localStorage.setItem('rm-' + k, v); } catch (e) {} };
+const leer = k => { try { return localStorage.getItem('rm-' + k); } catch (e) { return null; } };
+
+/* ---------- Sonido: apagado por omisión, a propósito ----------
+   Un juego que suena solo en medio de la clase se gana que lo prohíban. */
+let audio = null;
+function pitido(frec, dur, tipo) {
+  if (!sonido) return;
+  try {
+    if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
+    const o = audio.createOscillator(), g = audio.createGain();
+    o.type = tipo || 'square'; o.frequency.value = frec;
+    g.gain.setValueAtTime(0.05, audio.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + dur);
+    o.connect(g); g.connect(audio.destination);
+    o.start(); o.stop(audio.currentTime + dur);
+  } catch (e) {}
+}
+
+/* ---------- Mapa ---------- */
+function cargar(n) {
+  nivel = n;
+  const crudo = NIVELES[n];
+  mapa = [];
+  for (let y = 0; y < ALTO; y++) {
+    const fila = (crudo[y] || '').padEnd(ANCHO, '.').slice(0, ANCHO).split('');
+    mapa.push(fila);
+  }
+  let inicio = { x: 2, y: 6 };
+  for (let y = 0; y < ALTO; y++) for (let x = 0; x < ANCHO; x++) {
+    if (mapa[y][x] === 'P') { inicio = { x, y }; mapa[y][x] = '.'; }
+  }
+  jugador = {
+    x: inicio.x * LOSA + 3, y: inicio.y * LOSA + 2,
+    an: 10, al: 14, vx: 0, vy: 0, piso: 0, mira: 1, golpe: 0
+  };
+  particulas = []; cuadros = 0; muerto = 0; ganado = 0; sacudida = 0;
+  document.getElementById('mNivel').textContent = (n + 1) + '/' + NIVELES.length;
+  const r = leer('mejor' + n);
+  document.getElementById('mRecord').textContent = r ? 'mejor ' + reloj(+r) : '';
+}
+
+const losa = (x, y) => (x < 0 || y < 0 || x >= ANCHO || y >= ALTO) ? '#' : mapa[y][x];
+const choca = c => c === '#' || c === '=';
+
+function tocaPuas(j) {
+  const x0 = Math.floor(j.x / LOSA), x1 = Math.floor((j.x + j.an - 1) / LOSA);
+  const y0 = Math.floor(j.y / LOSA), y1 = Math.floor((j.y + j.al - 1) / LOSA);
+  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) if (losa(x, y) === '^') return true;
+  return false;
+}
+
+function tocaPuerta(j) {
+  const x0 = Math.floor(j.x / LOSA), x1 = Math.floor((j.x + j.an - 1) / LOSA);
+  const y0 = Math.floor(j.y / LOSA), y1 = Math.floor((j.y + j.al - 1) / LOSA);
+  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) if (losa(x, y) === 'D') return true;
+  return false;
+}
+
+/* ---------- Romper ----------
+   Rompe los ladrillos de la columna de enfrente, a la altura del cuerpo, y
+   también el de abajo si estás parado sobre uno. Lo segundo es lo que permite
+   caerse a propósito, que es medio juego. */
+function romper() {
+  if (jugador.golpe > 0) return;
+  jugador.golpe = 10;
+  const cx = Math.floor((jugador.x + jugador.an / 2) / LOSA);
+  const cy = Math.floor((jugador.y + jugador.al / 2) / LOSA);
+  const objetivo = [
+    [cx + jugador.mira, cy], [cx + jugador.mira, cy - 1], [cx + jugador.mira, cy + 1],
+    [cx, cy + 1]
+  ];
+  let rotos = 0;
+  for (const [x, y] of objetivo) {
+    if (losa(x, y) === '=') { mapa[y][x] = '.'; polvo(x, y); rotos++; }
+  }
+  if (rotos) { sacudida = 5; pitido(170, 0.09); }
+  else pitido(90, 0.05, 'sine');
+}
+
+function polvo(tx, ty) {
+  for (let i = 0; i < 9; i++) {
+    particulas.push({
+      x: tx * LOSA + Math.random() * LOSA, y: ty * LOSA + Math.random() * LOSA,
+      vx: (Math.random() - 0.5) * 2.4, vy: -Math.random() * 2.2, vida: 26 + Math.random() * 14
+    });
+  }
+}
+
+/* ---------- Movimiento ---------- */
+function mover(j, dx, dy) {
+  j.x += dx;
+  let x0 = Math.floor(j.x / LOSA), x1 = Math.floor((j.x + j.an - 1) / LOSA);
+  let y0 = Math.floor(j.y / LOSA), y1 = Math.floor((j.y + j.al - 1) / LOSA);
+  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+    if (!choca(losa(x, y))) continue;
+    if (dx > 0) { j.x = x * LOSA - j.an; j.vx = 0; }
+    else if (dx < 0) { j.x = (x + 1) * LOSA; j.vx = 0; }
+  }
+
+  j.y += dy;
+  x0 = Math.floor(j.x / LOSA); x1 = Math.floor((j.x + j.an - 1) / LOSA);
+  y0 = Math.floor(j.y / LOSA); y1 = Math.floor((j.y + j.al - 1) / LOSA);
+  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+    if (!choca(losa(x, y))) continue;
+    if (dy > 0) { j.y = y * LOSA - j.al; j.vy = 0; j.piso = GRACIA; }
+    else if (dy < 0) { j.y = (y + 1) * LOSA; j.vy = 0; }
+  }
+}
+
+function paso() {
+  cuadros++;
+  if (sacudida > 0) sacudida--;
+  if (jugador.golpe > 0) jugador.golpe--;
+
+  if (muerto > 0) { if (--muerto === 0) cargar(nivel); return; }
+  if (ganado > 0) { if (--ganado === 0) terminarNivel(); return; }
+
+  const j = jugador;
+  if (tecla.izq && !tecla.der) { j.vx -= PASO; j.mira = -1; }
+  else if (tecla.der && !tecla.izq) { j.vx += PASO; j.mira = 1; }
+  else j.vx *= FRENO;
+  j.vx = Math.max(-TOPE, Math.min(TOPE, j.vx));
+  if (Math.abs(j.vx) < 0.05) j.vx = 0;
+
+  if (memSalto > 0) memSalto--;
+  if (j.piso > 0) j.piso--;
+  if (memSalto > 0 && j.piso > 0) { j.vy = SALTO; j.piso = 0; memSalto = 0; pitido(520, 0.07, 'triangle'); }
+  // soltar el botón a medio salto lo corta: da control fino
+  if (!tecla.saltar && j.vy < -1.6) j.vy = -1.6;
+
+  if (memRomper > 0) { memRomper--; if (memRomper === 0) {} }
+  j.vy = Math.min(j.vy + GRAVEDAD, 7);
+
+  mover(j, j.vx, 0);
+  mover(j, 0, j.vy);
+
+  if (tocaPuas(j) || j.y > H + 40) {
+    muerto = 24; sacudida = 8; pitido(120, 0.22, 'sawtooth');
+    for (let i = 0; i < 14; i++) polvo(Math.floor(j.x / LOSA), Math.floor(j.y / LOSA));
+  } else if (tocaPuerta(j)) {
+    ganado = 20; pitido(660, 0.1, 'triangle');
+    setTimeout(() => pitido(880, 0.16, 'triangle'), 90);
+  }
+
+  for (let i = particulas.length - 1; i >= 0; i--) {
+    const p = particulas[i];
+    p.x += p.vx; p.y += p.vy; p.vy += 0.22; p.vida--;
+    if (p.vida <= 0) particulas.splice(i, 1);
+  }
+}
+
+/* ---------- Dibujo ---------- */
+function dibujar() {
+  const sx = sacudida ? (Math.random() - 0.5) * sacudida : 0;
+  const sy = sacudida ? (Math.random() - 0.5) * sacudida : 0;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.fillStyle = '#1B1740';
+  ctx.fillRect(0, 0, W, H);
+  ctx.translate(sx, sy);
+
+  for (let y = 0; y < ALTO; y++) for (let x = 0; x < ANCHO; x++) {
+    const c = mapa[y][x], px = x * LOSA, py = y * LOSA;
+    if (c === '#') {
+      ctx.fillStyle = '#3A3558'; ctx.fillRect(px, py, LOSA, LOSA);
+      ctx.fillStyle = '#453f6b'; ctx.fillRect(px, py, LOSA, 2);
+    } else if (c === '=') {
+      ctx.fillStyle = '#B5643C'; ctx.fillRect(px, py, LOSA, LOSA);
+      ctx.fillStyle = '#8d4a2b';
+      ctx.fillRect(px, py + 7, LOSA, 1.5); ctx.fillRect(px + 7, py, 1.5, 7);
+      ctx.fillRect(px + 3, py + 8, 1.5, 8);
+      ctx.fillStyle = '#c87a52'; ctx.fillRect(px, py, LOSA, 1.5);
+    } else if (c === '^') {
+      ctx.fillStyle = '#C4483A';
+      for (let k = 0; k < 2; k++) {
+        ctx.beginPath();
+        ctx.moveTo(px + k * 8, py + LOSA);
+        ctx.lineTo(px + k * 8 + 4, py + 5);
+        ctx.lineTo(px + k * 8 + 8, py + LOSA);
+        ctx.closePath(); ctx.fill();
+      }
+    } else if (c === 'D') {
+      ctx.fillStyle = '#C99B52'; ctx.fillRect(px + 2, py + 2, 12, 14);
+      ctx.fillStyle = '#241a08'; ctx.fillRect(px + 4, py + 5, 8, 11);
+      ctx.fillStyle = '#C99B52'; ctx.fillRect(px + 9, py + 10, 2, 2);
+    }
+  }
+
+  ctx.fillStyle = '#d9b98f';
+  for (const p of particulas) ctx.fillRect(p.x | 0, p.y | 0, 2, 2);
+
+  const j = jugador;
+  if (muerto === 0) {
+    const rebote = (ganado > 0) ? Math.sin(cuadros * 0.5) * 1.5 : 0;
+    ctx.fillStyle = '#F2F1F7';
+    ctx.fillRect(j.x | 0, (j.y + rebote) | 0, j.an, j.al);
+    ctx.fillStyle = '#29235C';
+    const ojo = j.mira > 0 ? j.an - 4 : 2;
+    ctx.fillRect((j.x + ojo) | 0, (j.y + 4 + rebote) | 0, 2, 3);
+    if (j.golpe > 4) {
+      ctx.fillStyle = '#C99B52';
+      const bx = j.mira > 0 ? j.x + j.an : j.x - 6;
+      ctx.fillRect(bx | 0, (j.y + 4 + rebote) | 0, 6, 6);
+    }
+  }
+}
+
+/* ---------- Bucle ---------- */
+let anterior = 0, resto = 0;
+function vuelta(t) {
+  if (!corriendo) return;
+  const dt = Math.min(t - anterior, 100); anterior = t;
+  resto += dt;
+  while (resto >= 1000 / 60) { paso(); resto -= 1000 / 60; }
+  dibujar();
+  if (cuadros % 15 === 0) document.getElementById('mTiempo').textContent = reloj(cuadros);
+  requestAnimationFrame(vuelta);
+}
+
+const reloj = c => {
+  const s = Math.floor(c / 60);
+  return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+};
+
+/* ---------- Pantallas ---------- */
+function pantalla(html) { capa.innerHTML = html; capa.classList.add('on'); }
+function quitarPantalla() { capa.classList.remove('on'); }
+
+function inicio() {
+  corriendo = false;
+  const hechos = NIVELES.map((_, i) => leer('mejor' + i)).filter(Boolean).length;
+  pantalla(
+    '<div><h1>ROMPE EL MURO</h1>' +
+    '<p>Hay un muro entre tú y la puerta. No lo rodees.</p>' +
+    '<button class="boton" id="bJugar">' + (hechos ? 'Seguir' : 'Empezar') + '</button>' +
+    (hechos ? '<div class="tiempos">' + hechos + ' de ' + NIVELES.length + ' niveles pasados</div>' +
+              '<button class="secundario" id="bDesde">Elegir nivel</button>' : '') +
+    '</div>');
+  document.getElementById('bJugar').onclick = () => {
+    let n = 0;
+    while (n < NIVELES.length - 1 && leer('mejor' + n)) n++;
+    arrancar(n);
+  };
+  const bd = document.getElementById('bDesde');
+  if (bd) bd.onclick = elegir;
+}
+
+function elegir() {
+  let h = '<div><h2>Elige nivel</h2><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:280px;margin:0 auto">';
+  for (let i = 0; i < NIVELES.length; i++) {
+    const r = leer('mejor' + i);
+    const abierto = i === 0 || leer('mejor' + (i - 1));
+    h += '<button class="tecla" style="width:auto;height:48px;font-size:15px;' +
+         (abierto ? '' : 'opacity:.35') + '" ' + (abierto ? 'data-n="' + i + '"' : 'disabled') +
+         '>' + (i + 1) + '</button>';
+  }
+  h += '</div><div class="tiempos">Se abren conforme los pasas</div>' +
+       '<button class="secundario" id="bVolver">Volver</button></div>';
+  pantalla(h);
+  capa.querySelectorAll('[data-n]').forEach(b => b.onclick = () => arrancar(+b.dataset.n));
+  document.getElementById('bVolver').onclick = inicio;
+}
+
+function arrancar(n) {
+  quitarPantalla();
+  cargar(n);
+  corriendo = true; anterior = performance.now(); resto = 0;
+  requestAnimationFrame(vuelta);
+}
+
+function terminarNivel() {
+  corriendo = false;
+  const previo = leer('mejor' + nivel);
+  const mejoro = !previo || cuadros < +previo;
+  if (mejoro) guardar('mejor' + nivel, cuadros);
+
+  const ultimo = nivel === NIVELES.length - 1;
+  pantalla(
+    '<div><h2>' + (ultimo ? 'Pasaste todos' : 'Nivel ' + (nivel + 1) + ' pasado') + '</h2>' +
+    '<p>' + reloj(cuadros) + (mejoro ? ' · tu mejor tiempo' : ' · tu mejor es ' + reloj(+previo)) + '</p>' +
+    (ultimo
+      ? '<button class="boton" id="bOtra">Volver a empezar</button>'
+      : '<button class="boton" id="bSigue">Siguiente</button>') +
+    '<button class="secundario" id="bRepetir">Repetir este</button>' +
+    '<button class="secundario" id="bMenu">Elegir nivel</button></div>');
+
+  const bs = document.getElementById('bSigue');
+  if (bs) bs.onclick = () => arrancar(nivel + 1);
+  const bo = document.getElementById('bOtra');
+  if (bo) bo.onclick = () => arrancar(0);
+  document.getElementById('bRepetir').onclick = () => arrancar(nivel);
+  document.getElementById('bMenu').onclick = elegir;
+}
+
+/* ---------- Controles ---------- */
+function liga(id, prop) {
+  const b = document.getElementById(id);
+  const on = e => { e.preventDefault(); tecla[prop] = true; b.classList.add('presionada');
+                    if (prop === 'saltar') memSalto = MEMORIA;
+                    if (prop === 'romper') romper(); };
+  const off = e => { e.preventDefault(); tecla[prop] = false; b.classList.remove('presionada'); };
+  b.addEventListener('touchstart', on, { passive: false });
+  b.addEventListener('touchend', off, { passive: false });
+  b.addEventListener('touchcancel', off, { passive: false });
+  b.addEventListener('mousedown', on);
+  b.addEventListener('mouseup', off);
+  b.addEventListener('mouseleave', off);
+}
+liga('tIzq', 'izq'); liga('tDer', 'der'); liga('tSaltar', 'saltar'); liga('tRomper', 'romper');
+
+addEventListener('keydown', e => {
+  if (e.repeat) return;
+  const k = e.key.toLowerCase();
+  if (k === 'arrowleft' || k === 'a') tecla.izq = true;
+  if (k === 'arrowright' || k === 'd') tecla.der = true;
+  if (k === 'arrowup' || k === 'w' || k === ' ') { tecla.saltar = true; memSalto = MEMORIA; e.preventDefault(); }
+  if (k === 'x' || k === 'k' || k === 'arrowdown') { tecla.romper = true; romper(); }
+  if (k === 'r') cargar(nivel);
+});
+addEventListener('keyup', e => {
+  const k = e.key.toLowerCase();
+  if (k === 'arrowleft' || k === 'a') tecla.izq = false;
+  if (k === 'arrowright' || k === 'd') tecla.der = false;
+  if (k === 'arrowup' || k === 'w' || k === ' ') tecla.saltar = false;
+  if (k === 'x' || k === 'k' || k === 'arrowdown') tecla.romper = false;
+});
+
+document.getElementById('bReiniciar').onclick = () => { if (corriendo) cargar(nivel); };
+const bs = document.getElementById('bSonido');
+sonido = leer('sonido') === '1';
+bs.style.color = sonido ? 'var(--oro)' : 'var(--suave)';
+bs.onclick = () => {
+  sonido = !sonido;
+  guardar('sonido', sonido ? '1' : '0');
+  bs.style.color = sonido ? 'var(--oro)' : 'var(--suave)';
+  if (sonido) pitido(440, 0.08, 'triangle');
+};
+
+/* ---------- Tamaño ----------
+   El lienzo dibuja siempre en 320x192 y se estira al hueco disponible, con
+   los píxeles enteros para que no se vea borroso. */
+function medir() {
+  const caja = lienzo.getBoundingClientRect();
+  const escala = Math.max(1, Math.floor(Math.min(caja.width / W, caja.height / H) * 2) / 2);
+  lienzo.width = W; lienzo.height = H;
+  lienzo.style.width = (W * escala) + 'px';
+  lienzo.style.height = (H * escala) + 'px';
+  lienzo.style.margin = 'auto';
+  ctx.imageSmoothingEnabled = false;
+}
+addEventListener('resize', medir);
+addEventListener('orientationchange', () => setTimeout(medir, 200));
+
+cargar(0);
+medir();
+dibujar();
+inicio();
+</script>
+</body>
+</html>

@@ -5,7 +5,7 @@
    de CACHE. Si no lo haces, los teléfonos seguirán mostrando
    la versión vieja.
    ============================================================ */
-const CACHE = 'orbarak-alumnos-v9';
+const CACHE = 'orbarak-alumnos-v10';
 
 const ARCHIVOS = [
   './',
@@ -16,7 +16,8 @@ const ARCHIVOS = [
   './icon-512-maskable.png',
   './apple-touch-icon.png',
   './logo-tile.png',
-  './juegos/hexterra/'
+  './juegos/hexterra/',
+  './juegos/rompeelmuro/'
 ];
 
 self.addEventListener('install', e => {

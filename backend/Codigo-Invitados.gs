@@ -50,10 +50,10 @@ var INV_JUEGOS = [
   {
     id: 'rompeelmuro',
     nombre: 'Rompe el muro',
-    linea: 'Todavía en construcción.',
-    jugadores: 'Un jugador',
-    url: '',
-    listo: false
+    linea: 'Hay un muro entre tú y la puerta. No lo rodees.',
+    jugadores: 'Un jugador, diez niveles',
+    url: './juegos/rompeelmuro/',
+    listo: true
   }
 ];
 
