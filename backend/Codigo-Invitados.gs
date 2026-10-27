@@ -204,7 +204,6 @@ function alJuegos(p) {
 // Se corre a mano desde el editor: elige invitadosInstalar y Ejecutar.
 
 function invitadosInstalar() {
-  var ui = SpreadsheetApp.getUi();
   var creadas = [];
 
   var esquema = {
@@ -242,10 +241,15 @@ function invitadosInstalar() {
     ]]);
   }
 
-  ui.alert('Listo',
-    (creadas.length ? 'Hojas creadas: ' + creadas.join(', ') + '\n\n' : 'Las hojas ya existían.\n\n') +
-    'En RetosSemanales te dejé un reto de ejemplo. Cámbialo o agrega un renglón nuevo ' +
+  var resumen = (creadas.length ? 'Hojas creadas: ' + creadas.join(', ') : 'Las hojas ya existían.') +
+    '\n\nEn RetosSemanales te dejé un reto de ejemplo. Cámbialo o agrega un renglón nuevo ' +
     'con la fecha de esta semana.\n\nDe los invitados no se guarda nada: ni nombre, ' +
-    'ni respuesta. En RespuestasReto solo caen los alumnos identificados.',
-    ui.ButtonSet.OK);
+    'ni respuesta. En RespuestasReto solo caen los alumnos identificados.';
+
+  // getUi() solo existe cuando esto corre desde la hoja. Si se corre desde el
+  // editor de Apps Script, la ventana no se puede abrir y no importa: las hojas
+  // ya quedaron creadas arriba. El aviso nunca debe tumbar la instalación.
+  try { SpreadsheetApp.getUi().alert('Listo', resumen, SpreadsheetApp.getUi().ButtonSet.OK); }
+  catch (e) { Logger.log(resumen); }
+  return resumen;
 }
