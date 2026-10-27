@@ -220,7 +220,7 @@ function campusReconocimientos_(id) {
     var f = rows[i][CAMPUS_COL.reconoce.fecha - 1];
     var esFecha = Object.prototype.toString.call(f) === '[object Date]';
     out.push({
-      fecha:  esFecha ? Utilities.formatDate(f, tz, 'd MMM yyyy') : '',
+      fecha:  esFecha ? alFechaAnio_(f) : '',
       orden:  esFecha ? f.getTime() : 0,
       motivo: txt_(rows[i][CAMPUS_COL.reconoce.motivo - 1]),
       xp:     Number(rows[i][CAMPUS_COL.reconoce.xp - 1]) || 0,

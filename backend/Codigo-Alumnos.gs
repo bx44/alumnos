@@ -46,6 +46,24 @@ var AL_ESQUEMA = {
                           'Otorgado por']
 };
 
+// ---------- Fechas en español ----------
+// Utilities.formatDate usa el idioma de la cuenta, que aquí es inglés, y
+// escupía "26 de October". Los nombres van a mano para que no dependa de eso.
+var AL_MESES = ['enero','febrero','marzo','abril','mayo','junio',
+                'julio','agosto','septiembre','octubre','noviembre','diciembre'];
+var AL_MESES_CORTOS = ['ene','feb','mar','abr','may','jun',
+                       'jul','ago','sep','oct','nov','dic'];
+
+function alMes_(d)         { return AL_MESES[d.getMonth()]; }
+function alFechaLarga_(d)  { return d.getDate() + ' de ' + AL_MESES[d.getMonth()]; }
+function alFechaCorta_(d)  { return d.getDate() + ' ' + AL_MESES_CORTOS[d.getMonth()]; }
+function alFechaAnio_(d)   { return alFechaCorta_(d) + ' ' + d.getFullYear(); }
+function alDiaCorto_(d)    { return DIAS[d.getDay()].substring(0, 3).toLowerCase(); }
+function alHora_(d) {
+  var h = d.getHours(), m = d.getMinutes();
+  return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+}
+
 var AL_TIPOS_SOL = ['Permiso', 'Pregunta', 'Reportar algo', 'Quiero hablar con alguien'];
 
 
@@ -309,7 +327,7 @@ function alInicio(p) {
     ok: true,
     nombre: s.nombre,
     dia: DIAS[hoy.getDay()],
-    fecha: Utilities.formatDate(hoy, tz, "d 'de' MMMM"),
+    fecha: alFechaLarga_(hoy),
     especial: especial,
     clases: clases,
     temas: temas,
@@ -342,7 +360,7 @@ function alAvisosDe_(id) {
       titulo: txt_(rows[i][AL_COL.avisos.titulo - 1]),
       mensaje: txt_(rows[i][AL_COL.avisos.mensaje - 1]),
       fecha: Object.prototype.toString.call(f) === '[object Date]'
-        ? Utilities.formatDate(f, tz, 'd MMM') : ''
+        ? alFechaCorta_(f) : ''
     });
   }
   return out.reverse().slice(0, 5);
@@ -367,7 +385,7 @@ function alAvance(p) {
     var cv = txt_(eRows[i][COL.evaluaciones.clave - 1]);
     var cal = eRows[i][COL.evaluaciones.calif - 1];
     bejinot.push({
-      fecha: Utilities.formatDate(f, tz, 'd MMM yyyy'),
+      fecha: alFechaAnio_(f),
       orden: f.getTime(),
       materia: (mats[cv] || {}).materia || cv,
       tipo: txt_(eRows[i][COL.evaluaciones.tipo - 1]),
@@ -406,7 +424,7 @@ function alAvance(p) {
     bejinot: bejinot.slice(0, 25),
     bejinotTotal: bejinot.length,
     asistencia: {
-      mes: Utilities.formatDate(hoy, tz, 'MMMM'),
+      mes: alMes_(hoy),
       presentes: presentes,
       total: delMes,
       porcentaje: delMes ? Math.round(presentes / delMes * 100) : null,
@@ -455,7 +473,7 @@ function alHorario(p) {
     if (Object.prototype.toString.call(f) !== '[object Date]') continue;
     if (f < hoy || f > tope) continue;
     prox.push({
-      fecha: Utilities.formatDate(f, tz, 'EEE d MMM'),
+      fecha: alDiaCorto_(f) + ' ' + alFechaCorta_(f),
       orden: f.getTime(),
       materia: (mats[cv] || {}).materia || cv,
       tema: txt_(tRows[j][COL.temario.tema - 1]),
@@ -540,7 +558,7 @@ function alMetasDe_(id, soloAbiertas) {
       meta: txt_(rows[i][AL_COL.metas.meta - 1]),
       estado: estado,
       fecha: Object.prototype.toString.call(f) === '[object Date]'
-        ? Utilities.formatDate(f, tz, 'd MMM') : ''
+        ? alFechaCorta_(f) : ''
     });
   }
   return out;
@@ -596,7 +614,7 @@ function alSolicitudesDe_(id) {
     var f = rows[i][AL_COL.sol.sello - 1];
     out.push({
       fecha: Object.prototype.toString.call(f) === '[object Date]'
-        ? Utilities.formatDate(f, tz, 'd MMM · HH:mm') : '',
+        ? alFechaCorta_(f) + ' · ' + alHora_(f) : '',
       orden: Object.prototype.toString.call(f) === '[object Date]' ? f.getTime() : 0,
       tipo: txt_(rows[i][AL_COL.sol.tipo - 1]),
       mensaje: txt_(rows[i][AL_COL.sol.mensaje - 1]),
@@ -811,7 +829,7 @@ function alumnosSolicitudesPendientes() {
     var f = rows[i][AL_COL.sol.sello - 1];
     h += '<div class="s"><div class="c"><b>' + txt_(rows[i][AL_COL.sol.nombre - 1]) + '</b><span>' +
          (Object.prototype.toString.call(f) === '[object Date]'
-            ? Utilities.formatDate(f, tz, 'd MMM · HH:mm') : '') + '</span></div>' +
+            ? alFechaCorta_(f) + ' · ' + alHora_(f) : '') + '</span></div>' +
          '<div class="c">' + txt_(rows[i][AL_COL.sol.tipo - 1]) + ' · fila ' + (i + 2) + '</div>' +
          '<p>' + txt_(rows[i][AL_COL.sol.mensaje - 1]) + '</p></div>';
     pend++;
