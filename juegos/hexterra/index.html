@@ -597,6 +597,7 @@ const MODES={
   margrande:{name:'Gran archipiélago',desc:'isla de 30 + 6 islas · con oro',target:14,big:true,sea:true,needShips:true},
   volcan:{name:'Volcán',desc:'19 losetas · volcán al centro',target:10,note:'El volcán da el recurso que quieras a quien esté junto a él. Pero cuando sale su número hace erupción: un dado marca una de sus 6 esquinas; un poblado ahí se destruye y una ciudad baja a poblado.'},
   bosque:{name:'Bosque negro',desc:'19 losetas · mucha madera · lago',target:10,note:'Seis bosques y un lago al centro, donde empieza el ladrón. La madera sobra: lo que escasea es lo demás.'},
+  niebla:{name:'Islas de niebla',desc:'isla de 19 + niebla alrededor',target:12,sea:true,needShips:true,note:'Más allá del mar hay niebla. Cuando tu barco o camino toca una loseta con niebla, se descubre: puede ser tierra (te llevas 1 de ese recurso, o uno a elegir si es oro) o mar. Cada isla nueva da 2 puntos.'},
   oro:{name:'La búsqueda del oro',desc:'19 losetas · 3 minas de oro',target:10,note:'Tres minas en la isla: quien está junto a una elige el recurso que quiera. El oro nunca tiene 2, 12, 6 ni 8.'}
 };
 /* rules = map + the mechanics switched on. Older games had no switches: their map implied them */
@@ -650,17 +651,28 @@ const BCACHE={};
 /* gen 2+: gold fields never get 2, 12, 6 or 8. Older games keep gen 1 so their board never changes */
 function board(S){const g=S.gen||1,k=S.mode+':'+S.seed+':'+g;return BCACHE[k]||(BCACHE[k]=genBoard(S.mode,S.seed,g))}
 /* number tokens can be swapped by the Inventor, so read numbers through this */
-const numOf=(S,B,h)=>S.nums&&S.nums[h]!=null?S.nums[h]:B.hexes[h].num;
+const hidden=(S,B,h)=>!!(B.hexes[h]&&B.hexes[h].fog&&!(S.seen&&S.seen[h]));
+const numOf=(S,B,h)=>hidden(S,B,h)?null:S.nums&&S.nums[h]!=null?S.nums[h]:B.hexes[h].num;
 
 function genBoard(mode,seed,gen){
   const rnd=mulberry32(seed);
   const sh=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
   const key=(q,r)=>q+','+r;
   const land=[];
-  const BIG=mode==='grande'||mode==='margrande',SEA=mode==='mar'||mode==='margrande';
+  const BIG=!!MODES[mode].big,SEA=!!MODES[mode].sea;
   if(BIG){for(let r=-3;r<=3;r++)for(let q=Math.max(-3,-3-r)+1;q<=Math.min(3,3-r);q++)land.push({q,r,isl:0})}
   else{for(let q=-2;q<=2;q++)for(let r=-2;r<=2;r++)if(hexDist(q,r)<=2)land.push({q,r,isl:0})}
   if(mode==='margrande'){[[[-3,-2],[-2,-3]],[[3,-5],[4,-5]],[[5,-2],[5,-1]],[[3,2],[2,3]],[[-2,5],[-3,5]],[[-5,3],[-5,2]]].forEach((g,i)=>g.forEach(([q,r])=>land.push({q,r,isl:i+1})))}
+  const FOG=new Map();
+  if(mode==='niebla'){
+    const ring=[];for(let q=-4;q<=4;q++)for(let r=-4;r<=4;r++)if(hexDist(q,r)===4)ring.push({q,r});
+    ring.sort((a,b)=>Math.atan2(1.5*a.r,Math.sqrt(3)*(a.q+a.r/2))-Math.atan2(1.5*b.r,Math.sqrt(3)*(b.q+b.r/2)));
+    const content=sh(['wood','wood','brick','brick','sheep','sheep','wheat','wheat','ore','gold','sea','sea','sea','sea','sea']);
+    ring.forEach((h,i)=>{if([1,2,3,4,5].includes(i%8))FOG.set(h.q+','+h.r,content.pop())});
+    const fl=[...FOG].filter(([k,t])=>t!=='sea').map(([k,t])=>{const[q,r]=k.split(',').map(Number);return{q,r,fogT:t,isl:0}});
+    let id=0;fl.forEach(h=>{if(h.isl)return;id++;const st=[h];h.isl=id;while(st.length){const x=st.pop();fl.forEach(y=>{if(!y.isl&&hexDist(x.q-y.q,x.r-y.r)===1){y.isl=id;st.push(y)}})}});
+    fl.forEach(h=>land.push(h));
+  }
   if(mode==='mar'){[[[4,-4],[3,-4]],[[4,0],[4,-1]],[[-4,4],[-3,4]],[[-4,0],[-4,1]],[[0,4],[1,3]]].forEach((g,i)=>g.forEach(([q,r])=>land.push({q,r,isl:i+1})))}
   const L=new Set(land.map(h=>key(h.q,h.r)));
   const sea=[];
@@ -672,12 +684,14 @@ function genBoard(mode,seed,gen){
   const islT=sh(tally(mode==='margrande'?{gold:2,wood:2,brick:2,sheep:2,wheat:2,ore:2}:{gold:2,wood:2,brick:2,sheep:1,wheat:1,ore:2}));
   const hexes=[];
   land.forEach(h=>{const c=CENTER[mode]&&h.q===0&&h.r===0?CENTER[mode]:null;
+    if(h.fogT){hexes.push({q:h.q,r:h.r,isl:h.isl,type:h.fogT,fog:true});return}
     hexes.push(c==='lake'?{q:h.q,r:h.r,isl:0,type:'desert',lake:true}:{q:h.q,r:h.r,isl:h.isl,type:c||(h.isl===0?mainT.pop():islT.pop())})});
-  sea.forEach(h=>hexes.push({q:h.q,r:h.r,isl:-1,type:'sea'}));
+  sea.forEach(h=>hexes.push(FOG.has(key(h.q,h.r))?{q:h.q,r:h.r,isl:-1,type:'sea',fog:true}:{q:h.q,r:h.r,isl:-1,type:'sea'}));
   let nums=BIG?[2,2,3,3,3,4,4,4,5,5,5,6,6,6,8,8,8,9,9,9,10,10,10,11,11,11,12,12]:[2,3,3,4,4,5,5,6,6,8,8,9,9,10,10,11,11,12];
   if(mode==='mar')nums=nums.concat([2,3,4,5,6,8,9,10,11,12]);
   if(mode==='margrande')nums=nums.concat([2,3,4,5,6,8,9,10,11,12,4,10]);
   if(mode==='volcan')nums=nums.concat([rnd()<.5?4:10]);
+  if(mode==='niebla')nums=nums.concat([3,4,5,6,8,9,10,11,4,10]);
   const prod=hexes.filter(h=>h.type!=='sea'&&h.type!=='desert');
   const idx=new Map(hexes.map((h,i)=>[key(h.q,h.r),i]));
   const hot=n=>n===6||n===8;
@@ -759,12 +773,13 @@ function vpOf(S,pi,full){
 }
 const handLimit=(S,pi)=>((S.cfg&&S.cfg.discard)||7)+(S.ck?2*countPieces(S,pi).wall:0);
 /* friendly robber: no blocking a hex that touches a player with 2 or fewer visible points */
-function robberOK(S,B,h,pi){const H=B.hexes[h];if(!H||H.type==='sea'||h===S.robber)return false;if(!(S.cfg&&S.cfg.friendly))return true;return !H.v.some(v=>{const b=S.build[v];return b&&b.p!==pi&&vpOf(S,b.p,false)<=2})}
+function robberOK(S,B,h,pi){const H=B.hexes[h];if(!H||H.type==='sea'||h===S.robber||hidden(S,B,h))return false;if(!(S.cfg&&S.cfg.friendly))return true;return !H.v.some(v=>{const b=S.build[v];return b&&b.p!==pi&&vpOf(S,b.p,false)<=2})}
 function robberSpots(S,B,pi){const all=B.hexes.map((h,i)=>i).filter(i=>robberOK(S,B,i,pi));return all.length?all:B.hexes.map((h,i)=>i).filter(i=>B.hexes[i].type==='desert'&&i!==S.robber).concat(all)}
 const enemyAt=(S,v,pi)=>{const b=S.build[v];if(b&&b.p!==pi)return true;const k=S.knights&&S.knights[v];return !!(k&&k.p!==pi)};
 function canSettle(S,B,v,pi,setup){
   const V=B.verts[v];
   if(!V||!V.land||S.build[v]||(S.knights&&S.knights[v]))return false;
+  if(!V.h.some(h=>B.hexes[h].type!=='sea'&&!hidden(S,B,h)))return false;
   if(V.adj.some(a=>S.build[a]))return false;
   if(setup)return !RULES(S).ships||V.isl===0;
   return V.e.some(e=>S.lines[e]&&S.lines[e].p===pi);
@@ -1538,6 +1553,15 @@ function act(S0,me,a,rand){
     const k=pool[Math.floor(rand()*pool.length)];T.res[k]--;P.res[k]++;if(S.stats)S.stats.stole[pi]++;
     log(`${P.name} le robó una carta a ${T.name}`);
   }
+  /* fog: a road or ship that touches a hidden tile uncovers it */
+  for(const e of Object.keys(S.lines)){
+    if(S0.lines&&S0.lines[e])continue;const l=S.lines[e],E=B.edges[e];
+    E.h.forEach(h=>{if(!hidden(S,B,h))return;S.seen=S.seen||{};S.seen[h]=1;const H=B.hexes[h],Q=S.players[l.p];
+      if(H.type==='sea'){log(`${Q.name} descubre mar bajo la niebla`);return}
+      if(H.type==='gold'){if(S.step==='main'&&l.p===S.cur){S.gold={[l.p]:1};S.step='gold'}log(`${Q.name} descubre una mina de oro (${H.num})${S.step==='gold'?' y elige un recurso':''}`);return}
+      const g=give(Q,H.type,1);log(`${Q.name} descubre ${RES_ES[H.type]} (${H.num})${g?` y se lleva 1`:''}`);
+    });
+  }
   if(S.phase==='play'){
     const w=S.cur;
     if(vpOf(S,w,true)>=targetOf(S)){S.phase='over';S.winner=w;log(`¡${S.players[w].name} gana con ${vpOf(S,w,true)} puntos!`)}
@@ -1621,7 +1645,10 @@ function resWeight(S,k){
   if(S.ck)return{wood:1,brick:.9,sheep:1.05,wheat:1.3,ore:1.35,gold:1.4,volcano:.9}[k]||0;
   return{wood:1.05,brick:1.05,sheep:.85,wheat:1.1,ore:1,gold:1.4,volcano:.9}[k]||0;
 }
-function settleable(S,B,v){const V=B.verts[v];return V&&V.land&&!S.build[v]&&!(S.knights&&S.knights[v])&&!V.adj.some(a=>S.build[a])}
+function settleable(S,B,v){const V=B.verts[v];return V&&V.land&&!S.build[v]&&!(S.knights&&S.knights[v])&&!V.adj.some(a=>S.build[a])&&V.h.some(h=>B.hexes[h].type!=='sea'&&!hidden(S,B,h))}
+const fogNear=(S,B,v)=>B.verts[v].h.some(h=>hidden(S,B,h));
+/* how many steps from this corner to the nearest fog, up to 4 */
+function fogDist(S,B,v){let fr=[v];const seen=new Set(fr);for(let d=0;d<=4;d++){if(fr.some(x=>fogNear(S,B,x)))return d;const nx=[];fr.forEach(x=>B.verts[x].adj.forEach(y=>{if(!seen.has(y)){seen.add(y);nx.push(y)}}));fr=nx}return 99}
 function vScore(S,B,v,pi,prod){
   const V=B.verts[v];let s=0;const seen=new Set();
   V.h.forEach(h=>{const H=B.hexes[h];if(H.type==='sea'||H.type==='desert')return;const p=pipsOf(numOf(S,B,h));
@@ -1629,6 +1656,7 @@ function vScore(S,B,v,pi,prod){
     if(prod&&!prod[H.type]&&!seen.has(H.type))s+=p*.45;seen.add(H.type)});
   if(V.port==='any')s+=1.2;else if(V.port&&prod&&prod[V.port]>=4)s+=2;else if(V.port)s+=.6;
   if(RULES(S).ships&&V.isl>0&&!(S.players[pi].islands||[]).includes(V.isl))s+=5;
+  if(B.hexes.some(h=>h.fog&&!(S.seen&&S.seen[B.hexes.indexOf(h)]))&&V.h.some(h=>B.hexes[h].type==='sea'&&!hidden(S,B,h)))s+=1.5;
   return s;
 }
 function edgeValue(S,B,e,pi,prod){
@@ -1636,6 +1664,7 @@ function edgeValue(S,B,e,pi,prod){
   for(const f of[E.a,E.b]){
     if(settleable(S,B,f))best=Math.max(best,vScore(S,B,f,pi,prod));
     for(const g of B.verts[f].adj){if(g===E.a||g===E.b)continue;if(settleable(S,B,g))best=Math.max(best,vScore(S,B,g,pi,prod)*.75)}
+    if(S.seen!==undefined||B.hexes.some(h=>h.fog)){const d=fogDist(S,B,f);if(d<99)best=Math.max(best,5-d*.8)}
   }
   return best;
 }
@@ -1662,6 +1691,7 @@ function botGoals(S,B,pi){
     const es=E.filter(e=>canLine(S,B,e,pi,kind,null));if(!es.length)continue;
     const e=es.sort((x,y)=>edgeValue(S,B,y,pi,prod)-edgeValue(S,B,x,pi,prod))[0],ev=edgeValue(S,B,e,pi,prod);
     let val=spotsNow?.6:1.4+ev/14;if(ev===0)val=S.roadLen&&S.longest!==pi&&(S.roadLen[pi]||0)>=3?.9:.3;
+    if(kind==='ship'&&ev>=3&&B.hexes.some(h=>h.fog))val=Math.max(val,1.7);
     out.push({k:kind,cost:COST[kind],val,free:S.free>0,a:{t:'build',kind,e}});
   }
   if(!S.ck&&S.deck&&S.deck.length)out.push({k:'dev',cost:COST.dev,val:1.3,a:{t:'buyDev'}});
@@ -2182,6 +2212,7 @@ function boardSvg(passive){
   const rolled=S.dice&&S.phase==='play'&&S.dice[0]+S.dice[1]!==7?S.dice[0]+S.dice[1]:null;
   const preview=!passive&&U.alcOn&&U.alcOn!==7?U.alcOn:null;
   B.hexes.forEach((h,i)=>{
+    if(hidden(S,B,i)){const X=h.x*Z,Y=h.y*Z;out.push(`<polygon points="${poly(h,1)}" fill="#aab6bd" stroke="#8e9ba3" stroke-width="1.5"/><g pointer-events="none" fill="#e9eef0" opacity=".9"><ellipse cx="${X-10}" cy="${Y+2}" rx="16" ry="9"/><ellipse cx="${X+8}" cy="${Y-4}" rx="15" ry="10"/><ellipse cx="${X+12}" cy="${Y+8}" rx="13" ry="7"/></g><text x="${X}" y="${Y+30}" text-anchor="middle" font-size="11" font-weight="800" fill="#5d6b73" font-family="system-ui">niebla</text>`);return}
     if(h.type==='sea'){out.push(`<polygon points="${poly(h,1)}" fill="var(--sea1)" stroke="var(--sea2)" stroke-width="1.5"/>`);return}
     out.push(`<polygon points="${poly(h,1)}" fill="#e8d9a8" stroke="#c9b67e" stroke-width="1"/>`);
     out.push(`<polygon points="${poly(h,.93)}" fill="${h.lake?LAKE:HEXFILL[h.type]}" stroke="rgba(0,0,0,.18)" stroke-width="1"/>`);
@@ -3123,7 +3154,7 @@ function miniMap(mode){
   const hs=genBoard(mode,20261029,2).hexes,xs=hs.map(h=>h.x),ys=hs.map(h=>h.y);
   const x0=Math.min(...xs)-1,y0=Math.min(...ys)-1.1,w=Math.max(...xs)+1-x0,h=Math.max(...ys)+1.1-y0;
   const pts=h=>Array.from({length:6},(_,i)=>{const a=Math.PI/180*(60*i-30);return(h.x+Math.cos(a)*.94).toFixed(2)+','+(h.y+Math.sin(a)*.94).toFixed(2)}).join(' ');
-  return MINI[mode]=`<svg viewBox="${x0.toFixed(2)} ${y0.toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)}" class="mini" aria-hidden="true">${hs.map(x=>`<polygon points="${pts(x)}" fill="${x.type==='sea'?'var(--sea1)':x.lake?LAKE:HEXFILL[x.type]}"/>`).join('')}</svg>`;
+  return MINI[mode]=`<svg viewBox="${x0.toFixed(2)} ${y0.toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)}" class="mini" aria-hidden="true">${hs.map(x=>`<polygon points="${pts(x)}" fill="${x.fog?'#aab6bd':x.type==='sea'?'var(--sea1)':x.lake?LAKE:HEXFILL[x.type]}"/>`).join('')}</svg>`;
 }
 function roomEditor(c){
   const tab=U.rtab||'mode';
