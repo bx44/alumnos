@@ -538,9 +538,32 @@ button.dangerl{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 45%,va
 .mrank .lbl{display:flex;align-items:center;gap:6px}.mrank .lbl svg{display:inline-block}
 #hexp{display:inline-flex;flex-direction:row;align-items:center;gap:6px}
 .rkwrap{overflow-x:auto}
-@media (max-width:620px){.rk th:nth-child(6),.rk td:nth-child(6),.rk th:nth-child(8),.rk td:nth-child(8),.rk th:nth-child(9),.rk td:nth-child(9){display:none}.rk th,.rk td{padding-left:4px;padding-right:4px}}
+@media (max-width:620px){.rk th:nth-child(n+7),.rk td:nth-child(n+7){display:none}.rk td.dvc span{display:none}.rk th,.rk td{padding-left:4px;padding-right:4px}}
 .rk th .ab{display:none;font-style:normal}
 @media (max-width:620px){.rk th{font-size:0}.rk th .ab,.rk th:nth-child(-n+2){font-size:11px}.rk th .ab{display:inline}}
+/* room editor */
+.redit{display:flex;flex-direction:column;gap:10px}
+.rtabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--soft);padding:4px;border-radius:12px}
+.rtabs button{border:0;background:transparent;font-weight:800;padding:10px 6px;border-radius:9px;color:var(--muted)}
+.rtabs button.on{background:var(--panel);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.rtile{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 8px 9px;border-radius:12px;border:2px solid var(--line);background:var(--panel);color:var(--ink);text-align:center;min-height:0}
+.rtile b{font-size:14px;line-height:1.15}.rtile small{font-size:11.5px;color:var(--muted);font-weight:600;line-height:1.25}
+.rtile.sel{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--panel));box-shadow:0 0 0 1px var(--accent) inset}
+.rtile.sel::after{content:'✓';position:absolute;top:6px;left:8px;width:20px;height:20px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:12px;font-weight:900;display:grid;place-items:center}
+.rtile .mart{width:64px;height:56px}
+.rtile .mini{width:100%;max-width:120px;height:74px}
+.rtile.rule svg{color:var(--accent);margin:4px 0}
+.r56{position:absolute;top:6px;right:8px;background:var(--hl);color:#2a2000;font-size:11px;font-weight:900;padding:1px 6px;border-radius:999px}
+.rlbl{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.rbox{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--panel)}
+.rbox>b{font-size:14px}
+.arrows{display:flex;align-items:center;gap:14px}.arrows span{min-width:90px;text-align:center;font-weight:800}
+.arrows button{width:38px;height:38px;border-radius:50%;font-size:22px;line-height:1;padding:0;display:grid;place-items:center}
+.slide{display:flex;align-items:center;gap:10px;width:100%}.slide>span{color:var(--muted);font-weight:700;font-size:13px;min-width:18px;text-align:center}
+.slide input{flex:1;accent-color:var(--accent);height:28px}
+.slide output{min-width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:900}
+.dvc{white-space:nowrap}.dvc svg{vertical-align:middle;margin-right:5px}.dvc span{font-weight:700;font-size:13px}.div{vertical-align:middle;flex:none}.mr .div{margin-right:2px}
 body{margin:0;padding-top:max(14px,env(safe-area-inset-top,0px))}
 [hidden]{display:none!important}
 </style>
@@ -833,7 +856,7 @@ function openRoads(S,B){
 }
 function newState(mode,me,name,ck,table,timer){
   const code=Array.from({length:4},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ'[Math.floor(Math.random()*24)]).join('');
-  return{code,mode,ck:!!ck,table:!!table,timer:+timer||0,ext56:!!MODES[mode].big,ships:!!MODES[mode].sea,cfg:{vp:null,discard:7,friendly:false},deadline:null,paused:null,seed:Math.floor(Math.random()*2**31),gen:2,phase:'lobby',host:me,pids:table?[]:[me],players:table?[]:[{id:me,name,color:0}],build:{},lines:{},knights:{},log:[],v:1,created:Date.now()};
+  return{code,mode,ck:!!ck,table:!!table,timer:+timer||0,ext56:!!MODES[mode].big,ships:!!MODES[mode].sea,cfg:{vp:null,discard:7,friendly:false,balanced:false},deadline:null,paused:null,seed:Math.floor(Math.random()*2**31),gen:2,phase:'lobby',host:me,pids:table?[]:[me],players:table?[]:[{id:me,name,color:0}],build:{},lines:{},knights:{},log:[],v:1,created:Date.now()};
 }
 
 /* a progress card that would do nothing right now is not spent; this says why (or null if it can be played) */
@@ -1072,7 +1095,11 @@ function act(S0,me,a,rand){
     }
     case'roll':{
       needCur();needStep('roll');
-      doRoll(1+Math.floor(rand()*6),1+Math.floor(rand()*6));
+      if(S.cfg&&S.cfg.balanced){
+        /* balanced dice: draw the 36 combinations from a deck, reshuffled when few remain */
+        if(!S.dk||S.dk.length<=6)S.dk=Array.from({length:36},(_,i)=>i);
+        const c=S.dk.splice(Math.floor(rand()*S.dk.length),1)[0];doRoll(1+Math.floor(c/6),1+c%6);
+      }else doRoll(1+Math.floor(rand()*6),1+Math.floor(rand()*6));
       break;
     }
     case'discard':{
@@ -1424,7 +1451,11 @@ function act(S0,me,a,rand){
       if(a.timer!==undefined)S.timer=[0,60,90,120].includes(+a.timer)?+a.timer:0;
       if(a.ck!==undefined)S.ck=!!a.ck;
       if(a.ext56!==undefined){if(!a.ext56&&S.players.length>4)err('Hay más de 4 jugadores: quita a alguien primero.');S.ext56=!!a.ext56}
+      if(a.balanced!==undefined)S.cfg.balanced=!!a.balanced;
+      if(a.mode!==undefined){if(!MODES[a.mode])err('Ese mapa no existe.');S.mode=a.mode;if(MODES[a.mode].needShips)S.ships=true;S.nums=null}
       if(a.ships!==undefined){if(!a.ships&&MODES[S.mode].needShips)err('Este mapa necesita barcos.');S.ships=!!a.ships}
+      if(S.players.length>RULES(S).max)err(`Hay ${S.players.length} jugadores y así caben ${RULES(S).max}: quita a alguien primero.`);
+      if(S.cfg.vp&&S.cfg.vp===defaultTarget(S))S.cfg.vp=null;
       break;
     }
     case'rematch':{
@@ -1856,7 +1887,7 @@ const dispKeys=S=>S&&S.ck?PAIRS8:RES;
 const HEXFILL={wood:'#3d7a3a',brick:'#c06a3e',sheep:'#9cc25a',wheat:'#e7c04a',ore:'#8a939c',desert:'#dcc994',gold:'#5b4530'};
 const TCOL={trade:'#d9a520',politics:'#2f63c4',science:'#2f8f4a'};
 const U={wg:{},sd:{},ho:{},spyT:null,net:null,code:null,mode:null,sheet:null,dd:{},gd:{},pd:{},tg:{},tr:{},bg:null,bt:null,tab:'bank',newMode:'base',ck:false,table:false,timer:0,view:null,showBoard:false,name:'',kfrom:null,inv:[],pcard:null,alc:{w:3,r:3}};
-try{U.ext56=localStorage.getItem('hx-ext56')==='1';U.ships=localStorage.getItem('hx-ships')==='1';const nm=localStorage.getItem('hx-map');if(nm&&MODES[nm])U.newMode=nm;U.cb=localStorage.getItem('hx-cb')==='1';U.name=localStorage.getItem('hx-name')||'';U.ck=localStorage.getItem('hx-ck')==='1';U.table=localStorage.getItem('hx-table')==='1';U.timer=+(localStorage.getItem('hx-timer')||0)}catch(e){}
+try{U.ext56=localStorage.getItem('hx-ext56')==='1';U.ships=localStorage.getItem('hx-ships')==='1';const nm=localStorage.getItem('hx-map');if(nm&&MODES[nm])U.newMode=nm;U.cb=localStorage.getItem('hx-cb')==='1';U.name=localStorage.getItem('hx-name')||'';U.ck=localStorage.getItem('hx-ck')==='1';U.table=localStorage.getItem('hx-table')==='1';U.timer=+(localStorage.getItem('hx-timer')||0);U.friendly=localStorage.getItem('hx-friendly')==='1';U.balanced=localStorage.getItem('hx-balanced')==='1';U.vp=+(localStorage.getItem('hx-vp')||0)||null;U.discard=+(localStorage.getItem('hx-discard')||0)||null}catch(e){}
 const VIEW_ES={screen:'Pantalla',control:'Control',player:'Completo'};
 function viewOf(){
   if(U.view)return U.view;
@@ -2789,31 +2820,19 @@ function statsHtml(big){
   </div>`;
 }
 
-/* ---------- room settings (host) ---------- */
+/* ---------- room settings: the lobby uses the same editor as the start screen ---------- */
+function gameRoomCtx(){
+  const S=G,c=S.cfg||{},R=RULES(S);
+  return{mode:S.mode,ext56:R.ext56,ships:R.ships,ck:!!S.ck,vp:targetOf(S),vpDef:defaultTarget(S),discard:c.discard||7,friendly:!!c.friendly,balanced:!!c.balanced,timer:S.timer||0,players:S.players.length,
+    set:p=>send({t:'config',...p})};
+}
 function lobbySettings(){
-  const S=G,host=S.host===ME,c=S.cfg||{},vp=targetOf(S);
+  const S=G,c=S.cfg||{},vp=targetOf(S);
   const tl=(TIMERS.find(([v])=>v===S.timer)||TIMERS[0])[1];
-  if(!host)return`<div class="lset"><span class="lbl">Ajustes</span><p class="desc">${esc(modeName(S))} · gana con ${vp} · descartan con más de ${c.discard||7} · ${c.friendly?'ladrón amistoso':'ladrón normal'} · ${tl.toLowerCase()}</p></div>`;
-  return`<div class="lset"><span class="lbl">Ajustes de la partida</span>
-    <div class="lrow"><span>Puntos para ganar</span><span class="num"><button data-cfg="vp:-1" aria-label="menos">−</button><b>${vp}</b><button data-cfg="vp:1" aria-label="más">+</button></span></div>
-    <div class="lrow"><span>Descartan con más de</span><span class="num"><button data-cfg="discard:-1" aria-label="menos">−</button><b>${c.discard||7}</b><button data-cfg="discard:1" aria-label="más">+</button></span></div>
-    <div class="lrow"><span>Ladrón amistoso<br><small class="muted" style="font-weight:600">no bloquea a quien tiene 2 puntos o menos</small></span><button class="sw ${c.friendly?'on':''}" data-cfg="friendly" aria-label="Ladrón amistoso"><i></i></button></div>
-    <div class="lrow"><span>5–6 jugadores<br><small class="muted" style="font-weight:600">hasta 6 y fase de construcción entre turnos</small></span><button class="sw ${RULES(S).ext56?'on':''}" data-cfg="ext56" aria-label="5–6 jugadores"><i></i></button></div>
-    <div class="lrow"><span>Navegantes<br><small class="muted" style="font-weight:600">${MODES[S.mode].needShips?'este mapa los necesita':'barcos e islas nuevas'}</small></span><button class="sw ${RULES(S).ships?'on':''}" data-cfg="ships" aria-label="Navegantes" ${MODES[S.mode].needShips?'disabled':''}><i></i></button></div>
-    <div class="lrow"><span>Ciudades y caballeros</span><button class="sw ${S.ck?'on':''}" data-cfg="ck" aria-label="Ciudades y caballeros"><i></i></button></div>
-    <div class="lrow"><span>Tiempo por turno</span><div class="tabs">${TIMERS.map(([v,l])=>`<button data-cfgt="${v}" class="${S.timer===v?'on':''}">${l}</button>`).join('')}</div></div>
-  </div>`;
+  if(S.host!==ME)return`<div class="lset"><span class="lbl">Ajustes</span><p class="desc">${esc(modeName(S))} · gana con ${vp} · descartan con más de ${c.discard||7} · ${c.friendly?'ladrón amistoso':'ladrón normal'}${c.balanced?' · dados balanceados':''} · ${tl.toLowerCase()}</p></div>`;
+  return`<div class="lset"><span class="lbl">Ajustes de la partida</span>${roomEditor(gameRoomCtx())}</div>`;
 }
-function bindLobbySettings(){
-  document.querySelectorAll('[data-cfg]').forEach(b=>b.onclick=()=>{const[k,d]=b.dataset.cfg.split(':'),c=G.cfg||{};
-    if(k==='vp')send({t:'config',vp:targetOf(G)+(+d)});
-    else if(k==='discard')send({t:'config',discard:(c.discard||7)+(+d)});
-    else if(k==='friendly')send({t:'config',friendly:!c.friendly});
-    else if(k==='ck')send({t:'config',ck:!G.ck});
-    else if(k==='ext56')send({t:'config',ext56:!RULES(G).ext56});
-    else if(k==='ships')send({t:'config',ships:!RULES(G).ships})});
-  document.querySelectorAll('[data-cfgt]').forEach(b=>b.onclick=()=>send({t:'config',timer:+b.dataset.cfgt}));
-}
+function bindLobbySettings(){bindRoomEditor(gameRoomCtx(),()=>render())}
 
 /* ---------- cards flying into and out of your hand ---------- */
 const reduceMotion=()=>!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -3059,26 +3078,82 @@ function winExplain(i,compact){
     <div class="wl">${L.map(([icn,t,p])=>`<div class="wi">${ic(icn,15)}<span>${esc(t)}</span><b>+${p}</b></div>`).join('')}</div></div>`;
 }
 
-/* ---------- new game: map first, then the rules ---------- */
-function newGameHtml(){
-  const m=MODES[U.newMode],shipsOn=m.needShips||U.ships;
-  const sw=(id,on,title,desc,dis)=>`<button class="toggle ${on?'sel':''}" data-rule="${id}" ${dis?'disabled':''}><span class="box">${on?'✓':''}</span><div><b>${title}</b><br><span>${desc}</span></div></button>`;
-  return`<div class="lbl">Mapa</div>
-    <div class="modes">${Object.entries(MODES).map(([k,x])=>`<button class="mode ${U.newMode===k?'sel':''}" data-mode="${k}"><b>${x.name}</b><span>${x.desc}</span></button>`).join('')}</div>
-    <div class="lbl">Reglas</div>
-    <div class="rules">
-      ${sw('ext56',U.ext56,'5–6 jugadores','Hasta 6 jugadores y fase de construcción entre turnos: después de cada turno, los demás pueden construir.')}
-      ${sw('ships',shipsOn,'Navegantes',m.needShips?'Este mapa tiene islas: los barcos van incluidos. Cada isla nueva da 2 puntos.':'Barcos por la costa y el mar. Cada isla nueva da 2 puntos.',m.needShips)}
-      ${sw('ck',U.ck,'Ciudades y caballeros','Mercancías, mejoras de ciudad, metrópolis, caballeros contra los bárbaros y cartas de progreso. Se juega a 3 puntos más.')}
-    </div>`;
+/* ---------- room editor: Modo · Mapa · Ajustes (start screen and lobby) ---------- */
+const MODE_TILES=[
+  [{ext56:0,ships:0,ck:0},'Clásico'],[{ext56:1,ships:0,ck:0},'Clásico'],
+  [{ext56:0,ships:0,ck:1},'Ciudades y caballeros'],[{ext56:1,ships:0,ck:1},'Ciudades y caballeros'],
+  [{ext56:0,ships:1,ck:0},'Navegantes'],[{ext56:1,ships:1,ck:0},'Navegantes'],
+  [{ext56:0,ships:1,ck:1},'Navegantes + Ciudades'],[{ext56:1,ships:1,ck:1},'Navegantes + Ciudades']];
+const SEA_TWIN={mar:'base',margrande:'grande'};
+function modeArt(m){
+  const hex=(x,y,f)=>{const p=[];for(let i=0;i<6;i++){const a=Math.PI/180*(60*i-30);p.push((x+Math.cos(a)*7).toFixed(1)+','+(y+Math.sin(a)*7).toFixed(1))}return`<polygon points="${p.join(' ')}" fill="${f}" stroke="var(--panel)" stroke-width="1.2"/>`};
+  const flower=[[0,0,'desert'],[12.1,0,'wheat'],[-12.1,0,'wood'],[6.06,10.5,'ore'],[-6.06,10.5,'sheep'],[6.06,-10.5,'brick'],[-6.06,-10.5,'wood']].map(([x,y,t])=>hex(32+x,30+y,HEXFILL[t])).join('');
+  const castle=`<g transform="translate(${m.ships?14:20},12)" fill="#8b6a4a" stroke="#3b2a1a" stroke-width="1.2"><path d="M0 34 V12 H6 V8 H10 V12 H14 V4 H18 V0 H22 V4 H26 V12 H30 V8 H34 V12 H40 V34 Z"/><path d="M16 34 V24 A4 4 0 0 1 24 24 V34 Z" fill="#3b2a1a"/></g>`;
+  const ship=`<g transform="translate(${m.ck?30:16},${m.ck?22:14})" stroke="#1d3f55" stroke-width="1.2"><path d="M0 22 H32 L27 30 H5 Z" fill="#8a5a36"/><path d="M15 21 V0 L29 18 Z" fill="#f4efe2"/><path d="M13 21 V4 L3 18 Z" fill="#e4dccb"/></g>`;
+  let art=flower;
+  if(m.ck&&m.ships)art=castle+ship;else if(m.ck)art=castle;else if(m.ships)art=`<ellipse cx="32" cy="46" rx="26" ry="5" fill="var(--sea1)" opacity=".55"/>`+ship;
+  return`<svg viewBox="0 0 64 56" class="mart" aria-hidden="true">${art}</svg>`;
 }
-function bindNewGame(rerender){
-  const save=(k,v)=>{try{localStorage.setItem(k,v)}catch(_){}};
-  document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{U.newMode=b.dataset.mode;save('hx-map',U.newMode);rerender()});
-  document.querySelectorAll('[data-rule]').forEach(b=>b.onclick=()=>{const k=b.dataset.rule;U[k]=!U[k];save('hx-'+k,U[k]?'1':'0');rerender()});
+const MINI={};
+function miniMap(mode){
+  if(MINI[mode])return MINI[mode];
+  const hs=genBoard(mode,20261029,2).hexes,xs=hs.map(h=>h.x),ys=hs.map(h=>h.y);
+  const x0=Math.min(...xs)-1,y0=Math.min(...ys)-1.1,w=Math.max(...xs)+1-x0,h=Math.max(...ys)+1.1-y0;
+  const pts=h=>Array.from({length:6},(_,i)=>{const a=Math.PI/180*(60*i-30);return(h.x+Math.cos(a)*.94).toFixed(2)+','+(h.y+Math.sin(a)*.94).toFixed(2)}).join(' ');
+  return MINI[mode]=`<svg viewBox="${x0.toFixed(2)} ${y0.toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)}" class="mini" aria-hidden="true">${hs.map(x=>`<polygon points="${pts(x)}" fill="${x.type==='sea'?'var(--sea1)':HEXFILL[x.type]}"/>`).join('')}</svg>`;
 }
-function newGameTarget(){return MODES[U.newMode].target+(U.ck?3:0)}
-function applyNewGameRules(S){S.ext56=!!U.ext56;S.ships=MODES[U.newMode].needShips?true:!!U.ships;return S}
+function roomEditor(c){
+  const tab=U.rtab||'mode';
+  const T=[['mode','Modo'],['map','Mapa'],['set','Ajustes']];
+  let body;
+  if(tab==='mode'){
+    body=`<div class="rgrid">${MODE_TILES.map(([m,l],i)=>{const on=!!c.ext56===!!m.ext56&&!!c.ships===!!m.ships&&!!c.ck===!!m.ck;
+      return`<button class="rtile ${on?'sel':''}" data-rmode="${i}">${m.ext56?'<span class="r56">5–6</span>':''}${modeArt(m)}<b>${l}${m.ext56?' 5–6':''}</b><small>hasta ${m.ext56?6:4} jugadores</small></button>`}).join('')}</div>`;
+  }else if(tab==='map'){
+    body=`<div class="rgrid">${Object.entries(MODES).map(([k,x])=>`<button class="rtile map ${c.mode===k?'sel':''}" data-rmap="${k}">${miniMap(k)}<b>${x.name}</b><small>${x.desc}</small></button>`).join('')}</div>
+      <p class="small muted" style="margin:0">${MODES[c.mode].needShips?'Este mapa tiene islas: se juega con barcos.':'El oro solo sale en los mapas con islas.'}</p>`;
+  }else{
+    const ti=Math.max(0,TIMERS.findIndex(([v])=>v===c.timer));
+    const rule=(k,icn,t,d)=>`<button class="rtile rule ${c[k]?'sel':''}" data-rtog="${k}">${ic(icn,30)}<b>${t}</b><small>${d}</small></button>`;
+    body=`<div class="rlbl">Reglas</div>
+      <div class="rgrid">${rule('friendly','robber','Ladrón amistoso','no bloquea a quien tiene 2 puntos o menos')}${rule('balanced','dice','Dados balanceados','los números salen más parejo, con menos rachas')}</div>
+      <div class="rlbl">Ajustes avanzados</div>
+      <div class="rbox"><b>Tiempo por turno</b><div class="arrows"><button data-rtime="-1" aria-label="menos tiempo" ${ti===0?'disabled':''}>‹</button><span>${TIMERS[ti][1]}</span><button data-rtime="1" aria-label="más tiempo" ${ti===TIMERS.length-1?'disabled':''}>›</button></div></div>
+      <div class="rbox"><b>Puntos para ganar</b><div class="slide"><span>5</span><input type="range" min="5" max="20" value="${c.vp}" data-rslide="vp" aria-label="Puntos para ganar"><output>${c.vp}</output><span>20</span></div><small class="muted">${c.vp===c.vpDef?'lo normal para este modo':`lo normal es ${c.vpDef}`}</small></div>
+      <div class="rbox"><b>Descartan con más de</b><div class="slide"><span>7</span><input type="range" min="7" max="12" value="${c.discard}" data-rslide="discard" aria-label="Descartan con más de"><output>${c.discard}</output><span>12</span></div><small class="muted">cartas en la mano cuando sale el 7</small></div>`;
+  }
+  return`<div class="redit"><div class="rtabs">${T.map(([k,l])=>`<button data-rtab="${k}" class="${tab===k?'on':''}">${l}</button>`).join('')}</div>${body}</div>`;
+}
+function bindRoomEditor(c,rerender){
+  document.querySelectorAll('[data-rtab]').forEach(b=>b.onclick=()=>{U.rtab=b.dataset.rtab;rerender()});
+  document.querySelectorAll('[data-rmode]').forEach(b=>b.onclick=()=>{const m=MODE_TILES[+b.dataset.rmode][0],p={ext56:!!m.ext56,ships:!!m.ships,ck:!!m.ck};
+    if(!m.ships&&MODES[c.mode].needShips)p.mode=SEA_TWIN[c.mode]||'base';c.set(p)});
+  document.querySelectorAll('[data-rmap]').forEach(b=>b.onclick=()=>c.set({mode:b.dataset.rmap}));
+  document.querySelectorAll('[data-rtog]').forEach(b=>b.onclick=()=>c.set({[b.dataset.rtog]:!c[b.dataset.rtog]}));
+  document.querySelectorAll('[data-rtime]').forEach(b=>b.onclick=()=>{const i=Math.max(0,TIMERS.findIndex(([v])=>v===c.timer))+(+b.dataset.rtime);if(TIMERS[i])c.set({timer:TIMERS[i][0]})});
+  document.querySelectorAll('[data-rslide]').forEach(r=>{const o=r.parentNode.querySelector('output');r.oninput=()=>{o.textContent=r.value};r.onchange=()=>c.set({[r.dataset.rslide]:+r.value})});
+}
+/* the start screen keeps its choices in this device */
+function homeRoomCtx(rerender){
+  const m=MODES[U.newMode],ck=!!U.ck,def=m.target+(ck?3:0);
+  return{mode:U.newMode,ext56:!!U.ext56,ships:m.needShips||!!U.ships,ck,vp:U.vp||def,vpDef:def,discard:U.discard||7,friendly:!!U.friendly,balanced:!!U.balanced,timer:U.timer||0,players:1,
+    set:p=>{const save=(k,v)=>{try{localStorage.setItem(k,v)}catch(_){}};
+      if(p.mode){U.newMode=p.mode;save('hx-map',p.mode)}
+      ['ext56','ships','ck','friendly','balanced'].forEach(k=>{if(p[k]!==undefined){U[k]=!!p[k];save('hx-'+k,U[k]?'1':'0')}});
+      if(p.vp!==undefined){U.vp=p.vp;save('hx-vp',String(p.vp))}
+      if(p.discard!==undefined){U.discard=p.discard;save('hx-discard',String(p.discard))}
+      if(p.timer!==undefined){U.timer=p.timer;save('hx-timer',String(p.timer))}
+      if(U.vp&&U.vp===MODES[U.newMode].target+(U.ck?3:0)){U.vp=null;save('hx-vp','')}
+      rerender()}};
+}
+function newGameHtml(){return roomEditor(homeRoomCtx(()=>{}))}
+function bindNewGame(rerender){bindRoomEditor(homeRoomCtx(rerender),rerender)}
+function newGameTarget(){return U.vp||MODES[U.newMode].target+(U.ck?3:0)}
+function applyNewGameRules(S){
+  S.ext56=!!U.ext56;S.ships=MODES[U.newMode].needShips?true:!!U.ships;
+  S.cfg={vp:U.vp&&U.vp!==defaultTarget(S)?U.vp:null,discard:U.discard||7,friendly:!!U.friendly,balanced:!!U.balanced};
+  return S;
+}
 
 /* =========================================================
    History, ranking and house records
@@ -3105,17 +3180,34 @@ function filterRecs(recs){
   const f=U.hf||'all';
   return recs.filter(r=>f==='all'||(f==='plain'?!r.ck&&!r.ships&&!r.ext56:r[f]));
 }
+/* rating: every finished game, each pair of players is a duel won by whoever placed higher (Elo, start 1000) */
+const pkey=p=>p.bot?'bot:'+normName(p.name):keyOf(p.name);
+function ratingsOf(recs){
+  const R={},D={};
+  [...recs].sort((a,b)=>a.at-b.at).forEach(r=>{
+    const ps=r.players,n=ps.length;if(n<2)return;
+    const ks=ps.map(pkey),cur=ks.map(k=>R[k]==null?1000:R[k]),d=ks.map(()=>0),K=32/(n-1);
+    for(let i=0;i<n;i++)for(let j=0;j<n;j++){if(i===j)continue;const e=1/(1+Math.pow(10,(cur[j]-cur[i])/400));d[i]+=K*((ps[i].pos<ps[j].pos?1:ps[i].pos===ps[j].pos?.5:0)-e)}
+    D[r.id]={};ks.forEach((k,i)=>{const v=Math.round(d[i]);R[k]=cur[i]+v;D[r.id][k]=v});
+  });
+  return{R,D};
+}
+const DIVS=[[1125,'Diamante','#5fc8e8'],[1075,'Platino','#9fb4c4'],[1025,'Oro','#e2b22c'],[975,'Plata','#b9c0c6'],[-1e9,'Bronce','#c07a43']];
+const divOf=r=>DIVS.find(([m])=>r>=m);
+function divBadge(r,s){const[,n,c]=divOf(r);s=s||22;
+  return`<svg width="${s}" height="${s}" viewBox="0 0 24 24" class="div" aria-label="${n}"><title>${n}</title><path d="M12 1.5 L21.1 6.75 V17.25 L12 22.5 L2.9 17.25 V6.75 Z" fill="${c}" stroke="rgba(0,0,0,.35)" stroke-width="1.2"/><path d="M12 6 L16.8 8.8 V15.2 L12 18 L7.2 15.2 V8.8 Z" fill="rgba(255,255,255,.35)"/></svg>`}
 function rankingOf(recs,withBots){
-  const by={};
+  const by={},{R}=ratingsOf(recs),last={};
+  const {D}=ratingsOf(recs);
   [...recs].sort((a,b)=>a.at-b.at).forEach(r=>r.players.forEach(p=>{
+    const k=pkey(p);last[k]=D[r.id]?D[r.id][k]:0;
     if(p.bot&&!withBots)return;
-    const k=p.bot?'bot:'+normName(p.name):keyOf(p.name);
     const x=by[k]=by[k]||{k,name:p.name,bot:p.bot,games:0,wins:0,pos:0,vp:0,streak:0,best:0,last:0};
     x.name=p.name;x.games++;x.pos+=p.pos;x.vp+=p.vp;x.last=r.at;
     if(p.win){x.wins++;x.streak++;x.best=Math.max(x.best,x.streak)}else x.streak=0;
   }));
-  return Object.values(by).map(x=>({...x,pct:x.games?x.wins/x.games:0,avgPos:x.games?x.pos/x.games:0,avgVp:x.games?x.vp/x.games:0}))
-    .sort((a,b)=>b.wins-a.wins||b.pct-a.pct||a.avgPos-b.avgPos||b.games-a.games);
+  return Object.values(by).map(x=>({...x,rating:R[x.k]||1000,delta:last[x.k]||0,pct:x.games?x.wins/x.games:0,avgPos:x.games?x.pos/x.games:0,avgVp:x.games?x.vp/x.games:0}))
+    .sort((a,b)=>b.rating-a.rating||b.wins-a.wins||b.games-a.games);
 }
 function recordsOf(recs,withBots){
   const out=[];const ok=p=>withBots||!p.bot;
@@ -3133,7 +3225,7 @@ function pchip(p){return`<span class="lp"><i style="background:${COLORS[p.color|
 function miniRanking(recs,n){
   const rk=rankingOf(recs,false).slice(0,n||5);
   if(!rk.length)return'';
-  return`<div class="mrank"><div class="lbl">${ic('medal',14)} Ranking de esta mesa</div>${rk.map((x,i)=>`<div class="mr"><b class="pos p${i+1}">${i+1}</b><span class="nm2">${esc(x.name)}</span><span class="muted small">${x.wins} de ${x.games}</span></div>`).join('')}</div>`;
+  return`<div class="mrank"><div class="lbl">${ic('medal',14)} Ranking de esta mesa</div>${rk.map((x,i)=>`<div class="mr"><b class="pos p${i+1}">${i+1}</b>${divBadge(x.rating,18)}<span class="nm2">${esc(x.name)}</span><span class="muted small">${x.rating}</span></div>`).join('')}</div>`;
 }
 async function renderHistory(){
   setGameMode(false);$('#sheet').innerHTML='';
@@ -3148,14 +3240,16 @@ async function renderHistory(){
   if(!all.length)body=`<div class="card"><p class="desc">Aún no hay partidas terminadas en ${HISTORY_WHERE||'este historial'}. Cuando termine una, aparecerá aquí con su ranking y récords.</p></div>`;
   else if(tab==='rank'){
     const rk=rankingOf(recs,wb);
-    body=rk.length?`<div class="card"><div class="tw"><table class="st2 rk"><thead><tr><th>#</th><th>Jugador</th><th>Victorias<i class="ab">Gan.</i></th><th>Partidas<i class="ab">Jug.</i></th><th>% victorias<i class="ab">%</i></th><th>Lugar prom.</th><th>Puntos prom.<i class="ab">Pts.</i></th><th>Racha</th><th>Mejor racha</th></tr></thead><tbody>
-      ${rk.map((x,i)=>`<tr><td><b class="pos p${i+1}">${i+1}</b></td><td class="nmc">${esc(x.name)}${x.bot?' <small class="muted">bot</small>':''}</td><td><b>${x.wins}</b></td><td>${x.games}</td><td>${Math.round(x.pct*100)}%</td><td>${x.avgPos.toFixed(1)}</td><td>${x.avgVp.toFixed(1)}</td><td>${x.streak||'—'}</td><td>${x.best||'—'}</td></tr>`).join('')}</tbody></table></div></div>
+    body=rk.length?`<div class="card"><div class="tw"><table class="st2 rk"><thead><tr><th>#</th><th>Jugador</th><th>Nivel<i class="ab">Nivel</i></th><th>Puntaje<i class="ab">Puntaje</i></th><th>Victorias<i class="ab">Gan.</i></th><th>Partidas<i class="ab">Jug.</i></th><th>% victorias</th><th>Lugar prom.</th><th>Puntos prom.</th><th>Racha</th><th>Mejor racha</th></tr></thead><tbody>
+      ${rk.map((x,i)=>`<tr><td><b class="pos p${i+1}">${i+1}</b></td><td class="nmc">${esc(x.name)}${x.bot?' <small class="muted">bot</small>':''}</td><td class="dvc">${divBadge(x.rating)}<span>${divOf(x.rating)[1]}</span></td><td><b>${x.rating}</b>${x.delta?` <small class="${x.delta>0?'good':'bad'}">${x.delta>0?'▲':'▼'}${Math.abs(x.delta)}</small>`:''}</td><td>${x.wins}</td><td>${x.games}</td><td>${Math.round(x.pct*100)}%</td><td>${x.avgPos.toFixed(1)}</td><td>${x.avgVp.toFixed(1)}</td><td>${x.streak||'—'}</td><td>${x.best||'—'}</td></tr>`).join('')}</tbody></table></div></div>
+      <p class="small muted" style="margin:0">${DIVS.slice().reverse().map(([m,n])=>`${divBadge(m<0?900:m,16)} ${n}${m<0?'':' desde '+m}`).join(' · ')}. Todos empiezan con 1000: ganarle a alguien con más puntaje sube más.</p>
       ${mergeHtml(all)}`:`<div class="card"><p class="desc">No hay partidas con estos filtros.</p></div>`;
   }else if(tab==='games'){
+    const RD=ratingsOf(recs).D;
     body=recs.length?`<div class="glist">${[...recs].sort((a,b)=>b.at-a.at).map(r=>{const open=U.hopen===r.id,w=r.players.find(p=>p.win)||r.players[0];
       return`<div class="hg card ${open?'open':''}"><button class="hgh" data-hopen="${esc(r.id)}"><span class="hgw">${ic('trophy',16)} ${pchip(w)} <b>${w.vp}</b></span><span class="small muted">${fmtDate(r.at)} · ${esc(r.name)} · ${r.turns} turnos${fmtDur(r)?' · '+fmtDur(r):''}</span>
         <span class="hgp">${r.players.map(p=>`<span class="hpp">${p.pos}. ${pchip(p)} ${p.vp}</span>`).join('')}</span></button>
-        ${open?gameDetail(r):''}</div>`}).join('')}</div>`:`<div class="card"><p class="desc">No hay partidas con estos filtros.</p></div>`;
+        ${open?gameDetail(r,RD[r.id]):''}</div>`}).join('')}</div>`:`<div class="card"><p class="desc">No hay partidas con estos filtros.</p></div>`;
   }else{
     const rc=recordsOf(recs,wb);
     body=rc.length?`<div class="recs">${rc.map(x=>`<div class="card rec"><div class="lbl">${ic(x.icon,14)} ${x.label}</div><div class="rv">${x.fmt(x.w.v)}</div><div class="small">${pchip(x.w.p)} <span class="muted">· ${fmtDate(x.w.r.at)} · ${esc(x.w.r.name)}</span></div></div>`).join('')}</div>`:`<div class="card"><p class="desc">No hay récords con estos filtros.</p></div>`;
@@ -3172,10 +3266,10 @@ async function renderHistory(){
   q('[data-unalias]',b=>{const al=aliases();delete al[b.dataset.unalias];try{localStorage.setItem('hx-alias',JSON.stringify(al))}catch(e){};renderHistory()});
   if(HISTORY_BIND)HISTORY_BIND(all);
 }
-function gameDetail(r){
+function gameDetail(r,dl){
   const max=Math.max(1,...(r.rolls||[0]).slice(2));
   const hist=r.rolls?`<div class="lbl">Dados</div><div class="hh">${[2,3,4,5,6,7,8,9,10,11,12].map(n=>`<span><i style="height:${Math.round((r.rolls[n]||0)/max*44)+2}px" class="${n===7?'s':n===6||n===8?'r':''}"></i><b>${n}</b></span>`).join('')}</div>`:'';
-  return`<div class="hd">${r.players.map(p=>`<div class="hdp ${p.win?'win':''}"><div class="hdh">${p.pos}. ${pchip(p)} <b>${p.vp}</b></div>
+  return`<div class="hd">${r.players.map(p=>`<div class="hdp ${p.win?'win':''}"><div class="hdh">${p.pos}. ${pchip(p)} <b>${p.vp}</b>${dl&&dl[pkey(p)]?` <small class="${dl[pkey(p)]>0?'good':'bad'}">${dl[pkey(p)]>0?'+':''}${dl[pkey(p)]} de puntaje</small>`:''}</div>
     <div class="hdw">${(p.why||[]).map(([icn,t,v])=>`<span>${ic(icn,13)} ${esc(t)} <b>+${v}</b></span>`).join('')}</div>
     <div class="small muted hst"><span>${ic('cards',12)} ${p.prod} recursos</span><span>${ic('robber',12)} ${p.stole} robos</span><span>${ic('trade',12)} ${p.trades} cambios</span></div></div>`).join('')}${hist}</div>`;
 }
@@ -3309,7 +3403,6 @@ function renderHome(){
       <div class="lbl">Abrir una partida nueva</div>
       ${newGameHtml()}
       <button class="toggle ${U.table?'sel':''}" id="tb"><span class="box">${U.table?'✓':''}</span><div><b>Modo mesa</b><br><span>Este dispositivo (tele, tablet o laptop) será la pantalla con el tablero y no juega. Cada jugador entra desde su teléfono.</span></div></button>
-      <div class="lbl">Tiempo por turno</div><div class="tabs" id="tmr">${TIMERS.map(([v,l])=>`<button data-tm="${v}" class="${U.timer===v?'on':''}">${l}</button>`).join('')}</div>
       <p class="small muted" style="margin:0" id="tgt"></p>
       <button class="pri" id="create">${U.table?'Abrir mesa en esta pantalla':'Crear partida (este dispositivo la guarda)'}</button>
       <button class="hist-btn" id="histb">${ic('medal',18)} Historial y ranking</button>
