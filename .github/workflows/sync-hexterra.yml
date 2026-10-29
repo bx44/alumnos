@@ -1,0 +1,22 @@
+name: Copiar Hexterra
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 .github/scripts/sync-hexterra.py
+      - name: Guardar si cambió
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898900+github-actions[bot]@users.noreply.github.com"
+            git add juegos/hexterra/index.html sw.js
+            git commit -m "Hexterra: copiar la versión publicada"
+            git push
+          fi
