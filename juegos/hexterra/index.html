@@ -579,7 +579,7 @@ body{margin:0;padding-top:max(14px,env(safe-area-inset-top,0px))}
 const RES=['wood','brick','sheep','wheat','ore'];
 const COM=['paper','cloth','coin'];
 const ALL=[...RES,...COM];
-const RES_ES={wood:'Madera',brick:'Arcilla',sheep:'Lana',wheat:'Trigo',ore:'Piedra',paper:'Papel',cloth:'Tela',coin:'Moneda',gold:'Oro',desert:'Desierto',sea:'Mar'};
+const RES_ES={wood:'Madera',brick:'Arcilla',sheep:'Lana',wheat:'Trigo',ore:'Piedra',paper:'Papel',cloth:'Tela',coin:'Moneda',gold:'Oro',desert:'Desierto',sea:'Mar',volcano:'Volcán'};
 const COMOF={wood:'paper',sheep:'cloth',ore:'coin'};
 const TRACKS=['trade','politics','science'];
 const TRACK_COM={trade:'cloth',politics:'coin',science:'paper'};
@@ -594,7 +594,10 @@ const MODES={
   base:{name:'Isla clásica',desc:'19 losetas · sin oro',target:10},
   grande:{name:'Isla grande',desc:'30 losetas · 11 puertos · sin oro',target:10,big:true},
   mar:{name:'Archipiélago',desc:'isla de 19 + 5 islas · con oro',target:13,sea:true,needShips:true},
-  margrande:{name:'Gran archipiélago',desc:'isla de 30 + 6 islas · con oro',target:14,big:true,sea:true,needShips:true}
+  margrande:{name:'Gran archipiélago',desc:'isla de 30 + 6 islas · con oro',target:14,big:true,sea:true,needShips:true},
+  volcan:{name:'Volcán',desc:'19 losetas · volcán al centro',target:10,note:'El volcán da el recurso que quieras a quien esté junto a él. Pero cuando sale su número hace erupción: un dado marca una de sus 6 esquinas; un poblado ahí se destruye y una ciudad baja a poblado.'},
+  bosque:{name:'Bosque negro',desc:'19 losetas · mucha madera · lago',target:10,note:'Seis bosques y un lago al centro, donde empieza el ladrón. La madera sobra: lo que escasea es lo demás.'},
+  oro:{name:'La búsqueda del oro',desc:'19 losetas · 3 minas de oro',target:10,note:'Tres minas en la isla: quien está junto a una elige el recurso que quiera. El oro nunca tiene 2, 12, 6 ni 8.'}
 };
 /* rules = map + the mechanics switched on. Older games had no switches: their map implied them */
 function RULES(S){
@@ -663,14 +666,18 @@ function genBoard(mode,seed,gen){
   const sea=[];
   if(SEA){const R=mode==='margrande'?5:4;for(let q=-R;q<=R;q++)for(let r=-R;r<=R;r++)if(hexDist(q,r)<=R&&!L.has(key(q,r)))sea.push({q,r})}
   else{const seen=new Set();land.forEach(h=>DIRS.forEach(([dq,dr])=>{const k=key(h.q+dq,h.r+dr);if(!L.has(k)&&!seen.has(k)){seen.add(k);sea.push({q:h.q+dq,r:h.r+dr})}}))}
-  const mainT=sh(BIG?tally({wood:6,brick:5,sheep:6,wheat:6,ore:5,desert:2}):tally({wood:4,brick:3,sheep:4,wheat:4,ore:3,desert:1}));
+  const SPECIAL={volcan:{wood:4,brick:3,sheep:4,wheat:4,ore:3},bosque:{wood:6,brick:3,sheep:3,wheat:3,ore:3},oro:{wood:4,brick:3,sheep:3,wheat:3,ore:2,gold:3,desert:1}};
+  const CENTER={volcan:'volcano',bosque:'lake'};
+  const mainT=sh(BIG?tally({wood:6,brick:5,sheep:6,wheat:6,ore:5,desert:2}):tally(SPECIAL[mode]||{wood:4,brick:3,sheep:4,wheat:4,ore:3,desert:1}));
   const islT=sh(tally(mode==='margrande'?{gold:2,wood:2,brick:2,sheep:2,wheat:2,ore:2}:{gold:2,wood:2,brick:2,sheep:1,wheat:1,ore:2}));
   const hexes=[];
-  land.forEach(h=>hexes.push({q:h.q,r:h.r,isl:h.isl,type:h.isl===0?mainT.pop():islT.pop()}));
+  land.forEach(h=>{const c=CENTER[mode]&&h.q===0&&h.r===0?CENTER[mode]:null;
+    hexes.push(c==='lake'?{q:h.q,r:h.r,isl:0,type:'desert',lake:true}:{q:h.q,r:h.r,isl:h.isl,type:c||(h.isl===0?mainT.pop():islT.pop())})});
   sea.forEach(h=>hexes.push({q:h.q,r:h.r,isl:-1,type:'sea'}));
   let nums=BIG?[2,2,3,3,3,4,4,4,5,5,5,6,6,6,8,8,8,9,9,9,10,10,10,11,11,11,12,12]:[2,3,3,4,4,5,5,6,6,8,8,9,9,10,10,11,11,12];
   if(mode==='mar')nums=nums.concat([2,3,4,5,6,8,9,10,11,12]);
   if(mode==='margrande')nums=nums.concat([2,3,4,5,6,8,9,10,11,12,4,10]);
+  if(mode==='volcan')nums=nums.concat([rnd()<.5?4:10]);
   const prod=hexes.filter(h=>h.type!=='sea'&&h.type!=='desert');
   const idx=new Map(hexes.map((h,i)=>[key(h.q,h.r),i]));
   const hot=n=>n===6||n===8;
@@ -678,7 +685,7 @@ function genBoard(mode,seed,gen){
     sh(nums);prod.forEach((h,i)=>h.num=nums[i]);
     let ok=true;
     for(const h of prod){if(!hot(h.num))continue;for(const[dq,dr]of DIRS){const j=idx.get(key(h.q+dq,h.r+dr));if(j!=null&&hot(hexes[j].num)){ok=false;break}}if(!ok)break}
-    if(ok&&gen>=2)for(const h of prod)if(h.type==='gold'&&[2,12,6,8].includes(h.num)){ok=false;break}
+    if(ok&&gen>=2)for(const h of prod)if((h.type==='gold'||h.type==='volcano')&&[2,12,6,8].includes(h.num)){ok=false;break}
     if(ok)break;
   }
   const R3=Math.sqrt(3),verts=[],vmap=new Map(),edges=[],emap=new Map();
@@ -721,7 +728,7 @@ function genBoard(mode,seed,gen){
   }
   let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;
   hexes.forEach(h=>{x0=Math.min(x0,h.x-R3/2);x1=Math.max(x1,h.x+R3/2);y0=Math.min(y0,h.y-1);y1=Math.max(y1,h.y+1)});
-  const robber=hexes.findIndex(h=>h.type==='desert');
+  let robber=hexes.findIndex(h=>h.type==='desert');if(robber<0)robber=hexes.findIndex(h=>h.type==='volcano');
   return{hexes,verts,edges,ports,robber,bounds:{x0,x1,y0,y1}};
 }
 
@@ -1012,7 +1019,7 @@ function act(S0,me,a,rand){
       if(numOf(S,B,hi)!==t||hi===S.robber)return;
       H.v.forEach(v=>{const b=S.build[v];if(!b)return;
         const add=(k,q)=>{(dem[k]=dem[k]||{})[b.p]=((dem[k]||{})[b.p]||0)+q};
-        if(H.type==='gold'){S.gold[b.p]=(S.gold[b.p]||0)+(b.t==='city'?2:1);return}
+        if(H.type==='gold'||H.type==='volcano'){S.gold[b.p]=(S.gold[b.p]||0)+(b.t==='city'?2:1);return}
         if(b.t==='settlement')add(H.type,1);
         else if(S.ck&&COMOF[H.type]){add(H.type,1);add(COMOF[H.type],1)}
         else add(H.type,2);
@@ -1026,8 +1033,17 @@ function act(S0,me,a,rand){
     }
     Object.keys(S.gold).forEach(w=>got.add(+w));
     if(lines.length)log(lines.join(' · '));
+    /* the volcano erupts on its number: one die picks the corner */
+    B.hexes.forEach((H,hi)=>{
+      if(H.type!=='volcano'||numOf(S,B,hi)!==t||hi===S.robber)return;
+      const d=1+Math.floor(rand()*6),v=H.v[d-1],b=S.build[v];S.erupt={h:hi,d,v,id:S.rollId};
+      if(!b)log(`¡El volcán hace erupción! Sale ${d}: la lava cae en una esquina vacía`);
+      else if(b.metro)log(`¡El volcán hace erupción! Sale ${d}: la metrópolis de ${S.players[b.p].name} resiste`);
+      else if(b.t==='city'){b.t='settlement';b.wall=false;log(`¡El volcán hace erupción! Sale ${d}: la ciudad de ${S.players[b.p].name} baja a poblado`)}
+      else{delete S.build[v];log(`¡El volcán hace erupción! Sale ${d}: se destruye el poblado de ${S.players[b.p].name}`);recalcLongest(S,B,log)}
+    });
     if(S.ck)S.players.forEach((p,i)=>{if(p.imp.science>=3&&!got.has(i)){S.gold[i]=(S.gold[i]||0)+1;log(`${p.name} usa su acueducto`)}});
-    if(Object.keys(S.gold).length){S.step='gold';log('Hay recursos por elegir (oro o acueducto)')}else S.step='main';
+    if(Object.keys(S.gold).length){S.step='gold';log('Hay recursos por elegir')}else S.step='main';
   }
   switch(a.t){
     case'addBot':{
@@ -1602,8 +1618,8 @@ function botProfile(S,B,pi){
   return prod;
 }
 function resWeight(S,k){
-  if(S.ck)return{wood:1,brick:.9,sheep:1.05,wheat:1.3,ore:1.35,gold:1.4}[k]||0;
-  return{wood:1.05,brick:1.05,sheep:.85,wheat:1.1,ore:1,gold:1.4}[k]||0;
+  if(S.ck)return{wood:1,brick:.9,sheep:1.05,wheat:1.3,ore:1.35,gold:1.4,volcano:.9}[k]||0;
+  return{wood:1.05,brick:1.05,sheep:.85,wheat:1.1,ore:1,gold:1.4,volcano:.9}[k]||0;
 }
 function settleable(S,B,v){const V=B.verts[v];return V&&V.land&&!S.build[v]&&!(S.knights&&S.knights[v])&&!V.adj.some(a=>S.build[a])}
 function vScore(S,B,v,pi,prod){
@@ -1884,7 +1900,8 @@ const RC={wood:'#2f6b33',brick:'#b5542e',sheep:'#79a83b',wheat:'#d6a51f',ore:'#6
 /* each commodity sits under the resource it comes from; wheat and brick, which have none, share the last column */
 const HAND8=['wood','sheep','ore','wheat','paper','cloth','coin','brick'],PAIRS8=['wood','paper','sheep','cloth','ore','coin','wheat','brick'];
 const dispKeys=S=>S&&S.ck?PAIRS8:RES;
-const HEXFILL={wood:'#3d7a3a',brick:'#c06a3e',sheep:'#9cc25a',wheat:'#e7c04a',ore:'#8a939c',desert:'#dcc994',gold:'#5b4530'};
+const HEXFILL={wood:'#3d7a3a',brick:'#c06a3e',sheep:'#9cc25a',wheat:'#e7c04a',ore:'#8a939c',desert:'#dcc994',gold:'#5b4530',volcano:'#5a3a33'};
+const LAKE='#3f8fb3';
 const TCOL={trade:'#d9a520',politics:'#2f63c4',science:'#2f8f4a'};
 const U={wg:{},sd:{},ho:{},spyT:null,net:null,code:null,mode:null,sheet:null,dd:{},gd:{},pd:{},tg:{},tr:{},bg:null,bt:null,tab:'bank',newMode:'base',ck:false,table:false,timer:0,view:null,showBoard:false,name:'',kfrom:null,inv:[],pcard:null,alc:{w:3,r:3}};
 try{U.ext56=localStorage.getItem('hx-ext56')==='1';U.ships=localStorage.getItem('hx-ships')==='1';const nm=localStorage.getItem('hx-map');if(nm&&MODES[nm])U.newMode=nm;U.cb=localStorage.getItem('hx-cb')==='1';U.name=localStorage.getItem('hx-name')||'';U.ck=localStorage.getItem('hx-ck')==='1';U.table=localStorage.getItem('hx-table')==='1';U.timer=+(localStorage.getItem('hx-timer')||0);U.friendly=localStorage.getItem('hx-friendly')==='1';U.balanced=localStorage.getItem('hx-balanced')==='1';U.vp=+(localStorage.getItem('hx-vp')||0)||null;U.discard=+(localStorage.getItem('hx-discard')||0)||null}catch(e){}
@@ -2167,10 +2184,14 @@ function boardSvg(passive){
   B.hexes.forEach((h,i)=>{
     if(h.type==='sea'){out.push(`<polygon points="${poly(h,1)}" fill="var(--sea1)" stroke="var(--sea2)" stroke-width="1.5"/>`);return}
     out.push(`<polygon points="${poly(h,1)}" fill="#e8d9a8" stroke="#c9b67e" stroke-width="1"/>`);
-    out.push(`<polygon points="${poly(h,.93)}" fill="${HEXFILL[h.type]}" stroke="rgba(0,0,0,.18)" stroke-width="1"/>`);
+    out.push(`<polygon points="${poly(h,.93)}" fill="${h.lake?LAKE:HEXFILL[h.type]}" stroke="rgba(0,0,0,.18)" stroke-width="1"/>`);
+    if(h.type==='volcano'){const X=h.x*Z,Y=h.y*Z,er=S.erupt&&S.erupt.h===i&&S.erupt.id===S.rollId?S.erupt.d:0;
+      out.push(`<g pointer-events="none" fill="none" stroke-linecap="round"><path d="M${X-6} ${Y-14} L${X-14} ${Y-24} M${X+5} ${Y-14} L${X+12} ${Y-26} M${X+15} ${Y+2} L${X+26} ${Y-2} M${X-16} ${Y+4} L${X-28} ${Y+8} M${X-6} ${Y+22} L${X-10} ${Y+32} M${X+8} ${Y+22} L${X+14} ${Y+31}" stroke="#ff6a1f" stroke-width="2.6" opacity=".85"/><circle cx="${X}" cy="${Y+7}" r="20" stroke="#ff6a1f" stroke-width="2" opacity=".55"/></g>`);
+      for(let k=0;k<6;k++){const a=Math.PI/180*(60*k-30),x=X+Math.cos(a)*Z*.7,y=Y+Math.sin(a)*Z*.7;
+        out.push(`<g pointer-events="none"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${er===k+1?9:7}" fill="${er===k+1?'#ff5a1f':'#2a1a16'}" stroke="${er===k+1?'#ffd29a':'#e0672e'}" stroke-width="1.4"/><text x="${x.toFixed(1)}" y="${(y+3.6).toFixed(1)}" text-anchor="middle" font-size="${er===k+1?11:9.5}" font-weight="800" fill="#ffd29a" font-family="system-ui">${k+1}</text></g>`)}}
     if(h.type==='gold'){const X=h.x*Z,Y=h.y*Z;out.push(`<g pointer-events="none" opacity=".9"><path d="M${X-30} ${Y-6} q8 -6 15 -2 t14 4" stroke="#d9a520" stroke-width="2" fill="none"/><path d="M${X+6} ${Y+22} q8 -5 16 -1" stroke="#d9a520" stroke-width="2" fill="none"/><circle cx="${X+24}" cy="${Y-10}" r="1.8" fill="#ffe680"/><circle cx="${X-22}" cy="${Y+16}" r="1.6" fill="#ffe680"/><circle cx="${X+18}" cy="${Y+8}" r="1.3" fill="#ffe680"/></g>`)}
     const num=numOf(S,B,i);
-    out.push(`<use href="#g-${h.type}" x="${h.x*Z-14}" y="${h.y*Z-(num?36:16)}" width="28" height="28"/>`);
+    if(h.type!=='volcano')out.push(`<use href="#g-${h.lake?'lake':h.type}" x="${h.x*Z-14}" y="${h.y*Z-(num?36:16)}" width="28" height="28"/>`);
     if(num){const red=num===6||num===8;const pips=6-Math.abs(7-num);
       if(num===preview)out.push(`<polygon class="pulse" points="${poly(h,.9)}" fill="rgba(240,180,41,.22)" stroke="var(--hl)" stroke-width="4" stroke-dasharray="10 6"/>`);
       if(num===rolled)out.push(`<polygon points="${poly(h,.9)}" fill="none" stroke="${i===S.robber?'#555':'#fff6c4'}" stroke-width="4" opacity=".9"/><circle cx="${h.x*Z}" cy="${h.y*Z+7}" r="19" fill="none" stroke="var(--hl)" stroke-width="4"/>`);
@@ -2214,7 +2235,7 @@ function boardSvg(passive){
   const since=Date.now()-(U.rollSeenAt||0);
   if(rolled&&U.rollSeenId===S.rollId&&since<2600){
     B.hexes.forEach((h,i)=>{if(numOf(S,B,i)!==rolled||i===S.robber||h.type==='sea'||h.type==='desert')return;
-      h.v.forEach((v,j)=>{const b=S.build[v];if(!b)return;const V=B.verts[v],q=b.t==='city'?2:1,col=h.type==='gold'?'#e3b23c':HEXFILL[h.type];
+      h.v.forEach((v,j)=>{const b=S.build[v];if(!b)return;const V=B.verts[v],q=b.t==='city'?2:1,col=h.type==='gold'||h.type==='volcano'?'#e3b23c':HEXFILL[h.type];
         const x=(V.x*.6+h.x*.4)*Z,y=(V.y*.6+h.y*.4)*Z;
         out.push(`<g class="fly" style="animation-delay:-${since}ms"><g transform="translate(${x},${y})"><rect x="-11" y="-14" width="22" height="28" rx="4" fill="${col}" stroke="#fff" stroke-width="2"/><text y="5" text-anchor="middle" font-family="Bricolage Grotesque,system-ui" font-weight="800" font-size="13" fill="#fff" stroke="#1d1d1d" stroke-width="2.5" paint-order="stroke">+${q}</text></g></g>`)})});
   }
@@ -2245,6 +2266,8 @@ function glyphDefs(){
   <symbol id="g-wheat" viewBox="0 0 28 28"><path d="M14 25 V6" stroke="#7a5a10" stroke-width="2"/><g fill="#8a6612"><ellipse cx="11" cy="9" rx="2.5" ry="4" transform="rotate(-25 11 9)"/><ellipse cx="17" cy="9" rx="2.5" ry="4" transform="rotate(25 17 9)"/><ellipse cx="11" cy="15" rx="2.5" ry="4" transform="rotate(-25 11 15)"/><ellipse cx="17" cy="15" rx="2.5" ry="4" transform="rotate(25 17 15)"/></g></symbol>
   <symbol id="g-ore" viewBox="0 0 28 28"><path d="M2 23 L10 8 L15 15 L19 10 L26 23 Z" fill="#4a525b"/><path d="M10 8 L13 12 L8 13 Z" fill="#e8ecef"/></symbol>
   <symbol id="g-gold" viewBox="0 0 28 28"><g stroke="#6b4a0c" stroke-width="1.2" stroke-linejoin="round"><path d="M2 24 L5 18 H13 L15 24 Z" fill="#f2c94c"/><path d="M13 24 L16 18 H24 L26 24 Z" fill="#e8b632"/><path d="M7.5 18 L10.5 12 H18 L20.5 18 Z" fill="#ffd95e"/></g><path d="M6 19.5 H11 M17 19.5 H22 M11 13.5 H16" stroke="#fff6c4" stroke-width="1.2"/><path d="M21 4 L22 7 L25 8 L22 9 L21 12 L20 9 L17 8 L20 7 Z" fill="#fff3a6"/><path d="M6 6 L6.6 7.6 L8.2 8.2 L6.6 8.8 L6 10.4 L5.4 8.8 L3.8 8.2 L5.4 7.6 Z" fill="#fff3a6"/></symbol>
+  <symbol id="g-volcano" viewBox="0 0 28 28"><path d="M2 25 L10 9 H18 L26 25 Z" fill="#3a2622" stroke="#1a0f0c" stroke-width="1.2" stroke-linejoin="round"/><path d="M10 9 L12 14 L14 11 L16 15 L18 9 Z" fill="#ff6a1f"/><path d="M13 13 L12 20 M16 15 L17 22" stroke="#ff8a3d" stroke-width="1.6" stroke-linecap="round"/><path d="M11 6 Q13 2 16 5 Q19 2 20 6" fill="none" stroke="#c9c2bd" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="g-lake" viewBox="0 0 28 28"><g fill="none" stroke="#d8eef7" stroke-width="2" stroke-linecap="round"><path d="M4 12 q3 -3 6 0 t6 0 t6 0"/><path d="M7 18 q3 -3 6 0 t6 0"/></g></symbol>
   <symbol id="g-desert" viewBox="0 0 28 28"><path d="M14 24 V8 M14 14 H10 V10 M14 17 H18 V12" stroke="#5f7a3a" stroke-width="3" fill="none" stroke-linecap="round"/></symbol>`;
 }
 function logoSvg(s){return`<svg width="${s}" height="${s}" viewBox="0 0 54 54" aria-hidden="true"><polygon points="27,3 48,15 48,39 27,51 6,39 6,15" fill="#2f6e8f"/><polygon points="27,11 41,19 41,35 27,43 13,35 13,19" fill="#e7c04a"/><polygon points="27,11 41,19 27,27 13,19" fill="#3d7a3a"/><polygon points="27,27 41,35 27,43" fill="#c06a3e"/><polygon points="13,35 27,27 27,43" fill="#8a939c"/></svg>`}
@@ -3100,7 +3123,7 @@ function miniMap(mode){
   const hs=genBoard(mode,20261029,2).hexes,xs=hs.map(h=>h.x),ys=hs.map(h=>h.y);
   const x0=Math.min(...xs)-1,y0=Math.min(...ys)-1.1,w=Math.max(...xs)+1-x0,h=Math.max(...ys)+1.1-y0;
   const pts=h=>Array.from({length:6},(_,i)=>{const a=Math.PI/180*(60*i-30);return(h.x+Math.cos(a)*.94).toFixed(2)+','+(h.y+Math.sin(a)*.94).toFixed(2)}).join(' ');
-  return MINI[mode]=`<svg viewBox="${x0.toFixed(2)} ${y0.toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)}" class="mini" aria-hidden="true">${hs.map(x=>`<polygon points="${pts(x)}" fill="${x.type==='sea'?'var(--sea1)':HEXFILL[x.type]}"/>`).join('')}</svg>`;
+  return MINI[mode]=`<svg viewBox="${x0.toFixed(2)} ${y0.toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)}" class="mini" aria-hidden="true">${hs.map(x=>`<polygon points="${pts(x)}" fill="${x.type==='sea'?'var(--sea1)':x.lake?LAKE:HEXFILL[x.type]}"/>`).join('')}</svg>`;
 }
 function roomEditor(c){
   const tab=U.rtab||'mode';
@@ -3111,7 +3134,7 @@ function roomEditor(c){
       return`<button class="rtile ${on?'sel':''}" data-rmode="${i}">${m.ext56?'<span class="r56">5–6</span>':''}${modeArt(m)}<b>${l}${m.ext56?' 5–6':''}</b><small>hasta ${m.ext56?6:4} jugadores</small></button>`}).join('')}</div>`;
   }else if(tab==='map'){
     body=`<div class="rgrid">${Object.entries(MODES).map(([k,x])=>`<button class="rtile map ${c.mode===k?'sel':''}" data-rmap="${k}">${miniMap(k)}<b>${x.name}</b><small>${x.desc}</small></button>`).join('')}</div>
-      <p class="small muted" style="margin:0">${MODES[c.mode].needShips?'Este mapa tiene islas: se juega con barcos.':'El oro solo sale en los mapas con islas.'}</p>`;
+      <p class="small muted" style="margin:0">${MODES[c.mode].note||(MODES[c.mode].needShips?'Este mapa tiene islas: se juega con barcos y hay oro en las islas.':'Sin oro: solo los cinco recursos de siempre.')}</p>`;
   }else{
     const ti=Math.max(0,TIMERS.findIndex(([v])=>v===c.timer));
     const rule=(k,icn,t,d)=>`<button class="rtile rule ${c[k]?'sel':''}" data-rtog="${k}">${ic(icn,30)}<b>${t}</b><small>${d}</small></button>`;
