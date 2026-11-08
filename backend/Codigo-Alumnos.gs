@@ -86,11 +86,12 @@ function apiAlumnos(p) {
       // Construye tu campus — el motor vive en Codigo-Campus.gs
       case 'al_campus':         return alCampus(p);
       case 'al_campus_guardar': return alCampusGuardar(p);
-      // Estas tres NO piden token: son la puerta de invitados.
+      // Estas cuatro NO piden token: son la puerta de invitados.
       // Viven en Codigo-Invitados.gs y no tocan datos de ningún alumno.
       case 'al_reto':           return alReto(p);
       case 'al_reto_responder': return alRetoResponder(p);
       case 'al_juegos':         return alJuegos(p);
+      case 'al_juego_retos':    return alJuegoRetos(p);
       // Avisos al celular. Viven en Codigo-Push.gs y sí piden token:
       // un invitado no recibe avisos y no se guarda nada de su teléfono.
       case 'al_push_registrar': return alPushRegistrar(p);

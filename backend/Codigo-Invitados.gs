@@ -26,7 +26,8 @@
 
 var INV_H = {
   retos:      'RetosSemanales',
-  respuestas: 'RespuestasReto'
+  respuestas: 'RespuestasReto',
+  juego:      'RetosJuego'
 };
 
 var INV_COL = {
@@ -53,6 +54,14 @@ var INV_JUEGOS = [
     linea: 'Hay un muro entre tú y la puerta. No lo rodees.',
     jugadores: 'Un jugador, diez niveles',
     url: './juegos/rompeelmuro/',
+    listo: true
+  },
+  {
+    id: 'pardes',
+    nombre: 'Pardés',
+    linea: 'Doce pisos para abajo, del Bet Hamidrash al Pardés. Cada portón te hace una pregunta.',
+    jugadores: 'Un jugador · las preguntas salen de la hoja RetosJuego',
+    url: './juegos/pardes/',
     listo: true
   }
 ];
@@ -202,6 +211,62 @@ function alJuegos(p) {
 }
 
 
+// ═══════════════════ PREGUNTAS DEL JUEGO PARDÉS ═══════════════════
+/**
+ * Manda todo lo que haya en la hoja RetosJuego. No pide token: el juego
+ * también lo juegan invitados, y aquí no hay nada de ningún alumno.
+ *
+ * OJO, y conviene saberlo: la respuesta correcta sí viaja al teléfono,
+ * porque el juego tiene que funcionar sin internet. Un alumno curioso puede
+ * verla si se mete al código de la página. Por eso esto es un juego y no
+ * cuenta para calificaciones: para lo que sí cuenta está el reto semanal,
+ * donde la respuesta nunca sale del servidor.
+ *
+ * La hoja sirve para dos cosas según la columna Tipo:
+ *   Pregunta → C es la pregunta, D-G las opciones, H cuál es la buena.
+ *   Palabra  → C es la palabra en hebreo o arameo y D lo que quiere decir.
+ *              El juego arma solo las opciones malas con otras palabras.
+ */
+function alJuegoRetos(p) {
+  var cache = CacheService.getScriptCache();
+  var listo = cache.get('pardes_retos');
+  if (listo) return JSON.parse(listo);
+
+  var out = { ok: true, preguntas: [], palabras: [] };
+  var sh = SS.getSheetByName(INV_H.juego);
+  if (sh && sh.getLastRow() > 1) {
+    var filas = sh.getRange(2, 1, sh.getLastRow() - 1, 10).getValues();
+    for (var i = 0; i < filas.length; i++) {
+      var f = filas[i];
+      if (txt_(f[9]) === 'No') continue;
+      var tipo = txt_(f[0]).toLowerCase();
+      var hondura = Math.min(4, Math.max(1, parseInt(f[1], 10) || 1));
+      var texto = txt_(f[2]);
+      if (!texto) continue;
+
+      if (tipo.indexOf('palab') === 0) {
+        var trad = txt_(f[3]);
+        if (trad) out.palabras.push({ n: hondura, h: texto, t: trad });
+        continue;
+      }
+      var ops = [], correcta = -1;
+      var letras = ['A', 'B', 'C', 'D'];
+      var buena = txt_(f[7]).toUpperCase().charAt(0);
+      for (var k = 0; k < 4; k++) {
+        var o = txt_(f[3 + k]);
+        if (!o) continue;
+        if (letras[k] === buena) correcta = ops.length;
+        ops.push(o);
+      }
+      if (ops.length < 2 || correcta < 0) continue;
+      out.preguntas.push({ n: hondura, p: texto, o: ops, c: correcta, e: txt_(f[8]) });
+    }
+  }
+  try { cache.put('pardes_retos', JSON.stringify(out), 600); } catch (e) {}
+  return out;
+}
+
+
 // ═══════════════════ INSTALACIÓN ═══════════════════
 // Se corre a mano desde el editor: elige invitadosInstalar y Ejecutar.
 
@@ -211,7 +276,10 @@ function invitadosInstalar() {
   var esquema = {
     RetosSemanales: ['Semana (fecha)', 'Pregunta', 'Opción A', 'Opción B', 'Opción C',
                      'Opción D', 'Correcta (A/B/C/D)', 'Qué decir al contestar', 'Activo'],
-    RespuestasReto: ['Fecha y hora', 'ID del alumno', 'Nombre', 'Semana', 'Respuesta', '¿Acertó?']
+    RespuestasReto: ['Fecha y hora', 'ID del alumno', 'Nombre', 'Semana', 'Respuesta', '¿Acertó?'],
+    RetosJuego: ['Tipo', 'Hondura (1-4)', 'Pregunta o palabra', 'Opción A / Traducción',
+                 'Opción B', 'Opción C', 'Opción D', 'Correcta (A/B/C/D)',
+                 'Qué decir al contestar', 'Activo']
   };
 
   for (var nombre in esquema) {
@@ -243,10 +311,35 @@ function invitadosInstalar() {
     ]]);
   }
 
+  var sj = SS.getSheetByName(INV_H.juego);
+  sj.getRange('A2:A500').setDataValidation(
+    SpreadsheetApp.newDataValidation().requireValueInList(['Pregunta', 'Palabra'], true).build());
+  sj.getRange('H2:H500').setDataValidation(
+    SpreadsheetApp.newDataValidation().requireValueInList(['A', 'B', 'C', 'D'], true).build());
+  sj.getRange('J2:J500').setDataValidation(
+    SpreadsheetApp.newDataValidation().requireValueInList(['Sí', 'No'], true).build());
+  sj.getRange('A1').setNote('Pregunta = de opción múltiple. Palabra = traducción: en la columna C ' +
+    'va la palabra en hebreo o arameo y en la D lo que quiere decir. Las opciones malas las arma ' +
+    'el juego solo, con las traducciones de las otras palabras.');
+  sj.getRange('B1').setNote('Qué tan hondo aparece: 1 en el Bet Hamidrash (pisos 1 a 3), ' +
+    '2 en los Salones, 3 en la Excursión, 4 en el Pardés. Si no sabes, pon 1 o 2.');
+  sj.getRange('I1').setNote('Lo que se lee después de contestar, acierte o no. Es para explicar.');
+  sj.getRange('J1').setNote('Pon No para sacar un renglón del juego sin borrarlo.');
+  if (sj.getLastRow() < 2) {
+    sj.getRange(2, 1, 3, 10).setValues([
+      ['Pregunta', 1, '¿Cómo se llama el libro que se usa para apoyar el sefer al estudiar de pie?',
+       'Shtender', 'Bimá', 'Arón', 'Amud', 'A', 'El shtender.', 'Sí'],
+      ['Palabra', 2, 'תָּא שְׁמַע', 'ven y escucha', '', '', '', '', '', 'Sí'],
+      ['Palabra', 3, 'קוּשְׁיָא', 'pregunta difícil', '', '', '', '', '', 'Sí']
+    ]);
+  }
+
   var resumen = (creadas.length ? 'Hojas creadas: ' + creadas.join(', ') : 'Las hojas ya existían.') +
     '\n\nEn RetosSemanales te dejé un reto de ejemplo. Cámbialo o agrega un renglón nuevo ' +
     'con la fecha de esta semana.\n\nDe los invitados no se guarda nada: ni nombre, ' +
-    'ni respuesta. En RespuestasReto solo caen los alumnos identificados.';
+    'ni respuesta. En RespuestasReto solo caen los alumnos identificados.' +
+    '\n\nEn RetosJuego van las preguntas del juego Pardés. Cada renglón que agregues ' +
+    'aparece en el juego al rato (tarda hasta 10 minutos en actualizarse).';
 
   // getUi() solo existe cuando esto corre desde la hoja. Si se corre desde el
   // editor de Apps Script, la ventana no se puede abrir y no importa: las hojas

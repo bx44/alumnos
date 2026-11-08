@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#120F26">
+<title>Pardés · Or Barak</title>
+<style>
+:root{
+  --fondo:#120F26; --navy:#29235C; --oro:#C99B52; --tinta:#F2F1F7; --suave:#8F89B4;
+  --borde:#3A3558; --peligro:#C4483A; --verde:#4E9B57; --azul:#4A6FB5;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;
+  -webkit-user-select:none;user-select:none;touch-action:manipulation}
+html,body{height:100%;overflow:hidden;background:var(--fondo);color:var(--tinta);
+  font-family:'Trebuchet MS',system-ui,sans-serif;font-size:15px}
+button{font-family:inherit}
+#todo{position:fixed;inset:0;display:flex;flex-direction:column}
+
+/* ---------- barra de arriba ---------- */
+#barra{display:flex;align-items:center;gap:9px;flex-shrink:0;
+  padding:calc(5px + env(safe-area-inset-top)) 11px 5px;font-size:12.5px;color:var(--suave)}
+#vida{position:relative;width:104px;height:15px;border:1px solid var(--borde);border-radius:8px;
+  overflow:hidden;background:#241f42;flex-shrink:0}
+#vidaLlena{position:absolute;inset:0;width:100%;background:linear-gradient(#C4483A,#8E3027);
+  transition:width .18s}
+#vidaTexto{position:absolute;inset:0;display:grid;place-items:center;font-size:10.5px;
+  font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+#lugar{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#lugar b{color:var(--tinta);font-weight:700}
+#jidushim{color:var(--oro);font-weight:700;flex-shrink:0}
+#barra button{background:none;border:0;color:var(--suave);font-size:16px;padding:3px 5px;cursor:pointer}
+
+/* ---------- tablero ---------- */
+#marco{flex:1;position:relative;min-height:0}
+#lienzo{position:absolute;inset:0;width:100%;height:100%;display:block;
+  image-rendering:pixelated;background:#0C0A1A}
+#bitacora{position:absolute;left:0;right:0;bottom:0;padding:6px 11px 7px;font-size:12.5px;
+  line-height:1.35;background:linear-gradient(transparent,rgba(12,10,26,.92) 45%);
+  pointer-events:none;min-height:40px}
+#bitacora div{color:var(--suave)}
+#bitacora div:last-child{color:var(--tinta)}
+#bitacora .bien{color:var(--verde)} #bitacora .mal{color:#E07A6C} #bitacora .oro{color:var(--oro)}
+
+/* ---------- mandos ---------- */
+#mandos{display:flex;justify-content:space-between;align-items:flex-end;flex-shrink:0;
+  padding:8px 13px calc(11px + env(safe-area-inset-bottom));gap:10px}
+#cruz{display:grid;grid-template-columns:repeat(3,46px);grid-template-rows:repeat(3,46px);gap:4px}
+#cruz button{border-radius:12px;border:2px solid var(--borde);background:#241f42;color:var(--tinta);
+  font-size:17px;display:grid;place-items:center;cursor:pointer}
+#cruz button:active,#cruz button.presionada{background:var(--navy);border-color:var(--oro)}
+#cruz .hueco{visibility:hidden}
+#acciones{display:flex;flex-direction:column;gap:7px;align-items:stretch}
+#acciones button{min-width:92px;padding:11px 12px;border-radius:12px;border:2px solid var(--borde);
+  background:#241f42;color:var(--tinta);font-size:13.5px;font-weight:700;cursor:pointer}
+#acciones button:active{background:var(--navy);border-color:var(--oro)}
+#acciones button.oro{background:#3a2d18;border-color:#6b5328;color:var(--oro)}
+#acciones button:disabled{opacity:.35}
+
+/* ---------- capas ---------- */
+.capa{position:absolute;inset:0;z-index:6;display:none;background:rgba(12,10,26,.95);
+  overflow-y:auto;-webkit-overflow-scrolling:touch}
+.capa.on{display:block}
+.centro{min-height:100%;display:grid;place-items:center;padding:26px 22px calc(26px + env(safe-area-inset-bottom));text-align:center}
+.capa h1{font-size:30px;color:var(--oro);letter-spacing:.06em;margin-bottom:4px}
+.capa h2{font-size:20px;margin-bottom:9px}
+.capa p{color:var(--suave);font-size:14px;line-height:1.6;max-width:32ch;margin:0 auto 16px}
+.capa .boton{background:var(--oro);color:#241a08;border:0;border-radius:12px;
+  padding:13px 28px;font-size:16px;font-weight:700;cursor:pointer;margin:3px}
+.capa .secundario{background:none;color:var(--suave);border:0;padding:11px;font-size:13.5px;
+  cursor:pointer;text-decoration:underline;display:block;margin:2px auto}
+.marca{font-size:12px;color:#5f5a80;letter-spacing:.14em;margin-bottom:16px}
+
+/* ---------- pregunta ---------- */
+#preguntaCaja{width:100%;max-width:430px;text-align:left}
+#preguntaCaja .tipo{font-size:11px;letter-spacing:.16em;color:var(--oro);margin-bottom:8px}
+#preguntaCaja .texto{font-size:19px;line-height:1.4;margin-bottom:4px}
+#preguntaCaja .heb{font-size:30px;line-height:1.35;margin-bottom:4px;direction:rtl;text-align:center;
+  font-family:'Times New Roman',serif;color:var(--tinta)}
+#preguntaCaja .quien{font-size:12.5px;color:var(--suave);margin-bottom:14px}
+.opcion{display:flex;gap:10px;align-items:center;width:100%;text-align:left;margin-bottom:8px;
+  padding:13px 14px;border-radius:12px;border:2px solid var(--borde);background:#241f42;
+  color:var(--tinta);font-size:15px;cursor:pointer;line-height:1.3}
+.opcion .letra{color:var(--oro);font-weight:700;font-size:13px;flex-shrink:0;width:14px}
+.opcion:disabled{opacity:.45}
+.opcion.bien{background:#1E4330;border-color:var(--verde);opacity:1}
+.opcion.mal{background:#45201C;border-color:var(--peligro);opacity:1}
+.opcion.fuera{opacity:.2}
+#cierre{font-size:14px;line-height:1.55;color:var(--suave);margin-top:12px;min-height:22px}
+#cierre b{color:var(--tinta)}
+#ayudas{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+#ayudas button{background:#3a2d18;border:2px solid #6b5328;color:var(--oro);border-radius:10px;
+  padding:9px 13px;font-size:12.5px;font-weight:700;cursor:pointer}
+#ayudas button:disabled{opacity:.3}
+
+/* ---------- mochila ---------- */
+#mochilaCaja{width:100%;max-width:430px;text-align:left}
+#mochilaCaja h2{text-align:left;font-size:17px;margin-bottom:3px}
+.renglon{display:flex;gap:11px;align-items:center;width:100%;text-align:left;margin-bottom:7px;
+  padding:11px 12px;border-radius:11px;border:1px solid var(--borde);background:#1C1836;
+  color:var(--tinta);font-size:14.5px;cursor:pointer}
+.renglon.puesto{border-color:var(--oro)}
+.renglon .ico{width:26px;height:26px;flex-shrink:0;image-rendering:pixelated}
+.renglon .cuerpo{flex:1;min-width:0}
+.renglon .nom{font-weight:700;font-size:14.5px}
+.renglon .det{font-size:12px;color:var(--suave);line-height:1.35}
+.renglon .cant{color:var(--oro);font-weight:700;font-size:13px}
+.grupo-t{font-size:11px;letter-spacing:.14em;color:#5f5a80;margin:14px 0 7px}
+#detalle{position:absolute;inset:0;z-index:7;display:none;background:rgba(12,10,26,.96);padding:26px 22px}
+#detalle.on{display:grid;place-items:center}
+#detalleCaja{max-width:33ch;text-align:center}
+#detalleCaja h3{font-size:19px;color:var(--oro);margin-bottom:8px}
+#detalleCaja p{margin-bottom:14px}
+.flota{position:absolute;left:50%;top:14%;transform:translateX(-50%);z-index:9;
+  background:rgba(36,31,66,.96);border:1px solid var(--borde);border-radius:11px;
+  padding:10px 16px;font-size:14px;max-width:80%;text-align:center;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="todo">
+
+  <div id="barra">
+    <div id="vida"><div id="vidaLlena"></div><div id="vidaTexto">20/20</div></div>
+    <div id="lugar"><b>Piso 1</b> · Bet Hamidrash</div>
+    <div id="jidushim">0</div>
+    <button id="bSonido" title="Sonido">&#9834;</button>
+    <button id="bMenu" title="Menú">&#9776;</button>
+  </div>
+
+  <div id="marco">
+    <canvas id="lienzo"></canvas>
+    <div id="bitacora"></div>
+  </div>
+
+  <div id="mandos">
+    <div id="cruz">
+      <button class="hueco"></button><button data-dir="0,-1">&#9650;</button><button class="hueco"></button>
+      <button data-dir="-1,0">&#9664;</button><button data-dir="0,0">&middot;</button><button data-dir="1,0">&#9654;</button>
+      <button class="hueco"></button><button data-dir="0,1">&#9660;</button><button class="hueco"></button>
+    </div>
+    <div id="acciones">
+      <button id="bUsar" class="oro">Bajar</button>
+      <button id="bMochila">Mochila</button>
+    </div>
+  </div>
+
+  <div class="capa" id="capa"><div class="centro"><div id="capaCaja"></div></div></div>
+
+  <div class="capa" id="pregunta"><div class="centro"><div id="preguntaCaja"></div></div></div>
+
+  <div class="capa" id="mochila"><div class="centro"><div id="mochilaCaja"></div></div>
+    <div id="detalle"><div id="detalleCaja"></div></div>
+  </div>
+
+</div>
+<script>
+"use strict";
+/* ══════════════════════════════════════════════════════════════════
+   PARDÉS · Mazmorras de Or Barak
+   Un solo archivo. Sin internet obligatorio. Sin librerías.
+
+   CÓMO AGREGAR CONTENIDO SIN PROGRAMAR
+   · Preguntas y traducciones: en la hoja RetosJuego del sistema.
+     El juego las baja solas y las guarda en el teléfono.
+   · Lo que está aquí abajo (bichos, objetos, pisos) son listas:
+     para cambiar un nombre o un número, cámbialo y ya.
+   ══════════════════════════════════════════════════════════════════ */
+
+var API_URL = 'https://script.google.com/macros/s/AKfycbwwf7g-2dS1I3EyQugckgnA2hjRreo8LhAx6CDbVhgT8BFWOFNcYKM1W5coKtuI5qpuQg/exec';
+var APP_KEY = 'crh,uesa';
+
+/* ---------- colores de los dibujos ----------
+   Cada letra de un dibujo es un color de esta tabla. */
+var PAL = {
+  '.': null,          // transparente
+  k: '#17132E', n: '#2B2550', m: '#423A6E', z: '#6B63A0',
+  w: '#F2F1F7', g: '#C9C6DB', s: '#E8C49A', t: '#C08F62',   // piel
+  o: '#C99B52', y: '#F0D27A', b: '#4A6FB5', c: '#8FB8E8',
+  r: '#C4483A', e: '#8E3027', v: '#4E9B57', h: '#2F6B3C',
+  f: '#E07A6C', p: '#9B6BC4', a: '#5BC8C8', u: '#7A5230',
+  d: '#3A2A18', l: '#D9D2C2', x: '#000000'
+};
+
+/* ---------- dibujos de 8x8 ---------- */
+var SPR = {
+  alumno: ['..nnnn..','.nbbbbn.','.nssssn.','.nsxxsn.','..nssn..','.wwnnww.','.w.ww.w.','..n..n..'],
+
+  shiamun:  ['........','..zzzz..','.zmmmmz.','zmwmmwmz','zmmmmmmz','zmmzzmmz','.zmmmmz.','..z..z..'],
+  polilla:  ['........','.g....g.','.gg..gg.','..gddg..','.gdwwdg.','..gddg..','.gg..gg.','.g....g.'],
+  bostezo:  ['..gggg..','.g....g.','g..gg..g','g.gwwg.g','g..gg..g','.g....g.','..gggg..','........'],
+
+  bilbul:   ['..p..p..','.pppppp.','pwppppwp','pppppppp','p.pppp.p','.pppppp.','..p..p..','.p....p.'],
+  reloj:    ['.llllll.','.l....l.','..lrrl..','...ll...','..lrrl..','.l....l.','.llllll.','........'],
+  gis:      ['........','...ll...','..lwwl..','..lwwl..','..lwwl..','...ll...','........','........'],
+
+  zancudo:  ['........','.g.gg.g.','..gggg..','...kk...','..kffk..','...kk...','..g..g..','........'],
+  vibora:   ['........','..hh....','.hvvh...','.hvxh.hh','..hvvhvh','...hvvvh','....hhhv','........'],
+  mapache:  ['........','.gg..gg.','.gwggwg.','.gxggxg.','..gwwg..','.gggggg.','.g.gg.g.','g......g'],
+
+  safek:    ['..mmmm..','.mpppmm.','mpwppwpm','mppppppm','.mppppm.','..mppm..','...mm...','...m....'],
+  gaava:    ['..oooo..','.oyyyyo.','.osssso.','.osxxso.','..osso..','.oooooo.','.o.oo.o.','..o..o..'],
+  sombra:   ['........','..kkkk..','.kknnkk.','kknrrnkk','kknnnnkk','.kknnkk.','..k..k..','........'],
+
+  granShiamun: ['.zzzzzz.','zmmmmmmz','zmwmmwmz','zmmmmmmz','zmzzzzmz','zmmzzmmz','.zmmmmz.','.z.zz.z.'],
+  bilbulMayor: ['.p.pp.p.','pppppppp','pwppppwp','pppppppp','p.pppp.p','pppppppp','.p.pp.p.','p......p'],
+  coyote:      ['........','u..uu..u','.uuuuuu.','.uxuuxu.','..uwwu..','.uuuuuu.','u.u..u.u','........'],
+  granSafek:   ['.mmmmmm.','mppppppm','mpwppwpm','mppppppm','mpppppfm','.mppppm.','..mmmm..','...mm...'],
+
+  pluma:   ['.......w','......ww','.....ww.','....ww..','...ww...','..ww....','.wo.....','oo......'],
+  libro:   ['........','.uuuuuu.','.ulllll.','.ulwwll.','.ulllll.','.ulwwll.','.uuuuuu.','........'],
+  frasco:  ['...ww...','...ww...','..wwww..','..wccw..','.wccccw.','.wccccw.','.wccccw.','..wwww..'],
+  pan:     ['........','..uuuu..','.uttttu.','uttttttu','uttttttu','.uttttu.','..uuuu..','........'],
+  vela:    ['...y....','..yy....','...o....','...w....','...w....','...w....','..www...','..www...'],
+  lupa:    ['..ooo...','.o...o..','o..c..o.','o..c..o.','.o...o..','..ooo...','.....oo.','......oo'],
+  cuaderno:['........','.oooooo.','.olllll.','.ol.l.l.','.olllll.','.ol.l.l.','.oooooo.','........'],
+  arena:   ['.oooooo.','.ywwwwy.','..ywwy..','...yy...','..y..y..','.ywwwwy.','.ywwwwy.','.oooooo.'],
+  brujula: ['..oooo..','.ollllo.','ollrrllo','olrwwrlo','ollrrllo','.ollllo.','..oooo..','........'],
+  llavero: ['..oo....','.o..o...','.o..o...','..oo....','...o....','...ooo..','...o.o..','...ooo..'],
+  cofre:   ['........','.uuuuuu.','.uoooou.','.uuuuuu.','.uoyoou.','.uuuuuu.','.u....u.','........'],
+  abierto: ['.uuuuuu.','.u....u.','.u....u.','........','.uuuuuu.','.uyyyyu.','.uuuuuu.','........'],
+  escalera:['........','zzzzzzzz','z......z','zzzzzzzz','z......z','zzzzzzzz','z......z','zzzzzzzz'],
+  porton:  ['oooooooo','o.o..o.o','o.o..o.o','oooooooo','o.o..o.o','o.o..o.o','o.o..o.o','oooooooo'],
+  shtender:['..dddd..','.dllllld','..dddd..','...dd...','...dd...','..dddd..','.dddddd.','........'],
+  fogata:  ['........','...y....','..yoy...','.yoroy..','.yorroy.','..oooo..','.duuud..','..dddd..'],
+  arbol:   ['..hhh...','.hvvvh..','hvvvvvh.','.hvvvh..','..hvh...','...u....','...u....','..uuu...'],
+  agua:    ['........','........','.aaaa.aa','aaccaaaa','.aaaaaca','aaaacaaa','.aa.aaa.','........'],
+  pizarron:['oooooooo','oh....ho','oh.ww.ho','oh.w..ho','oh....ho','oh.ww.ho','oooooooo','........']
+};
+
+/* ---------- las cuatro regiones ----------
+   Tres pisos cada una. Para cambiar un nombre, cámbialo aquí. */
+var REGIONES = [
+  { nombre: 'Bet Hamidrash', entrada: 'El Bet Hamidrash, a oscuras',
+    frase: 'Los shtenders siguen en su lugar. Algo se mueve entre los libreros.',
+    piso: '#2A2448', pared: '#443A24', suelo2: '#322A52', adorno: ['shtender', 'libro'],
+    bichos: ['shiamun', 'polilla', 'bostezo'], jefe: 'granShiamun' },
+  { nombre: 'Los Salones', entrada: 'Los salones, pasada la hora',
+    frase: 'Las butacas están volteadas y el pizarrón tiene algo escrito que nadie borró.',
+    piso: '#26304A', pared: '#2D3A58', suelo2: '#2B3652', adorno: ['pizarron', 'libro'],
+    bichos: ['bilbul', 'gis', 'reloj', 'bostezo'], jefe: 'bilbulMayor' },
+  { nombre: 'La Excursión', entrada: 'El cerro, ya de noche',
+    frase: 'La fogata quedó encendida. Nadie se acuerda de quién la prendió.',
+    piso: '#1F3326', pared: '#2E4432', suelo2: '#24392B', adorno: ['arbol', 'fogata', 'agua'],
+    bichos: ['zancudo', 'vibora', 'mapache', 'polilla'], jefe: 'coyote' },
+  { nombre: 'El Pardés', entrada: 'El Pardés',
+    frase: 'Aquí abajo ya no hay paredes de verdad. Lo que hay son preguntas.',
+    piso: '#2B2050', pared: '#3B2C6B', suelo2: '#31255C', adorno: ['vela', 'libro'],
+    bichos: ['safek', 'gaava', 'sombra', 'bilbul'], jefe: 'granSafek' }
+];
+
+/* ---------- bichos ----------
+   vida, ataque (mín-máx), defensa, velocidad (1 normal, 0.5 lento, 2 rápido),
+   jidushim que deja, y su maña. */
+var BICHOS = {
+  shiamun:  { nombre: 'Shiamún',      spr:'shiamun',  vida:9,  atq:[1,3], def:0, vel:0.5, jid:3,  maña:'pega',
+              dice:'El aburrimiento se te pega a los pies.' },
+  polilla:  { nombre: 'Polilla',      spr:'polilla',  vida:5,  atq:[1,2], def:0, vel:2,   jid:2,  maña:'huye',
+              dice:'Se te escapa entre los libros.' },
+  bostezo:  { nombre: 'Bostezo',      spr:'bostezo',  vida:7,  atq:[1,2], def:0, vel:1,   jid:3,  maña:'contagia',
+              dice:'Se te contagia y pierdes un turno.' },
+  bilbul:   { nombre: 'Bilbul',       spr:'bilbul',   vida:14, atq:[2,5], def:1, vel:1,   jid:6,  maña:'confunde',
+              dice:'Te revuelve: por unos turnos caminas al revés.' },
+  gis:      { nombre: 'Gis quebrado', spr:'gis',      vida:6,  atq:[2,4], def:0, vel:2,   jid:3,  maña:'enjambre',
+              dice:'Nunca viene solo.' },
+  reloj:    { nombre: 'Reloj atrasado', spr:'reloj',  vida:16, atq:[2,4], def:2, vel:0.5, jid:7,  maña:'pega',
+              dice:'Va lento, pero no se cansa.' },
+  zancudo:  { nombre: 'Zancudo',      spr:'zancudo',  vida:8,  atq:[2,4], def:0, vel:2,   jid:4,  maña:'pega',
+              dice:'Pica y se va.' },
+  vibora:   { nombre: 'Víbora del cerro', spr:'vibora', vida:18, atq:[4,8], def:1, vel:1, jid:10, maña:'espera',
+              dice:'No se mueve hasta que te acercas.' },
+  mapache:  { nombre: 'Mapache',      spr:'mapache',  vida:14, atq:[2,4], def:1, vel:2,   jid:8,  maña:'roba',
+              dice:'Te quita algo de la mochila y corre.' },
+  safek:    { nombre: 'Safek',        spr:'safek',    vida:22, atq:[4,9], def:2, vel:1,   jid:14, maña:'aparece',
+              dice:'La duda no camina: aparece.' },
+  gaava:    { nombre: 'Gaavá',        spr:'gaava',    vida:28, atq:[5,11],def:4, vel:1,   jid:18, maña:'crece',
+              dice:'Cada vez que le fallas, se hace más grande.' },
+  sombra:   { nombre: 'Sombra',       spr:'sombra',   vida:20, atq:[4,8], def:2, vel:1,   jid:12, maña:'pega',
+              dice:'No se le ve la cara.' },
+
+  granShiamun: { nombre:'El Gran Shiamún', spr:'granShiamun', vida:32, atq:[2,5], def:1, vel:0.5, jid:45,
+                 maña:'parte', jefe:true, grito:'Un bostezo del tamaño del salón.',
+                 dice:'Se parte en dos cada vez que lo golpeas fuerte.' },
+  bilbulMayor: { nombre:'El Bilbul Mayor', spr:'bilbulMayor', vida:48, atq:[3,7], def:2, vel:1, jid:80,
+                 maña:'invoca', jefe:true, grito:'Todo lo que creías ordenado se mueve de lugar.',
+                 dice:'Llama gises y te voltea el camino.' },
+  coyote:      { nombre:'El Coyote del cerro', spr:'coyote', vida:66, atq:[5,10], def:3, vel:2, jid:130,
+                 maña:'embiste', jefe:true, grito:'Algo bajó del cerro y no era el viento.',
+                 dice:'Pega y se aleja antes de que respondas.' },
+  granSafek:   { nombre:'Safek, la Duda', spr:'granSafek', vida:100, atq:[6,12], def:4, vel:1, jid:250,
+                 maña:'duda', jefe:true, grito:'—¿Y tú cómo sabes que es así?',
+                 dice:'Se cura solo. La única forma de bajarle la vida es contestando bien.' }
+};
+
+/* ---------- objetos ---------- */
+var ARMAS = [
+  { id:'pluma',    nombre:'Pluma',                 spr:'pluma', dmg:[2,5],  piso:1, det:'Lo que traes siempre.' },
+  { id:'marca',    nombre:'Marcatextos gordo',     spr:'pluma', dmg:[2,6],  piso:2, det:'Deja marca.' },
+  { id:'regla',    nombre:'Regla de metal',        spr:'pluma', dmg:[3,8],  piso:4, det:'De las de taller.' },
+  { id:'baston',   nombre:'Bastón de la excursión',spr:'pluma', dmg:[5,11], piso:7, det:'Pesa, pero llega lejos.' },
+  { id:'shtender', nombre:'Shtender portátil',     spr:'shtender', dmg:[7,16], piso:10, det:'Nadie sabe quién lo bajó hasta acá.' }
+];
+var ARMADURAS = [
+  { id:'sueter',   nombre:'Suéter del uniforme', spr:'libro', def:1, piso:1, det:'Pica, pero algo detiene.' },
+  { id:'chamarra', nombre:'Chamarra',            spr:'libro', def:2, piso:3, det:'La que te prestaron.' },
+  { id:'imper',    nombre:'Impermeable',         spr:'libro', def:3, piso:6, det:'Huele a campamento.' },
+  { id:'chaleco',  nombre:'Chaleco del rally',   spr:'libro', def:5, piso:9, det:'Reflejante. Aquí abajo sirve de algo.' }
+];
+var CONSUMIBLES = [
+  { id:'agua',   nombre:'Agua',               spr:'frasco', cura:6,  det:'Media botella.' },
+  { id:'bisli',  nombre:'Bisli',              spr:'pan',    cura:4,  det:'De la tiendita.' },
+  { id:'torta',  nombre:'Torta del recreo',   spr:'pan',    cura:16, det:'Alguien la guardó para después.' },
+  { id:'cafe',   nombre:'Café de la sala',    spr:'frasco', cura:3, rapido:12, det:'Te mueves al doble un rato.' },
+  { id:'miel',   nombre:'Pan con miel',       spr:'pan',    cura:10, det:'Para que el estudio sea dulce.' }
+];
+var ARTEFACTOS = [
+  { id:'vela',     nombre:'Vela de havdalá',    spr:'vela',     cargas:3, det:'Ilumina el piso entero por un rato.' },
+  { id:'lupa',     nombre:'Lupa de Rashi',      spr:'lupa',     cargas:4, det:'En una pregunta, borra dos opciones malas.' },
+  { id:'cuaderno', nombre:'Cuaderno de jazará', spr:'cuaderno', cargas:3, det:'Te vuelve a preguntar algo que fallaste. Si ahora sí le atinas, te curas bien.' },
+  { id:'arena',    nombre:'Reloj de arena del séder', spr:'arena', cargas:3, det:'Congela a todos seis turnos.' },
+  { id:'brujula',  nombre:'Brújula de la excursión',  spr:'brujula', cargas:5, det:'Te marca dónde está la bajada.' },
+  { id:'llavero',  nombre:'Llavero de dirección',     spr:'llavero', cargas:4, det:'Abre un cofre atorado sin preguntar nada.' }
+];
+
+/* ══════════════════════════════════════════════════════════════════
+   BANCO DE PREGUNTAS QUE TRAE EL JUEGO DE FÁBRICA
+   Si la hoja RetosJuego tiene preguntas, el juego usa las de la hoja
+   y además éstas. n = qué tan hondo aparecen (1 a 4).
+   ══════════════════════════════════════════════════════════════════ */
+var BANCO = [
+ {n:1,p:'¿En qué idioma está escrita casi toda la Guemará?',o:['Arameo','Hebreo','Griego','Ladino'],c:0,
+  e:'Arameo babilonio. Por eso cuesta la primera vez.'},
+ {n:1,p:'¿Cuántos sedarim (órdenes) tiene la Mishná?',o:['Cuatro','Seis','Diez','Doce'],c:1,
+  e:'Seis: Zeraim, Moed, Nashim, Nezikin, Kodashim y Taharot.'},
+ {n:1,p:'¿Quién ordenó la Mishná?',o:['Rabí Akivá','Rav Ashí','Rabí Yehudá HaNasí','Rambam'],c:2,
+  e:'Rabí Yehudá HaNasí, al que la Guemará llama simplemente Rabí.'},
+ {n:1,p:'Cada daf tiene dos caras. ¿Cómo se llaman?',o:['Alef y bet','Rishón y shení','Peshat y derash','Yamín y smol'],c:0,
+  e:'Amud alef y amud bet. Por eso 2a y 2b.'},
+ {n:1,p:'El comentario que va pegado al lomo de la página es de…',o:['Tosafot','Rashi','Maharshá','Rosh'],c:1,
+  e:'Rashi va del lado de adentro; Tosafot del lado de afuera.'},
+ {n:1,p:'Mishná y Guemará juntas forman…',o:['El Midrash','El Talmud','La Halajá','El Sidur'],c:1,
+  e:'Eso es el Talmud.'},
+ {n:1,p:'¿Cuál Talmud se estudia más en las yeshivot?',o:['El Yerushalmí','El Bavlí','Los dos igual','Ninguno'],c:1,
+  e:'El Bavlí, el de Babilonia.'},
+ {n:1,p:'¿Cómo se le dice al pasaje que estás estudiando en la Guemará?',o:['Sugiá','Perek','Siman','Daf'],c:0,
+  e:'Sugiá. El perek es el capítulo y el daf es la hoja.'},
+ {n:1,p:'¿En qué seder está masejet Sukká?',o:['Zeraim','Moed','Nashim','Nezikin'],c:1,
+  e:'En Moed, el orden de las fiestas.'},
+ {n:1,p:'Los sabios de la Mishná se llaman…',o:['Amoraim','Tanaim','Gueonim','Rishonim'],c:1,
+  e:'Tanaim. Los de la Guemará son amoraim.'},
+
+ {n:2,p:'"Kal vajomer" es aprender…',o:['De una palabra repetida','De lo leve a lo grave','De la mayoría','De una lista'],c:1,
+  e:'Si en lo chico aplica, con más razón en lo grande.'},
+ {n:2,p:'"Guezerá shavá" aprende una ley de…',o:['Dos versículos con la misma palabra','Un sueño','La costumbre','Un cálculo de números'],c:0,
+  e:'La misma palabra en dos lugares enlaza las dos leyes.'},
+ {n:2,p:'Una "baraita" es una enseñanza de los tanaim que…',o:['Está en la Mishná','Quedó fuera de la Mishná','Escribió Rashi','Está en el Zohar'],c:1,
+  e:'Baraita quiere decir "de afuera".'},
+ {n:2,p:'Cuando la Guemará dice "teikú", quiere decir que la pregunta…',o:['Se resolvió','Era tonta','Queda sin resolver','Es de otro tratado'],c:2,
+  e:'Queda parada. Nadie la cerró.'},
+ {n:2,p:'"Majloket" es…',o:['Una disputa entre sabios','Un tipo de korbán','Una fiesta','Un error del copista'],c:0,
+  e:'Dos opiniones que no coinciden.'},
+ {n:2,p:'"Nafká miná" pregunta…',o:['De dónde salió el versículo','Qué diferencia práctica hay','Quién lo dijo','Cuándo pasó'],c:1,
+  e:'Si las dos opiniones dan lo mismo en la práctica, ¿para qué discutir?'},
+ {n:2,p:'"Matnitín" se refiere a…',o:['Nuestra Mishná','Una baraita','El Yerushalmí','Un comentario tardío'],c:0,
+  e:'La Mishná que estamos estudiando.'},
+ {n:2,p:'Abayé y Ravá son famosos por…',o:['Sus discusiones','Haber escrito la Mishná','Ser hermanos','Vivir en Jerusalén'],c:0,
+  e:'Sus majlokot son el pan de cada día en el Bavlí.'},
+ {n:2,p:'"Peshitá" quiere decir que lo que se dijo…',o:['Es obvio','Es falso','Es una pregunta','Es del Rambam'],c:0,
+  e:'La Guemará reclama: eso ya se sabía, ¿para qué decirlo?'},
+ {n:2,p:'"Tá shemá" introduce…',o:['Una prueba de una fuente','Una bendición','Un cuento','Un regaño'],c:0,
+  e:'"Ven y escucha": aquí va una fuente para resolver.'},
+
+ {n:3,p:'¿Cuántas paredes necesita como mínimo una sucá?',o:['Una','Dos y un poco','Tres completas','Cuatro'],c:1,
+  e:'Dos como deben ser y una tercera aunque sea de un tefaj.'},
+ {n:3,p:'¿Cuál es la altura máxima de una sucá?',o:['10 tefajim','20 amot','7 amot','No hay máximo'],c:1,
+  e:'Más alta de veinte amot, no sirve. Con eso abre la masejet.'},
+ {n:3,p:'¿Y la altura mínima?',o:['10 tefajim','1 amá','20 tefajim','3 amot'],c:0,
+  e:'Diez tefajim. Menos de eso ya no es un espacio.'},
+ {n:3,p:'La sejaj tiene que ser de algo que…',o:['Sea nuevo','Creció de la tierra y está cortado','Sea de metal','Lo haya hecho un jajam'],c:1,
+  e:'Que haya crecido del suelo, que esté desconectado y que no reciba tumá.'},
+ {n:3,p:'¿Cuál korbán se quema completo sobre el mizbéaj?',o:['Shelamim','Jatat','Olá','Minjá'],c:2,
+  e:'La olá sube entera. De ahí su nombre.'},
+ {n:3,p:'El korbán minjá está hecho principalmente de…',o:['Carne','Harina y aceite','Vino','Fruta'],c:1,
+  e:'Harina fina con aceite y levoná.'},
+ {n:3,p:'¿Qué libro de la Torá abre con las leyes de los korbanot?',o:['Shemot','Vayikrá','Bamidbar','Devarim'],c:1,
+  e:'Vayikrá, desde el primer perek.'},
+ {n:3,p:'"Lejatjilá" significa…',o:['Después de hecho','De entrada, como se debe','Nunca','Solo en shabat'],c:1,
+  e:'Lejatjilá es como sí se hace; bedivad es qué pasa si ya se hizo de otro modo.'},
+ {n:3,p:'"Bedivad" significa…',o:['De entrada','Ya hecho, a posteriori','Por costumbre','Por error grave'],c:1,
+  e:'Lo que ya pasó: ¿vale o no vale?'},
+ {n:3,p:'"Safek" significa…',o:['Certeza','Duda','Castigo','Permiso'],c:1,
+  e:'Duda. Media Guemará es qué hacer con un safek.'},
+
+ {n:4,p:'"Migó" es un argumento que dice…',o:['Que la mayoría manda','Que si quisiera mentir habría dicho algo mejor','Que el texto se repite','Que el testigo es pariente'],c:1,
+  e:'Si tenía a la mano una mentira más conveniente y no la usó, le creemos.'},
+ {n:4,p:'"Jazaká" es la presunción de que…',o:['Las cosas siguen como estaban','Todos son culpables','El texto está mal','Hay que preguntar al rav'],c:0,
+  e:'Lo que estaba, sigue estando, hasta que se demuestre lo contrario.'},
+ {n:4,p:'"Sevará" es…',o:['Un versículo','Razonamiento lógico, sin versículo','Una costumbre','Un decreto del rey'],c:1,
+  e:'A veces la Guemará pregunta "¿para qué versículo? ¡es sevará!".'},
+ {n:4,p:'"Midiorayta" quiere decir que la ley es…',o:['De la Torá','De los sabios','De la costumbre','Del gobierno'],c:0,
+  e:'De la Torá misma. Miderabanán es de los sabios.'},
+ {n:4,p:'"Teyuvtá" es…',o:['Una pregunta sin respuesta','Una refutación que gana','Un elogio','Un tipo de korbán'],c:1,
+  e:'El argumento quedó tumbado.'},
+ {n:4,p:'Pardés son cuatro niveles: Peshat, Remez, Derash y…',o:['Sod','Siman','Seder','Safek'],c:0,
+  e:'Sod, lo escondido. Las cuatro letras forman PaRDeS.'},
+ {n:4,p:'"Peshat" es…',o:['El sentido simple del texto','Una alusión','Una parábola','Un secreto'],c:0,
+  e:'Lo que dice el texto, tal como se lee.'},
+ {n:4,p:'Una "baayá" que la Guemará no logra resolver termina en…',o:['Teikú','Teyuvtá','Mashmá','Guezerá'],c:0,
+  e:'Teikú: queda abierta.'},
+ {n:4,p:'"Rov" como principio es decidir según…',o:['La mayoría','El más viejo','El más rico','El que preguntó'],c:0,
+  e:'Seguimos a la mayoría cuando hay duda.'},
+ {n:4,p:'Cuando la Guemará dice "gufá", está…',o:['Cerrando el tema','Volviendo al texto que citó de pasada','Citando la Torá','Pidiendo silencio'],c:1,
+  e:'Trajo una fuente para otra cosa y ahora la estudia por sí misma.'},
+
+ {n:1,p:'En el Bet Hamidrash, ¿qué se usa para apoyar el libro cuando estudias de pie?',
+  o:['El shtender','El arón','La bimá','La mejitzá'],c:0,e:'El shtender.'},
+ {n:1,p:'¿Cómo se llama la app de los alumnos de Or Barak?',o:['Or+','Barak','Metivta','Luz'],c:0,
+  e:'Or+. En la que estás jugando ahorita.'}
+];
+
+/* ---------- palabras para los retos de traducción ----------
+   El juego arma solo las opciones malas con las traducciones de las otras. */
+var PALABRAS = [
+ {n:1,h:'אָמַר',t:'dijo'},            {n:1,h:'תָּנָא',t:'enseñó'},
+ {n:1,h:'מַאי',t:'¿qué?'},            {n:1,h:'לֹא',t:'no'},
+ {n:1,h:'אִין',t:'sí'},               {n:1,h:'הָכָא',t:'aquí'},
+ {n:1,h:'הָתָם',t:'allá'},            {n:1,h:'מִלְּתָא',t:'una cosa, un asunto'},
+ {n:1,h:'רַבָּנַן',t:'los sabios'},    {n:1,h:'שְׁמַע',t:'escucha'},
+ {n:2,h:'תָּא שְׁמַע',t:'ven y escucha'}, {n:2,h:'קָא מַשְׁמַע לָן',t:'nos enseña'},
+ {n:2,h:'אִיכָּא דְּאָמְרִי',t:'hay quienes dicen'}, {n:2,h:'מְנָא הָנֵי מִילֵּי',t:'¿de dónde se sabe esto?'},
+ {n:2,h:'פְּשִׁיטָא',t:'es obvio'},    {n:2,h:'אֶלָּא',t:'sino'},
+ {n:2,h:'וְהָא',t:'¡pero si…!'},       {n:2,h:'דִּלְמָא',t:'quizá'},
+ {n:2,h:'רֵישָׁא',t:'la primera parte'}, {n:2,h:'סֵיפָא',t:'la última parte'},
+ {n:2,h:'מַתְנִיתִין',t:'nuestra Mishná'}, {n:2,h:'בָּרַיְיתָא',t:'enseñanza de afuera de la Mishná'},
+ {n:3,h:'קוּשְׁיָא',t:'pregunta difícil'}, {n:3,h:'תֵּירוּץ',t:'respuesta'},
+ {n:3,h:'מַחֲלוֹקֶת',t:'disputa'},     {n:3,h:'לִכְאוֹרָה',t:'a primera vista'},
+ {n:3,h:'אַדְּרַבָּה',t:'al contrario'}, {n:3,h:'גּוּפָא',t:'volvamos al texto mismo'},
+ {n:3,h:'סוּגְיָא',t:'el tema que se estudia'}, {n:3,h:'מַסֶּכֶת',t:'tratado'},
+ {n:3,h:'דַּף',t:'hoja'},              {n:3,h:'עַמּוּד',t:'cara de la hoja'},
+ {n:3,h:'שֶׁנֶּאֱמַר',t:'pues está dicho'}, {n:3,h:'דִּכְתִיב',t:'pues está escrito'},
+ {n:3,h:'כִּדְתַנְיָא',t:'como se enseñó'}, {n:3,h:'הַשְׁתָּא',t:'ahora'},
+ {n:4,h:'תֵּיקוּ',t:'queda sin resolver'}, {n:4,h:'תְּיוּבְתָּא',t:'refutación'},
+ {n:4,h:'סְבָרָא',t:'razonamiento lógico'}, {n:4,h:'חֲזָקָה',t:'presunción'},
+ {n:4,h:'מִיגּוֹ',t:'ya que pudo decir otra cosa'}, {n:4,h:'נָפְקָא מִינַּהּ',t:'diferencia práctica'},
+ {n:4,h:'בִּשְׁלָמָא',t:'se entiende que…'}, {n:4,h:'מֵעִיקָּרָא',t:'desde el principio'},
+ {n:4,h:'הָכִי נַמֵי',t:'así también'}, {n:4,h:'בָּעְיָא',t:'pregunta abierta'},
+ {n:4,h:'מִדְּאוֹרַיְיתָא',t:'de la Torá'}, {n:4,h:'מִדְּרַבָּנָן',t:'de los sabios'}
+];
+
+/* ══════════════════ UTILIDADES ══════════════════ */
+var ANCHO = 34, ALTO = 24, LOSA = 8;
+var ROCA = 0, PISO = 1, PARED = 2, PUERTA = 3, BAJADA = 4, COFRE = 5, ADORNO = 6, AGUA = 7, COFREAB = 8;
+
+function ale(n) { return Math.floor(Math.random() * n); }
+function entre(a, b) { return a + ale(b - a + 1); }
+function elige(lista) { return lista[ale(lista.length)]; }
+function revuelve(l) { for (var i = l.length - 1; i > 0; i--) { var j = ale(i + 1); var t = l[i]; l[i] = l[j]; l[j] = t; } return l; }
+function tope(v, a, b) { return v < a ? a : (v > b ? b : v); }
+function dist(a, b) { return Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y)); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+  return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+function guardar(k, v) { try { localStorage.setItem('pd-' + k, v); } catch (e) {} }
+function leer(k) { try { return localStorage.getItem('pd-' + k); } catch (e) { return null; } }
+function borrar(k) { try { localStorage.removeItem('pd-' + k); } catch (e) {} }
+
+/* ══════════════════ ESTADO ══════════════════ */
+var J = null;          // el alumno
+var mapa = null, visto = null, luz = null, cuartos = null, deCuarto = null;
+var bichos = [], sueltos = [], piso = 1, turnos = 0, corriendo = false;
+var bitacora = [], pendiente = null, autoCamino = null, autoTimer = 0;
+
+function region() { return REGIONES[Math.min(3, Math.floor((piso - 1) / 3))]; }
+function esJefe() { return piso % 3 === 0; }
+function nivelReto() { return Math.min(4, Math.ceil(piso / 3)); }
+
+function nuevoAlumno() {
+  return {
+    x: 0, y: 0, vida: 26, max: 26, nivel: 1, jid: 0, exp: 0,
+    arma: { id: 'pluma', nombre: 'Pluma', spr: 'pluma', dmg: [2, 5], det: 'Lo que traes siempre.' },
+    armadura: null,
+    mochila: [],
+    artefactos: [],
+    confundido: 0, dormido: 0, rapido: 0, invisible: 0,
+    falladas: [], aciertos: 0, errores: 0, racha: 0, mejorRacha: 0
+  };
+}
+
+/* ══════════════════ MAPA ══════════════════ */
+function vacio(v) { var a = new Array(ANCHO * ALTO); for (var i = 0; i < a.length; i++) a[i] = v; return a; }
+function en(x, y) { return x >= 0 && y >= 0 && x < ANCHO && y < ALTO; }
+function cel(x, y) { return en(x, y) ? mapa[y * ANCHO + x] : ROCA; }
+function pon(x, y, v) { if (en(x, y)) mapa[y * ANCHO + x] = v; }
+function pisable(x, y) { var c = cel(x, y); return c === PISO || c === PUERTA || c === BAJADA || c === AGUA || c === COFREAB; }
+function transparente(x, y) { var c = cel(x, y); return c === PISO || c === BAJADA || c === AGUA || c === COFREAB || c === PUERTA; }
+
+function generar() {
+  mapa = vacio(ROCA); visto = vacio(0); luz = vacio(0);
+  cuartos = []; deCuarto = vacio(-1);
+  var intentos = 0, meta = esJefe() ? 5 : entre(7, 9);
+
+  while (cuartos.length < meta && intentos++ < 400) {
+    var an = entre(5, 9), al = entre(4, 7);
+    if (esJefe() && cuartos.length === 0) { an = 11; al = 9; }
+    var x = entre(1, ANCHO - an - 2), y = entre(1, ALTO - al - 2);
+    var choca = false;
+    for (var i = 0; i < cuartos.length; i++) {
+      var c = cuartos[i];
+      if (x < c.x + c.an + 1 && x + an + 1 > c.x && y < c.y + c.al + 1 && y + al + 1 > c.y) { choca = true; break; }
+    }
+    if (choca) continue;
+    cuartos.push({ x: x, y: y, an: an, al: al, cx: x + (an >> 1), cy: y + (al >> 1) });
+  }
+  if (cuartos.length < 3) return generar();
+
+  cuartos.forEach(function (c, i) {
+    for (var y = c.y; y < c.y + c.al; y++) for (var x = c.x; x < c.x + c.an; x++) {
+      pon(x, y, PISO); deCuarto[y * ANCHO + x] = i;
+    }
+  });
+
+  for (var i = 1; i < cuartos.length; i++) pasillo(cuartos[i - 1], cuartos[i]);
+  pasillo(cuartos[cuartos.length - 1], cuartos[0]);
+
+  for (var y = 0; y < ALTO; y++) for (var x = 0; x < ANCHO; x++) {
+    if (cel(x, y) !== ROCA) continue;
+    var junto = false;
+    for (var dy = -1; dy <= 1 && !junto; dy++) for (var dx = -1; dx <= 1; dx++) {
+      var c2 = cel(x + dx, y + dy);
+      if (c2 === PISO || c2 === PUERTA) { junto = true; break; }
+    }
+    if (junto) pon(x, y, PARED);
+  }
+  puertas();
+}
+
+function pasillo(a, b) {
+  var x = a.cx, y = a.cy;
+  if (ale(2)) {
+    while (x !== b.cx) { x += x < b.cx ? 1 : -1; if (cel(x, y) === ROCA) pon(x, y, PISO); }
+    while (y !== b.cy) { y += y < b.cy ? 1 : -1; if (cel(x, y) === ROCA) pon(x, y, PISO); }
+  } else {
+    while (y !== b.cy) { y += y < b.cy ? 1 : -1; if (cel(x, y) === ROCA) pon(x, y, PISO); }
+    while (x !== b.cx) { x += x < b.cx ? 1 : -1; if (cel(x, y) === ROCA) pon(x, y, PISO); }
+  }
+}
+
+/* Una puerta donde el pasillo toca la orilla de un cuarto. */
+function puertas() {
+  cuartos.forEach(function (c) {
+    for (var x = c.x - 1; x <= c.x + c.an; x++) {
+      intentaPuerta(x, c.y - 1, 0, -1); intentaPuerta(x, c.y + c.al, 0, 1);
+    }
+    for (var y = c.y - 1; y <= c.y + c.al; y++) {
+      intentaPuerta(c.x - 1, y, -1, 0); intentaPuerta(c.x + c.an, y, 1, 0);
+    }
+  });
+}
+function intentaPuerta(x, y, dx, dy) {
+  if (cel(x, y) !== PISO) return;
+  if (deCuarto[y * ANCHO + x] >= 0) return;
+  if (cel(x + dx, y + dy) === PISO && cel(x - dx, y - dy) === PISO && ale(3) === 0) pon(x, y, PUERTA);
+}
+
+function cuartoDe(x, y) { return en(x, y) ? deCuarto[y * ANCHO + x] : -1; }
+
+function libre(c, evita) {
+  for (var i = 0; i < 60; i++) {
+    var x = c.x + ale(c.an), y = c.y + ale(c.al);
+    if (cel(x, y) !== PISO) continue;
+    if (bichoEn(x, y) || sueltoEn(x, y)) continue;
+    if (J && x === J.x && y === J.y) continue;
+    if (evita && Math.abs(x - evita.x) + Math.abs(y - evita.y) < 4) continue;
+    return { x: x, y: y };
+  }
+  return null;
+}
+
+/* ══════════════════ LUZ ══════════════════ */
+function verLinea(x0, y0, x1, y1) {
+  var dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0);
+  var sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1, err = dx - dy, x = x0, y = y0;
+  for (var g = 0; g < 60; g++) {
+    if (x === x1 && y === y1) return true;
+    var e2 = 2 * err;
+    if (e2 > -dy) { err -= dy; x += sx; }
+    if (e2 < dx) { err += dx; y += sy; }
+    if (x === x1 && y === y1) return true;
+    if (!transparente(x, y)) return false;
+  }
+  return false;
+}
+
+function alumbrar() {
+  var r = 7;
+  for (var i = 0; i < luz.length; i++) luz[i] = 0;
+  for (var y = J.y - r; y <= J.y + r; y++) for (var x = J.x - r; x <= J.x + r; x++) {
+    if (!en(x, y)) continue;
+    if ((x - J.x) * (x - J.x) + (y - J.y) * (y - J.y) > r * r + 2) continue;
+    if (!verLinea(J.x, J.y, x, y)) continue;
+    luz[y * ANCHO + x] = 1; visto[y * ANCHO + x] = 1;
+  }
+  var ic = cuartoDe(J.x, J.y);
+  if (ic >= 0) {
+    var c = cuartos[ic];
+    for (var yy = c.y - 1; yy <= c.y + c.al; yy++) for (var xx = c.x - 1; xx <= c.x + c.an; xx++) {
+      if (!en(xx, yy)) continue;
+      luz[yy * ANCHO + xx] = 1; visto[yy * ANCHO + xx] = 1;
+    }
+  }
+  if (J.verTodo > 0) for (var k = 0; k < luz.length; k++) { luz[k] = 1; visto[k] = 1; }
+}
+function iluminado(x, y) { return en(x, y) && luz[y * ANCHO + x] === 1; }
+function conocido(x, y) { return en(x, y) && visto[y * ANCHO + x] === 1; }
+
+/* ══════════════════ POBLAR EL PISO ══════════════════ */
+function poblar() {
+  var reg = region();
+  var e = libre(cuartos[0]); J.x = e.x; J.y = e.y;
+
+  var lejos = cuartos[0], mejor = -1;
+  cuartos.forEach(function (c) {
+    var d = Math.abs(c.cx - J.x) + Math.abs(c.cy - J.y);
+    if (d > mejor) { mejor = d; lejos = c; }
+  });
+  var b = libre(lejos) || { x: lejos.cx, y: lejos.cy };
+  pon(b.x, b.y, BAJADA);
+
+  bichos = []; sueltos = [];
+
+  if (esJefe()) {
+    var jefe = crearBicho(reg.jefe, b.x, b.y);
+    var sitio = libre(lejos, b) || { x: lejos.cx, y: lejos.cy };
+    jefe.x = sitio.x; jefe.y = sitio.y; jefe.dormido = true;
+    bichos.push(jefe);
+    for (var i = 0; i < 2 + Math.floor(piso / 4); i++) sueltaBicho(reg);
+  } else {
+    var cuantos = (piso <= 2 ? 2 : 3) + Math.floor(piso * 0.6) + ale(2);
+    for (var k = 0; k < cuantos; k++) sueltaBicho(reg);
+  }
+
+  var cofres = esJefe() ? 1 : entre(1, 2);
+  for (var q = 0; q < cofres; q++) {
+    var c = elige(cuartos), p = libre(c);
+    if (p) pon(p.x, p.y, COFRE);
+  }
+
+  for (var a = 0; a < entre(2, 4); a++) {
+    var cc = elige(cuartos), pp = libre(cc);
+    if (pp && cuartoDe(pp.x, pp.y) !== cuartoDe(J.x, J.y)) pon(pp.x, pp.y, ADORNO);
+  }
+
+  var cuantosObj = entre(2, 4);
+  for (var o = 0; o < cuantosObj; o++) {
+    var c3 = elige(cuartos), p3 = libre(c3);
+    if (p3) sueltos.push({ x: p3.x, y: p3.y, obj: objetoDelPiso() });
+  }
+
+  /* Seguro: si por lo que sea la bajada quedó incomunicada, se rehace el piso.
+     Mejor perder un milisegundo que dejar a alguien encerrado. */
+  var d = distancias(J.x, J.y, true);
+  if (d[b.x + b.y * ANCHO] >= 9999) { generar(); return poblar(); }
+  for (var t = 0; t < ALTO * ANCHO; t++) {
+    if (mapa[t] !== COFRE && mapa[t] !== ADORNO) continue;
+    var tx = t % ANCHO, ty = (t / ANCHO) | 0, alcanzable = false;
+    for (var k = 0; k < 8 && !alcanzable; k++)
+      if (d[(tx + DIRS[k][0]) + (ty + DIRS[k][1]) * ANCHO] < 9999) alcanzable = true;
+    if (!alcanzable) mapa[t] = PISO;
+  }
+  sueltos = sueltos.filter(function (s) { return d[s.x + s.y * ANCHO] < 9999; });
+
+  alumbrar();
+}
+
+function sueltaBicho(reg) {
+  var c = elige(cuartos);
+  if (cuartoDe(J.x, J.y) === cuartos.indexOf(c) && cuartos.length > 1) return;
+  var p = libre(c, J);
+  if (!p) return;
+  bichos.push(crearBicho(elige(reg.bichos), p.x, p.y));
+}
+
+function crearBicho(id, x, y) {
+  var d = BICHOS[id];
+  var crecer = 1 + (piso - 1) * 0.06;
+  return {
+    id: id, nombre: d.nombre, spr: d.spr, x: x, y: y,
+    vida: Math.round(d.vida * crecer), max: Math.round(d.vida * crecer),
+    atq: d.atq, def: d.def, vel: d.vel, jid: d.jid, maña: d.maña,
+    jefe: !!d.jefe, energia: 0, visto: false, dormido: false, enojado: 0, robo: null
+  };
+}
+
+function bichoEn(x, y) {
+  for (var i = 0; i < bichos.length; i++) if (bichos[i].x === x && bichos[i].y === y) return bichos[i];
+  return null;
+}
+function sueltoEn(x, y) {
+  for (var i = 0; i < sueltos.length; i++) if (sueltos[i].x === x && sueltos[i].y === y) return sueltos[i];
+  return null;
+}
+
+/* ══════════════════ OBJETOS QUE SALEN ══════════════════ */
+function objetoDelPiso() {
+  var r = Math.random();
+  if (r < 0.54) return { tipo: 'cons', d: elige(CONSUMIBLES) };
+  if (r < 0.66) return { tipo: 'arma', d: elige(ARMAS.filter(function (a) { return a.piso <= piso + 1; })) };
+  if (r < 0.82) return { tipo: 'arm', d: elige(ARMADURAS.filter(function (a) { return a.piso <= piso + 1; })) };
+  return { tipo: 'art', d: elige(ARTEFACTOS) };
+}
+function objetoBueno() {
+  var r = Math.random();
+  if (r < 0.40) return { tipo: 'art', d: elige(ARTEFACTOS) };
+  if (r < 0.70) return { tipo: 'arma', d: elige(ARMAS.filter(function (a) { return a.piso <= piso + 3; })) };
+  if (r < 0.90) return { tipo: 'arm', d: elige(ARMADURAS.filter(function (a) { return a.piso <= piso + 3; })) };
+  return { tipo: 'cons', d: elige(CONSUMIBLES) };
+}
+
+/* ══════════════════ CAMINOS ══════════════════ */
+var DIRS = [[0,-1],[1,0],[0,1],[-1,0],[1,-1],[1,1],[-1,1],[-1,-1]];
+
+/* Mapa de distancias desde un punto: los bichos se dejan ir cuesta abajo. */
+function distancias(ox, oy, abrePuertas) {
+  var d = new Array(ANCHO * ALTO); for (var i = 0; i < d.length; i++) d[i] = 9999;
+  var cola = [ox + oy * ANCHO]; d[ox + oy * ANCHO] = 0;
+  var cab = 0;
+  while (cab < cola.length) {
+    var p = cola[cab++], px = p % ANCHO, py = (p / ANCHO) | 0, nd = d[p] + 1;
+    for (var k = 0; k < 8; k++) {
+      var nx = px + DIRS[k][0], ny = py + DIRS[k][1];
+      if (!en(nx, ny)) continue;
+      var c = cel(nx, ny);
+      var ok = c === PISO || c === BAJADA || c === AGUA || c === COFREAB || (c === PUERTA && abrePuertas !== false);
+      if (!ok) continue;
+      var q = nx + ny * ANCHO;
+      if (d[q] <= nd) continue;
+      d[q] = nd; cola.push(q);
+    }
+  }
+  return d;
+}
+
+function camino(desdeX, desdeY, haciaX, haciaY) {
+  var d = distancias(haciaX, haciaY, true);
+  if (d[desdeX + desdeY * ANCHO] >= 9999) return null;
+  var ruta = [], x = desdeX, y = desdeY, g = 0;
+  while ((x !== haciaX || y !== haciaY) && g++ < 400) {
+    var mejor = null, mv = d[x + y * ANCHO];
+    for (var k = 0; k < 8; k++) {
+      var nx = x + DIRS[k][0], ny = y + DIRS[k][1];
+      if (!en(nx, ny)) continue;
+      var v = d[nx + ny * ANCHO];
+      if (v < mv) { mv = v; mejor = [nx, ny]; }
+    }
+    if (!mejor) return ruta.length ? ruta : null;
+    x = mejor[0]; y = mejor[1]; ruta.push([x, y]);
+  }
+  return ruta;
+}
+
+/* ══════════════════ BITÁCORA ══════════════════ */
+function di(texto, clase) {
+  bitacora.push({ t: texto, c: clase || '' });
+  if (bitacora.length > 3) bitacora.shift();
+  pintaBitacora();
+}
+function pintaBitacora() {
+  document.getElementById('bitacora').innerHTML =
+    bitacora.map(function (b) { return '<div class="' + b.c + '">' + esc(b.t) + '</div>'; }).join('');
+}
+
+/* ══════════════════ MOVER Y PEGAR ══════════════════ */
+function intentaMover(dx, dy) {
+  if (!corriendo || pendiente) return;
+  if (dx === 0 && dy === 0) { gastaTurno(); return; }
+
+  if (J.confundido > 0 && ale(3) === 0) {
+    var g = elige(DIRS); dx = g[0]; dy = g[1];
+  }
+  var nx = J.x + dx, ny = J.y + dy;
+  var b = bichoEn(nx, ny);
+  if (b) { atacaJugador(b); return; }
+
+  var c = cel(nx, ny);
+  if (c === COFRE) { abreCofre(nx, ny); return; }
+  if (c === ADORNO) { di('Hay algo estorbando.'); return; }
+  if (!pisable(nx, ny)) return;
+
+  J.x = nx; J.y = ny;
+  var s = sueltoEn(nx, ny);
+  if (s) { recoge(s); }
+  if (cel(nx, ny) === BAJADA) di('Aquí está la bajada. Dale a Bajar.', 'oro');
+  gastaTurno();
+}
+
+function atacaJugador(b) {
+  var pega = Math.random() < 0.86;
+  if (!pega) {
+    di('Le tiras y le pasas de lado.');
+    if (b.maña === 'crece') { b.max += 2; b.vida += 2; di(b.nombre + ' se crece.', 'mal'); }
+  } else {
+    var d = entre(J.arma.dmg[0], J.arma.dmg[1]) + J.nivel - 1 - b.def;
+    if (d < 1) d = 1;
+    b.vida -= d;
+    if (b.vida <= 0) { muereBicho(b); }
+    else {
+      di('Le pegas a ' + b.nombre + ' (' + d + ').'); son('golpe');
+      if (b.maña === 'parte' && !b.partido && b.vida < b.max / 2) partir(b);
+    }
+  }
+  b.visto = true; b.dormido = false;
+  gastaTurno();
+}
+
+function partir(b) {
+  b.partido = true;
+  for (var k = 0; k < 2; k++) {
+    var d = elige(DIRS), nx = b.x + d[0], ny = b.y + d[1];
+    if (!pisable(nx, ny) || bichoEn(nx, ny)) continue;
+    var c = crearBicho('shiamun', nx, ny); c.visto = true;
+    bichos.push(c);
+  }
+  di('¡Se parte en pedazos!', 'mal');
+}
+
+function muereBicho(b) {
+  bichos.splice(bichos.indexOf(b), 1);
+  J.jid += b.jid; J.exp += b.jid;
+  di('Cae ' + b.nombre + '. +' + b.jid + ' jidushim', 'bien'); son('cae');
+  if (b.robo) { sueltos.push({ x: b.x, y: b.y, obj: b.robo }); di('Suelta lo que te había quitado.', 'oro'); }
+  if (b.jefe) { ganasteJefe(b); }
+  subeNivel();
+}
+
+function subeNivel() {
+  var meta = J.nivel * 12;
+  while (J.exp >= meta) {
+    J.exp -= meta; J.nivel++;
+    J.max += 6; J.vida = J.max;
+    di('Subes a nivel ' + J.nivel + '. Te recuperas entero.', 'oro'); son('sube');
+    meta = J.nivel * 12;
+  }
+}
+
+function dañoAlAlumno(b) {
+  var d = entre(b.atq[0], b.atq[1]) - (J.armadura ? J.armadura.def : 0);
+  if (d < 1) d = 1;
+  J.vida -= d;
+  var extra = '';
+  if (b.maña === 'contagia' && ale(2) === 0) { J.dormido = 1; extra = ' Te contagia el bostezo.'; }
+  if (b.maña === 'confunde' && ale(2) === 0) { J.confundido = 5; extra = ' Te deja mareado.'; }
+  if (b.maña === 'roba' && !b.robo) {
+    var quitable = J.mochila.concat(J.artefactos);
+    if (quitable.length) {
+      var q = elige(quitable);
+      quitaDeMochila(q);
+      b.robo = q; extra = ' ¡Te quita ' + q.d.nombre + ' y corre!';
+    }
+  }
+  di(b.nombre + ' te pega (' + d + ').' + extra, 'mal'); son('daño');
+  if (J.vida <= 0) perdiste(b);
+}
+
+/* ══════════════════ TURNO ══════════════════ */
+function gastaTurno() {
+  if (!corriendo) return;
+  turnos++;
+
+  if (J.dormido > 0) { J.dormido--; di('No reaccionas a tiempo.'); }
+  if (J.confundido > 0) J.confundido--;
+  if (J.rapido > 0) J.rapido--;
+  if (J.verTodo > 0) J.verTodo--;
+  if (turnos % 5 === 0 && J.vida < J.max) J.vida = Math.min(J.max, J.vida + 1);
+
+  var pasos = J.rapido > 0 ? 0.5 : 1;
+  bichos.slice().forEach(function (b) {
+    b.energia += b.vel * pasos;
+    var vueltas = 0;
+    while (b.energia >= 1 && vueltas++ < 3) { b.energia -= 1; mueveBicho(b); }
+  });
+
+  alumbrar();
+  dibuja(); barra();
+  if (turnos % 12 === 0) guardaPartida();
+}
+
+function mueveBicho(b) {
+  if (!corriendo || b.vida <= 0) return;
+  var d = dist(b, J);
+  var leVe = d <= 8 && verLinea(b.x, b.y, J.x, J.y);
+
+  if (b.dormido) { if (leVe && d <= 4) { b.dormido = false; if (b.jefe) di(BICHOS[b.id].grito || '', 'mal'); } else return; }
+  if (b.maña === 'espera' && !b.visto && d > 2) return;
+  if (leVe) b.visto = true;
+  if (!b.visto) { if (ale(3) === 0) pasoAlAzar(b); return; }
+
+  if (b.maña === 'duda') return dudaActua(b);
+  if (b.maña === 'invoca' && turnos % 10 === 0) {
+    var cuantos = bichos.filter(function (o) { return o.id === 'gis'; }).length;
+    var p = cuantos < 3 ? alLado(b) : null;
+    if (p) { var g = crearBicho('gis', p.x, p.y); g.visto = true; bichos.push(g); di('Llama a los gises.', 'mal'); }
+  }
+  if (b.maña === 'aparece' && d > 2 && ale(6) === 0) {
+    var t = alLado(J); if (t) { b.x = t.x; b.y = t.y; di('Safek aparece junto a ti.', 'mal'); return; }
+  }
+  if ((b.maña === 'huye' || (b.maña === 'roba' && b.robo)) && b.vida < b.max * 0.45) return aleja(b);
+
+  if (d === 1) {
+    dañoAlAlumno(b);
+    if (b.maña === 'embiste') for (var s = 0; s < 3; s++) aleja(b);
+    return;
+  }
+  acerca(b);
+}
+
+function alLado(a) {
+  var o = revuelve(DIRS.slice());
+  for (var i = 0; i < o.length; i++) {
+    var x = a.x + o[i][0], y = a.y + o[i][1];
+    if (pisable(x, y) && !bichoEn(x, y) && !(x === J.x && y === J.y)) return { x: x, y: y };
+  }
+  return null;
+}
+function pasoAlAzar(b) {
+  var d = elige(DIRS), x = b.x + d[0], y = b.y + d[1];
+  if (pisable(x, y) && !bichoEn(x, y) && !(x === J.x && y === J.y)) { b.x = x; b.y = y; }
+}
+function acerca(b) {
+  if (!mapaJ) mapaJ = distancias(J.x, J.y, true);
+  var mejor = null, mv = mapaJ[b.x + b.y * ANCHO];
+  for (var k = 0; k < 8; k++) {
+    var nx = b.x + DIRS[k][0], ny = b.y + DIRS[k][1];
+    if (!en(nx, ny) || bichoEn(nx, ny) || (nx === J.x && ny === J.y)) continue;
+    var v = mapaJ[nx + ny * ANCHO];
+    if (v < mv) { mv = v; mejor = [nx, ny]; }
+  }
+  if (mejor) { b.x = mejor[0]; b.y = mejor[1]; } else pasoAlAzar(b);
+}
+function aleja(b) {
+  if (!mapaJ) mapaJ = distancias(J.x, J.y, true);
+  var mejor = null, mv = mapaJ[b.x + b.y * ANCHO];
+  for (var k = 0; k < 8; k++) {
+    var nx = b.x + DIRS[k][0], ny = b.y + DIRS[k][1];
+    if (!en(nx, ny) || bichoEn(nx, ny) || !pisable(nx, ny)) continue;
+    var v = mapaJ[nx + ny * ANCHO];
+    if (v > mv && v < 9999) { mv = v; mejor = [nx, ny]; }
+  }
+  if (mejor) { b.x = mejor[0]; b.y = mejor[1]; }
+}
+
+/* El jefe final: solo baja con respuestas. */
+function dudaActua(b) {
+  var d = dist(b, J);
+  if (b.regen !== 0 && turnos % 3 === 0 && b.vida < b.max) { b.vida = Math.min(b.max, b.vida + 4); }
+  if (turnos % 11 === 0) {
+    pregunta(nivelReto(), function (bien) {
+      if (bien) { b.vida -= 30; b.regen = 0; di('La duda se achica.', 'bien'); if (b.vida <= 0) muereBicho(b); }
+      else { b.vida = Math.min(b.max, b.vida + 14); b.regen = 1; di('La duda crece.', 'mal'); }
+    }, 'Safek te interrumpe');
+    return;
+  }
+  if (d === 1) return dañoAlAlumno(b);
+  acerca(b);
+}
+var mapaJ = null;
+
+/* ══════════════════ OBJETOS ══════════════════ */
+function recoge(s) {
+  sueltos.splice(sueltos.indexOf(s), 1);
+  guardaObjeto(s.obj);
+}
+function guardaObjeto(obj) {
+  son('toma');
+  if (obj.tipo === 'arma') {
+    if (!J.arma || obj.d.dmg[1] > J.arma.dmg[1]) {
+      J.arma = obj.d; di('Tomas ' + obj.d.nombre + '. Ahora pegas más fuerte.', 'oro');
+    } else { di('Encuentras ' + obj.d.nombre + ', pero lo tuyo pega más.'); }
+    return;
+  }
+  if (obj.tipo === 'arm') {
+    if (!J.armadura || obj.d.def > J.armadura.def) {
+      J.armadura = obj.d; di('Te pones ' + obj.d.nombre + '.', 'oro');
+    } else { di('Encuentras ' + obj.d.nombre + ', pero traes algo mejor.'); }
+    return;
+  }
+  if (obj.tipo === 'art') {
+    var ya = null;
+    for (var i = 0; i < J.artefactos.length; i++) if (J.artefactos[i].d.id === obj.d.id) ya = J.artefactos[i];
+    if (ya) { ya.cargas += 2; di(obj.d.nombre + ': dos cargas más.', 'oro'); }
+    else { J.artefactos.push({ tipo: 'art', d: obj.d, cargas: obj.d.cargas }); di('Encuentras ' + obj.d.nombre + '.', 'oro'); }
+    return;
+  }
+  var h = null;
+  for (var k = 0; k < J.mochila.length; k++) if (J.mochila[k].d.id === obj.d.id) h = J.mochila[k];
+  if (h) h.cant++; else J.mochila.push({ tipo: 'cons', d: obj.d, cant: 1 });
+  di('Guardas ' + obj.d.nombre + '.');
+}
+function quitaDeMochila(q) {
+  if (q.tipo === 'cons') { q.cant--; if (q.cant <= 0) J.mochila.splice(J.mochila.indexOf(q), 1); }
+  else J.artefactos.splice(J.artefactos.indexOf(q), 1);
+}
+
+function usaConsumible(q) {
+  var d = q.d;
+  J.vida = Math.min(J.max, J.vida + d.cura);
+  if (d.rapido) { J.rapido = d.rapido; di('Te mueves al doble.', 'oro'); }
+  di('Te tomas ' + d.nombre + '. +' + d.cura + ' de vida.', 'bien');
+  quitaDeMochila(q);
+  cierraMochila(); gastaTurno();
+}
+
+function usaArtefacto(q) {
+  if (q.cargas <= 0) { di('Ya no tiene cargas.'); return; }
+  var id = q.d.id;
+  if (id === 'lupa') { di('La lupa sirve cuando te hagan una pregunta.'); return; }
+  q.cargas--;
+  if (id === 'vela') { J.verTodo = 24; di('Se alumbra todo el piso.', 'oro'); }
+  if (id === 'arena') { bichos.forEach(function (b) { b.energia = -6; }); di('Todo se queda quieto seis turnos.', 'oro'); }
+  if (id === 'brujula') { J.brujula = 40; di('Sabes para dónde está la bajada.', 'oro'); }
+  if (id === 'llavero') { J.llave = (J.llave || 0) + 1; di('Traes una llave lista para el próximo cofre.', 'oro'); }
+  if (id === 'cuaderno') { cierraMochila(); return jazará(); }
+  cierraMochila(); gastaTurno();
+}
+
+function jazará() {
+  if (!J.falladas.length) { di('No traes nada pendiente de repasar.'); gastaTurno(); return; }
+  var p = J.falladas.shift();
+  muestraPregunta(p, function (bien) {
+    if (bien) { J.vida = Math.min(J.max, J.vida + 14); di('Lo repasaste y te quedó. +14 de vida.', 'bien'); }
+    else { J.falladas.push(p); di('Todavía no. Ahí queda para otra.', 'mal'); }
+    gastaTurno();
+  }, 'Jazará');
+}
+
+/* ══════════════════ COFRES ══════════════════ */
+function abreCofre(x, y) {
+  if (J.llave > 0) {
+    J.llave--; pon(x, y, COFREAB); guardaObjeto(objetoBueno());
+    di('Abres el cofre con la llave.', 'oro'); gastaTurno(); return;
+  }
+  pregunta(nivelReto(), function (bien) {
+    if (bien) {
+      pon(x, y, COFREAB);
+      guardaObjeto(objetoBueno());
+      J.jid += 5;
+      di('El cofre se abre. +5 jidushim', 'bien');
+    } else {
+      di('El cofre no cede. Vuelve con otra respuesta.', 'mal');
+    }
+    gastaTurno();
+  }, 'Un cofre atorado');
+}
+
+/* ══════════════════ BAJAR DE PISO ══════════════════ */
+function intentaBajar() {
+  if (!corriendo || pendiente) return;
+  if (cel(J.x, J.y) !== BAJADA) { di('La bajada no está aquí.'); return; }
+  var vivos = bichos.filter(function (b) { return b.jefe; });
+  if (vivos.length) { di('El jefe de este piso no te va a dejar pasar.', 'mal'); return; }
+
+  pregunta(nivelReto(), function (bien) {
+    if (bien) {
+      var premio = 8 + piso * 2 + J.racha * 3;
+      J.jid += premio;
+      J.vida = Math.min(J.max, J.vida + 6);
+      di('Pasas el portón. +' + premio + ' jidushim', 'bien');
+    } else {
+      di('El portón se abre de todos modos, pero algo bajó contigo.', 'mal');
+      J.castigo = true;
+    }
+    bajaPiso();
+  }, 'Portón del piso ' + piso);
+}
+
+function bajaPiso() {
+  piso++;
+  if (piso > 12) return ganaste();
+  generar(); poblar();
+  if (J.castigo) {
+    J.castigo = false;
+    var p = alLado(J);
+    if (p) { var b = crearBicho(elige(region().bichos), p.x, p.y); b.visto = true; bichos.push(b); }
+  }
+  J.artefactos.forEach(function (a) { if (a.cargas < a.d.cargas) a.cargas++; });
+  var reg = region();
+  if ((piso - 1) % 3 === 0) { di(reg.entrada + '.', 'oro'); di(reg.frase); }
+  else di('Piso ' + piso + '.');
+  mapaJ = null;
+  guardaPartida(); dibuja(); barra();
+}
+
+/* ══════════════════ PREGUNTAS ══════════════════ */
+var BANCO_EXTRA = [], PALABRAS_EXTRA = [], usadas = [];
+
+function todasPreguntas() { return BANCO.concat(BANCO_EXTRA); }
+function todasPalabras() { return PALABRAS.concat(PALABRAS_EXTRA); }
+
+function cercaDe(lista, n) {
+  var a = lista.filter(function (q) { return q.n === n; });
+  if (a.length >= 3) return a;
+  return lista.filter(function (q) { return Math.abs(q.n - n) <= 1; });
+}
+
+function sacaPregunta(n) {
+  var pal = todasPalabras(), pre = todasPreguntas();
+  var haceTraduccion = pal.length >= 4 && (Math.random() < 0.45 || !pre.length);
+  var q = null, intentos = 0;
+
+  while (intentos++ < 30) {
+    if (haceTraduccion) {
+      var cand = cercaDe(pal, n);
+      var w = elige(cand);
+      if (!w) break;
+      var firma = 'tr:' + w.h;
+      if (usadas.indexOf(firma) >= 0 && intentos < 20) continue;
+      usadas.push(firma);
+      var malas = revuelve(pal.filter(function (o) { return o.t !== w.t; })).slice(0, 3).map(function (o) { return o.t; });
+      if (malas.length < 3) break;
+      var ops = revuelve([w.t].concat(malas));
+      q = { heb: w.h, p: '¿Qué quiere decir?', o: ops, c: ops.indexOf(w.t),
+            e: '' + w.h + ' = ' + w.t + '.' };
+      break;
+    } else {
+      var cand2 = cercaDe(pre, n);
+      var p = elige(cand2);
+      if (!p) break;
+      var f2 = 'p:' + p.p;
+      if (usadas.indexOf(f2) >= 0 && intentos < 20) continue;
+      usadas.push(f2);
+      q = { p: p.p, o: p.o.slice(), c: p.c, e: p.e || '' };
+      break;
+    }
+  }
+  if (!q) {
+    var z = elige(todasPreguntas());
+    q = { p: z.p, o: z.o.slice(), c: z.c, e: z.e || '' };
+  }
+  if (usadas.length > 40) usadas = usadas.slice(-25);
+  return q;
+}
+
+function pregunta(n, cb, titulo) { muestraPregunta(sacaPregunta(n), cb, titulo); }
+
+function muestraPregunta(q, cb, titulo) {
+  pendiente = { q: q, cb: cb };
+  pararAuto();
+  var lupa = null;
+  for (var i = 0; i < J.artefactos.length; i++)
+    if (J.artefactos[i].d.id === 'lupa' && J.artefactos[i].cargas > 0) lupa = J.artefactos[i];
+
+  var letras = ['A', 'B', 'C', 'D', 'E'];
+  var h = '<div class="tipo">' + esc((titulo || 'Kashiá').toUpperCase()) + '</div>';
+  if (q.heb) h += '<div class="heb">' + esc(q.heb) + '</div>';
+  h += '<div class="texto">' + esc(q.p) + '</div>';
+  h += '<div class="quien">Piso ' + piso + ' · ' + esc(region().nombre) + '</div>';
+  q.o.forEach(function (o, i) {
+    h += '<button class="opcion" data-i="' + i + '"><span class="letra">' + letras[i] + '</span>' +
+         '<span>' + esc(o) + '</span></button>';
+  });
+  h += '<div id="ayudas">' + (lupa ? '<button id="bLupa">Lupa de Rashi (' + lupa.cargas + ')</button>' : '') + '</div>';
+  h += '<div id="cierre"></div>';
+
+  var caja = document.getElementById('preguntaCaja');
+  caja.innerHTML = h;
+  document.getElementById('pregunta').classList.add('on');
+
+  var botones = caja.querySelectorAll('.opcion');
+  for (var k = 0; k < botones.length; k++) botones[k].onclick = function () { contesta(parseInt(this.dataset.i, 10)); };
+  if (lupa) document.getElementById('bLupa').onclick = function () {
+    lupa.cargas--;
+    this.disabled = true;
+    var fuera = [];
+    for (var i = 0; i < q.o.length; i++) if (i !== q.c) fuera.push(i);
+    revuelve(fuera).slice(0, Math.min(2, fuera.length)).forEach(function (i) {
+      botones[i].classList.add('fuera'); botones[i].disabled = true;
+    });
+    this.textContent = 'Lupa usada';
+  };
+}
+
+function contesta(i) {
+  if (!pendiente) return;
+  var q = pendiente.q, cb = pendiente.cb;
+  var bien = (i === q.c);
+  var caja = document.getElementById('preguntaCaja');
+  var botones = caja.querySelectorAll('.opcion');
+  for (var k = 0; k < botones.length; k++) {
+    botones[k].disabled = true;
+    if (k === q.c) botones[k].classList.add('bien');
+    if (k === i && !bien) botones[k].classList.add('mal');
+  }
+  son(bien ? 'bien' : 'mal');
+  if (bien) { J.aciertos++; J.racha++; if (J.racha > J.mejorRacha) J.mejorRacha = J.racha; }
+  else {
+    J.errores++; J.racha = 0;
+    if (J.falladas.length < 12) J.falladas.push(q);
+  }
+  var texto = (bien ? '<b>Eso es.</b> ' : '<b>No era.</b> ') + esc(q.e || '');
+  if (bien && J.racha > 1) texto += ' <b>Llevas ' + J.racha + ' seguidas.</b>';
+  document.getElementById('cierre').innerHTML = texto;
+
+  setTimeout(function () {
+    document.getElementById('pregunta').classList.remove('on');
+    pendiente = null;
+    cb(bien);
+    dibuja(); barra();
+  }, bien ? 1250 : 2600);
+}
+
+/* Preguntas que vienen de la hoja RetosJuego. */
+function bajaPreguntas() {
+  var guardadas = leer('banco');
+  if (guardadas) { try { metePreguntas(JSON.parse(guardadas)); } catch (e) {} }
+  var ctrl = null;
+  try { ctrl = new AbortController(); setTimeout(function () { ctrl.abort(); }, 7000); } catch (e) {}
+  fetch(API_URL + '?accion=al_juego_retos&key=' + encodeURIComponent(APP_KEY),
+        ctrl ? { signal: ctrl.signal } : {})
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      if (!d || !d.ok) return;
+      guardar('banco', JSON.stringify(d));
+      metePreguntas(d);
+    })
+    .catch(function () { /* sin internet se juega con lo de fábrica */ });
+}
+function metePreguntas(d) {
+  if (d.preguntas && d.preguntas.length) BANCO_EXTRA = d.preguntas.filter(function (p) {
+    return p && p.p && p.o && p.o.length >= 2 && typeof p.c === 'number';
+  });
+  if (d.palabras && d.palabras.length) PALABRAS_EXTRA = d.palabras.filter(function (w) { return w && w.h && w.t; });
+}
+
+/* ══════════════════ DIBUJO ══════════════════ */
+var lienzo = document.getElementById('lienzo'), ctx = lienzo.getContext('2d');
+var escala = 3, colsV = 15, filsV = 11, anchoCss = 0, altoCss = 0;
+var cacheSpr = {};
+
+function pintaSprite(nombre, px, py, alfa) {
+  var clave = nombre + '|' + escala;
+  var im = cacheSpr[clave];
+  if (!im) {
+    var c = document.createElement('canvas');
+    c.width = LOSA * escala; c.height = LOSA * escala;
+    var g = c.getContext('2d');
+    var f = SPR[nombre];
+    for (var y = 0; y < 8; y++) for (var x = 0; x < 8; x++) {
+      var col = PAL[f[y].charAt(x)];
+      if (!col) continue;
+      g.fillStyle = col; g.fillRect(x * escala, y * escala, escala, escala);
+    }
+    im = cacheSpr[clave] = c;
+  }
+  if (alfa != null) ctx.globalAlpha = alfa;
+  ctx.drawImage(im, px, py);
+  ctx.globalAlpha = 1;
+}
+
+function ajusta() {
+  var r = document.getElementById('marco').getBoundingClientRect();
+  anchoCss = Math.max(200, Math.floor(r.width)); altoCss = Math.max(180, Math.floor(r.height));
+  var dpr = Math.min(2, window.devicePixelRatio || 1);
+  lienzo.width = Math.floor(anchoCss * dpr); lienzo.height = Math.floor(altoCss * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.imageSmoothingEnabled = false;
+  escala = Math.max(2, Math.min(6, Math.floor(Math.min(anchoCss / (13 * LOSA), altoCss / (11 * LOSA)))));
+  colsV = Math.ceil(anchoCss / (LOSA * escala)) + 1;
+  filsV = Math.ceil(altoCss / (LOSA * escala)) + 1;
+  cacheSpr = {};
+  if (corriendo) dibuja();
+}
+
+function camara() {
+  var cx = J.x - (colsV >> 1), cy = J.y - (filsV >> 1);
+  cx = tope(cx, 0, Math.max(0, ANCHO - colsV + 1));
+  cy = tope(cy, 0, Math.max(0, ALTO - filsV + 1));
+  if (ANCHO * LOSA * escala < anchoCss) cx = -Math.floor((anchoCss / (LOSA * escala) - ANCHO) / 2);
+  if (ALTO * LOSA * escala < altoCss) cy = -Math.floor((altoCss / (LOSA * escala) - ALTO) / 2);
+  return { x: cx, y: cy };
+}
+
+function dibuja() {
+  if (!corriendo || !mapa) return;
+  var T = LOSA * escala, cam = camara(), reg = region();
+  ctx.fillStyle = '#0C0A1A'; ctx.fillRect(0, 0, anchoCss, altoCss);
+
+  for (var fy = 0; fy < filsV; fy++) for (var fx = 0; fx < colsV; fx++) {
+    var x = cam.x + fx, y = cam.y + fy;
+    if (!en(x, y) || !conocido(x, y)) continue;
+    var px = fx * T, py = fy * T, c = cel(x, y), claro = iluminado(x, y);
+
+    if (c === PARED) {
+      ctx.fillStyle = reg.pared; ctx.fillRect(px, py, T, T);
+      ctx.fillStyle = 'rgba(255,255,255,.06)'; ctx.fillRect(px, py, T, Math.max(1, escala));
+    } else if (c === ROCA) {
+      ctx.fillStyle = '#0C0A1A'; ctx.fillRect(px, py, T, T);
+    } else {
+      ctx.fillStyle = ((x + y) % 2 === 0) ? reg.piso : reg.suelo2;
+      ctx.fillRect(px, py, T, T);
+    }
+
+    if (c === PUERTA) { ctx.fillStyle = '#6E4A22'; ctx.fillRect(px + escala, py + escala, T - 2 * escala, T - 2 * escala); }
+    if (c === BAJADA) pintaSprite('escalera', px, py);
+    if (c === COFRE) pintaSprite('cofre', px, py);
+    if (c === COFREAB) pintaSprite('abierto', px, py);
+    if (c === AGUA) pintaSprite('agua', px, py);
+    if (c === ADORNO) pintaSprite(adornoDe(x, y), px, py);
+
+    if (!claro) { ctx.fillStyle = 'rgba(8,6,18,.62)'; ctx.fillRect(px, py, T, T); }
+  }
+
+  sueltos.forEach(function (s) {
+    if (!iluminado(s.x, s.y)) return;
+    pintaSprite(s.obj.d.spr, (s.x - cam.x) * T, (s.y - cam.y) * T);
+  });
+
+  bichos.forEach(function (b) {
+    if (!iluminado(b.x, b.y)) return;
+    var px = (b.x - cam.x) * T, py = (b.y - cam.y) * T;
+    pintaSprite(b.spr, px, py);
+    if (b.vida < b.max) {
+      var an = Math.round(T * b.vida / b.max);
+      ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(px, py - escala, T, escala);
+      ctx.fillStyle = b.jefe ? '#C99B52' : '#C4483A'; ctx.fillRect(px, py - escala, an, escala);
+    }
+  });
+
+  pintaSprite('alumno', (J.x - cam.x) * T, (J.y - cam.y) * T);
+
+  if (J.brujula > 0) {
+    var esc2 = buscaBajada();
+    if (esc2) {
+      var ex = (esc2.x - cam.x) * T + T / 2, ey = (esc2.y - cam.y) * T + T / 2;
+      ctx.strokeStyle = 'rgba(201,155,82,.85)'; ctx.lineWidth = Math.max(1, escala / 2);
+      ctx.beginPath(); ctx.arc(ex, ey, T * 0.7, 0, 6.3); ctx.stroke();
+    }
+  }
+}
+function adornoDe(x, y) { var a = region().adorno; return a[(x * 7 + y * 13) % a.length]; }
+function buscaBajada() {
+  for (var y = 0; y < ALTO; y++) for (var x = 0; x < ANCHO; x++) if (cel(x, y) === BAJADA) return { x: x, y: y };
+  return null;
+}
+
+function barra() {
+  var pct = Math.max(0, Math.round(J.vida / J.max * 100));
+  document.getElementById('vidaLlena').style.width = pct + '%';
+  document.getElementById('vidaTexto').textContent = Math.max(0, J.vida) + '/' + J.max;
+  document.getElementById('lugar').innerHTML = '<b>Piso ' + piso + '</b> · ' + esc(region().nombre) +
+    ' · niv ' + J.nivel;
+  document.getElementById('jidushim').textContent = J.jid;
+  var enEscalera = corriendo && cel(J.x, J.y) === BAJADA;
+  var bu = document.getElementById('bUsar');
+  bu.textContent = enEscalera ? 'Bajar' : 'Esperar';
+  bu.className = enEscalera ? 'oro' : '';
+}
+
+/* ══════════════════ CONTROLES ══════════════════ */
+function pararAuto() { if (autoTimer) { clearInterval(autoTimer); autoTimer = 0; } autoCamino = null; }
+
+function hayBichoALaVista() {
+  for (var i = 0; i < bichos.length; i++) if (iluminado(bichos[i].x, bichos[i].y) && dist(bichos[i], J) <= 7) return true;
+  return false;
+}
+
+function vaHacia(tx, ty) {
+  if (!corriendo || pendiente) return;
+  if (!conocido(tx, ty)) return;
+  if (Math.abs(tx - J.x) <= 1 && Math.abs(ty - J.y) <= 1) { intentaMover(tx - J.x, ty - J.y); return; }
+  if (hayBichoALaVista()) { di('Primero resuelve lo que tienes enfrente.'); return; }
+  var ruta = camino(J.x, J.y, tx, ty);
+  if (!ruta || !ruta.length) return;
+  autoCamino = ruta;
+  var vidaAntes = J.vida;
+  autoTimer = setInterval(function () {
+    if (!corriendo || pendiente || !autoCamino || !autoCamino.length) return pararAuto();
+    var p = autoCamino.shift();
+    intentaMover(p[0] - J.x, p[1] - J.y);
+    if (J.vida < vidaAntes || hayBichoALaVista()) pararAuto();
+  }, 85);
+}
+
+lienzo.addEventListener('click', function (ev) {
+  if (!corriendo) return;
+  var r = lienzo.getBoundingClientRect(), T = LOSA * escala, cam = camara();
+  var tx = cam.x + Math.floor((ev.clientX - r.left) / T);
+  var ty = cam.y + Math.floor((ev.clientY - r.top) / T);
+  vaHacia(tx, ty);
+});
+
+var botonesCruz = document.querySelectorAll('#cruz button[data-dir]');
+for (var i = 0; i < botonesCruz.length; i++) {
+  (function (b) {
+    var d = b.dataset.dir.split(',').map(Number);
+    var disparo = function (ev) { ev.preventDefault(); pararAuto(); intentaMover(d[0], d[1]); };
+    b.addEventListener('touchstart', disparo, { passive: false });
+    b.addEventListener('mousedown', disparo);
+  })(botonesCruz[i]);
+}
+
+document.getElementById('bUsar').onclick = function () {
+  pararAuto();
+  if (cel(J.x, J.y) === BAJADA) intentaBajar(); else intentaMover(0, 0);
+};
+document.getElementById('bMochila').onclick = abreMochila;
+
+addEventListener('keydown', function (e) {
+  if (!corriendo || pendiente) return;
+  var k = e.key.toLowerCase(), m = { arrowup: [0,-1], w: [0,-1], arrowdown: [0,1], s: [0,1],
+    arrowleft: [-1,0], a: [-1,0], arrowright: [1,0], d: [1,0] };
+  if (m[k]) { e.preventDefault(); pararAuto(); intentaMover(m[k][0], m[k][1]); }
+  if (k === ' ' || k === '.') { e.preventDefault(); pararAuto(); if (cel(J.x,J.y) === BAJADA) intentaBajar(); else intentaMover(0,0); }
+  if (k === 'i') abreMochila();
+});
+
+addEventListener('resize', ajusta);
+
+/* ══════════════════ MOCHILA ══════════════════ */
+function abreMochila() {
+  if (!corriendo || pendiente) return;
+  pararAuto();
+  var h = '<h2>Mochila</h2><div class="grupo-t">PUESTO</div>';
+  h += renglon(J.arma.spr, J.arma.nombre, 'Pega ' + J.arma.dmg[0] + '–' + J.arma.dmg[1], '', true);
+  h += renglon(J.armadura ? J.armadura.spr : 'libro',
+               J.armadura ? J.armadura.nombre : 'Sin nada encima',
+               J.armadura ? 'Aguanta ' + J.armadura.def : 'Todo te llega completo', '', true);
+
+  if (J.artefactos.length) {
+    h += '<div class="grupo-t">ARTEFACTOS</div>';
+    J.artefactos.forEach(function (q, i) {
+      h += renglon(q.d.spr, q.d.nombre, q.d.det, q.cargas + '', false, 'art:' + i);
+    });
+  }
+  if (J.mochila.length) {
+    h += '<div class="grupo-t">PARA USAR</div>';
+    J.mochila.forEach(function (q, i) {
+      h += renglon(q.d.spr, q.d.nombre, q.d.det + ' · cura ' + q.d.cura, 'x' + q.cant, false, 'cons:' + i);
+    });
+  }
+  if (!J.artefactos.length && !J.mochila.length) h += '<p style="text-align:left">Traes la mochila vacía.</p>';
+
+  h += '<div class="grupo-t">CÓMO VAS</div>';
+  h += '<p style="text-align:left;margin-bottom:6px">Respuestas buenas: <b style="color:#F2F1F7">' + J.aciertos +
+       '</b> · falladas: <b style="color:#F2F1F7">' + J.errores + '</b> · mejor racha: <b style="color:#F2F1F7">' +
+       J.mejorRacha + '</b></p>';
+  if (J.falladas.length) h += '<p style="text-align:left">Tienes ' + J.falladas.length +
+       ' pendientes de repasar. El cuaderno de jazará sirve para eso.</p>';
+  h += '<button class="boton" id="bCerrarMochila" style="margin-top:10px">Volver</button>';
+
+  document.getElementById('mochilaCaja').innerHTML = h;
+  document.getElementById('mochila').classList.add('on');
+  document.getElementById('bCerrarMochila').onclick = cierraMochila;
+  var filas = document.querySelectorAll('#mochilaCaja .renglon[data-q]');
+  for (var k = 0; k < filas.length; k++) filas[k].onclick = function () {
+    var p = this.dataset.q.split(':');
+    if (p[0] === 'cons') usaConsumible(J.mochila[+p[1]]);
+    else usaArtefacto(J.artefactos[+p[1]]);
+  };
+}
+function renglon(spr, nom, det, cant, puesto, dato) {
+  return '<div class="renglon' + (puesto ? ' puesto' : '') + '"' + (dato ? ' data-q="' + dato + '"' : '') + '>' +
+    '<canvas class="ico" data-spr="' + spr + '"></canvas>' +
+    '<div class="cuerpo"><div class="nom">' + esc(nom) + '</div><div class="det">' + esc(det) + '</div></div>' +
+    (cant ? '<div class="cant">' + esc(cant) + '</div>' : '') + '</div>';
+}
+function cierraMochila() { document.getElementById('mochila').classList.remove('on'); }
+
+/* dibuja los iconitos de la mochila */
+function pintaIconos() {
+  var cs = document.querySelectorAll('canvas.ico');
+  for (var i = 0; i < cs.length; i++) {
+    var c = cs[i], f = SPR[c.dataset.spr]; if (!f || c.dataset.listo) continue;
+    c.width = 24; c.height = 24; c.dataset.listo = '1';
+    var g = c.getContext('2d');
+    for (var y = 0; y < 8; y++) for (var x = 0; x < 8; x++) {
+      var col = PAL[f[y].charAt(x)]; if (!col) continue;
+      g.fillStyle = col; g.fillRect(x * 3, y * 3, 3, 3);
+    }
+  }
+}
+new MutationObserver(pintaIconos).observe(document.body, { childList: true, subtree: true });
+
+/* ══════════════════ PANTALLAS ══════════════════ */
+function capa(html) {
+  document.getElementById('capaCaja').innerHTML = html;
+  document.getElementById('capa').classList.add('on');
+}
+function cierraCapa() { document.getElementById('capa').classList.remove('on'); }
+
+function records() {
+  try { return JSON.parse(leer('records') || '{}'); } catch (e) { return {}; }
+}
+function anota(fin) {
+  var r = records();
+  r.corridas = (r.corridas || 0) + 1;
+  r.mejorPiso = Math.max(r.mejorPiso || 0, piso);
+  r.mejorJid = Math.max(r.mejorJid || 0, J.jid);
+  r.aciertos = (r.aciertos || 0) + J.aciertos;
+  r.errores = (r.errores || 0) + J.errores;
+  r.mejorRacha = Math.max(r.mejorRacha || 0, J.mejorRacha);
+  if (fin === 'gana') r.terminadas = (r.terminadas || 0) + 1;
+  guardar('records', JSON.stringify(r));
+}
+
+function inicio() {
+  corriendo = false; borrarSiRoto();
+  var r = records(), hay = !!leer('partida');
+  var h = '<div class="marca">METIVTÁ OR BARAK</div><h1>PARDÉS</h1>' +
+    '<p>Doce pisos para abajo, del Bet Hamidrash hasta el Pardés. ' +
+    'Cada portón te hace una pregunta. Lo que sepas, te abre la puerta.</p>' +
+    (hay ? '<button class="boton" id="bSeguir">Seguir</button>' +
+           '<button class="secundario" id="bNueva">Empezar de nuevo</button>'
+         : '<button class="boton" id="bNueva">Empezar</button>') +
+    '<button class="secundario" id="bComo">Cómo se juega</button>';
+  if (r.corridas) h += '<div style="font-size:12.5px;color:#5f5a80;margin-top:16px;line-height:1.7">' +
+    'Bajaste hasta el piso <b style="color:#C99B52">' + r.mejorPiso + '</b> · ' +
+    'mejor cosecha <b style="color:#C99B52">' + r.mejorJid + '</b> jidushim<br>' +
+    'respuestas buenas: ' + (r.aciertos || 0) + ' · mejor racha: ' + (r.mejorRacha || 0) + '</div>';
+  capa(h);
+  var bn = document.getElementById('bNueva'); if (bn) bn.onclick = function () { borrar('partida'); nuevaPartida(); };
+  var bs = document.getElementById('bSeguir'); if (bs) bs.onclick = cargaPartida;
+  document.getElementById('bComo').onclick = comoSeJuega;
+}
+
+function comoSeJuega() {
+  capa('<h2>Cómo se juega</h2>' +
+    '<p style="text-align:left">Tocas una casilla y caminas hacia allá. Si tocas a un bicho que tienes pegado, le pegas. ' +
+    'La cruz de abajo sirve para moverte paso a paso.</p>' +
+    '<p style="text-align:left">Para bajar de piso tienes que pararte en la escalera y contestar la kashiá del portón. ' +
+    'Si le atinas, te llevas jidushim; si no, bajas igual pero algo baja contigo.</p>' +
+    '<p style="text-align:left">Los cofres también preguntan. Las preguntas que falles se te quedan apuntadas: ' +
+    'con el cuaderno de jazará las repasas y eso te cura.</p>' +
+    '<p style="text-align:left">Si te quedas sin vida, se acabó esa bajada y empiezas otra. Lo que aprendiste, no.</p>' +
+    '<button class="boton" id="bVolver">Entendido</button>');
+  document.getElementById('bVolver').onclick = inicio;
+}
+
+function nuevaPartida() {
+  J = nuevoAlumno(); J.verTodo = 0; J.brujula = 0; J.llave = 0;
+  piso = 1; turnos = 0; bitacora = []; usadas = []; mapaJ = null;
+  generar(); poblar();
+  corriendo = true; cierraCapa();
+  di(REGIONES[0].entrada + '.', 'oro'); di(REGIONES[0].frase);
+  ajusta(); dibuja(); barra(); guardaPartida();
+}
+
+function perdiste(b) {
+  corriendo = false; pararAuto(); borrar('partida'); anota('pierde');
+  capa('<h2>Hasta aquí llegaste</h2>' +
+    '<p>' + esc(b ? b.nombre + ' te tumbó en el piso ' + piso + '.' : 'Te quedaste sin vida en el piso ' + piso + '.') + '</p>' +
+    '<p>Juntaste <b style="color:#C99B52">' + J.jid + '</b> jidushim y contestaste bien ' + J.aciertos +
+    ' de ' + (J.aciertos + J.errores) + '.</p>' +
+    '<button class="boton" id="bOtra">Otra vez</button>' +
+    '<button class="secundario" id="bMenu2">Al principio</button>');
+  document.getElementById('bOtra').onclick = nuevaPartida;
+  document.getElementById('bMenu2').onclick = inicio;
+}
+
+function ganasteJefe(b) {
+  if (piso === 12) return;
+  di('Cae ' + b.nombre + '. El piso se queda quieto.', 'oro');
+}
+
+function ganaste() {
+  corriendo = false; pararAuto(); borrar('partida'); anota('gana');
+  capa('<div class="marca">PISO 12</div><h1>PARDÉS</h1>' +
+    '<p>Llegaste hasta abajo y saliste entero. Cuatro entraron al Pardés; de éste saliste tú.</p>' +
+    '<p><b style="color:#C99B52">' + J.jid + '</b> jidushim · ' + J.aciertos + ' respuestas buenas · ' +
+    'mejor racha ' + J.mejorRacha + '</p>' +
+    '<button class="boton" id="bOtra">Otra bajada</button>' +
+    '<button class="secundario" id="bMenu2">Al principio</button>');
+  document.getElementById('bOtra').onclick = nuevaPartida;
+  document.getElementById('bMenu2').onclick = inicio;
+}
+
+document.getElementById('bMenu').onclick = function () {
+  if (!corriendo) { inicio(); return; }
+  pararAuto();
+  capa('<h2>En pausa</h2><p>Piso ' + piso + ' · ' + esc(region().nombre) + '</p>' +
+    '<button class="boton" id="bSigo">Seguir jugando</button>' +
+    '<button class="secundario" id="bComo2">Cómo se juega</button>' +
+    '<button class="secundario" id="bDejar">Dejarlo aquí (se guarda)</button>');
+  document.getElementById('bSigo').onclick = cierraCapa;
+  document.getElementById('bComo2').onclick = comoSeJuega;
+  document.getElementById('bDejar').onclick = function () { guardaPartida(); corriendo = false; inicio(); };
+};
+
+/* ══════════════════ GUARDADO ══════════════════ */
+function guardaPartida() {
+  if (!corriendo) return;
+  try {
+    guardar('partida', JSON.stringify({
+      v: 1, piso: piso, turnos: turnos, J: J, mapa: mapa, visto: visto,
+      bichos: bichos, sueltos: sueltos, bitacora: bitacora,
+      cuartos: cuartos, deCuarto: deCuarto
+    }));
+  } catch (e) {}
+}
+function cargaPartida() {
+  var t = leer('partida'); if (!t) return nuevaPartida();
+  try {
+    var d = JSON.parse(t);
+    piso = d.piso; turnos = d.turnos || 0; J = d.J; mapa = d.mapa; visto = d.visto;
+    bichos = d.bichos || []; sueltos = d.sueltos || []; bitacora = d.bitacora || [];
+    cuartos = d.cuartos || []; deCuarto = d.deCuarto || vacio(-1);
+    luz = vacio(0); mapaJ = null;
+    if (!J || !mapa) throw new Error('rota');
+    corriendo = true; cierraCapa();
+    alumbrar(); ajusta(); dibuja(); barra(); pintaBitacora();
+  } catch (e) { borrar('partida'); nuevaPartida(); }
+}
+function borrarSiRoto() {
+  var t = leer('partida'); if (!t) return;
+  try { var d = JSON.parse(t); if (!d.J || !d.mapa) borrar('partida'); } catch (e) { borrar('partida'); }
+}
+
+/* ══════════════════ SONIDO ══════════════════ */
+/* Apagado de fábrica: nadie quiere que el celular suene en el Bet Hamidrash. */
+var sonido = leer('sonido') === '1', audio = null;
+function son(tipo) {
+  if (!sonido) return;
+  try {
+    if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
+    var notas = { golpe: [[220, .05]], daño: [[110, .09]], toma: [[660, .05], [880, .06]],
+      sube: [[523, .07], [659, .07], [784, .11]], bien: [[659, .07], [988, .1]],
+      mal: [[196, .14]], cae: [[330, .05], [196, .12]], fin: [[147, .3]] };
+    var lista = notas[tipo] || notas.golpe, t = audio.currentTime;
+    lista.forEach(function (n) {
+      var o = audio.createOscillator(), g = audio.createGain();
+      o.type = 'square'; o.frequency.value = n[0];
+      g.gain.setValueAtTime(0.045, t); g.gain.exponentialRampToValueAtTime(0.0001, t + n[1]);
+      o.connect(g); g.connect(audio.destination); o.start(t); o.stop(t + n[1]); t += n[1];
+    });
+  } catch (e) { sonido = false; }
+}
+
+/* ══════════════════ ARRANQUE ══════════════════ */
+var bs = document.getElementById('bSonido');
+bs.style.color = sonido ? 'var(--oro)' : 'var(--suave)';
+bs.onclick = function () {
+  sonido = !sonido; guardar('sonido', sonido ? '1' : '0');
+  bs.style.color = sonido ? 'var(--oro)' : 'var(--suave)';
+  if (sonido) son('toma');
+};
+
+bajaPreguntas();
+ajusta();
+inicio();
+
+</script>
+</body>
+</html>
