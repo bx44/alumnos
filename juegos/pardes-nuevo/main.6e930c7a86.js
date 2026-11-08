@@ -13012,6 +13012,7 @@ class Game {
   run;
   path = [];
   pendingIntent = null;
+  recogerAlLlegar = false;
   deps;
   logCap;
   constructor(seed, deps) {
@@ -13038,14 +13039,16 @@ class Game {
     this.path = [];
     this.pendingIntent = intent;
   }
-  setPath(path) {
+  setPath(path, recogerAlLlegar = false) {
     if (this.gameOver)
       return;
     this.pendingIntent = null;
     this.path = path;
+    this.recogerAlLlegar = recogerAlLlegar;
   }
   cancelPath() {
     this.path = [];
+    this.recogerAlLlegar = false;
   }
   get pathLength() {
     return this.path.length;
@@ -13191,6 +13194,10 @@ class Game {
     }
     if (this.path.length > 0) {
       const step = this.path.shift();
+      if (this.path.length === 0 && this.recogerAlLlegar) {
+        this.recogerAlLlegar = false;
+        this.pendingIntent = { kind: "pickup" };
+      }
       const dx = step.x - this.hero.x;
       const dy = step.y - this.hero.y;
       if (Math.max(Math.abs(dx), Math.abs(dy)) > 1) {
@@ -13759,6 +13766,11 @@ class InputHandler {
     }
     const here = level.idx(hero.x, hero.y);
     const tapped = level.idx(tx, ty);
+    const hayAlgo = level.items.some((it) => it.pos === tapped);
+    if (hayAlgo && tapped === here) {
+      game.queueIntent({ kind: "pickup" });
+      return;
+    }
     if (tapped === level.stairsDown && here === level.stairsDown) {
       game.queueIntent({ kind: "descend" });
       return;
@@ -13774,7 +13786,7 @@ class InputHandler {
       game.cancelPath();
       return;
     }
-    game.setPath(path);
+    game.setPath(path, hayAlgo);
   }
 }
 var DIRS = {
