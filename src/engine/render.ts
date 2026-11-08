@@ -3,6 +3,7 @@ import { ORIGINAL_SPRITES } from '../assets/original_sprites.js';
 import { Terrain, regionForDepth, type Region } from '../core/grid.js';
 import type { Level } from '../dungeon/level.js';
 import type { Game } from './loop.js';
+import { posSuave, pasoDe, limpiaSalvo } from '../orbarak/suave.js';
 
 /** Rendered tile size: 3x of the 16px art (SPEC). */
 export const TILE_PX = 48;
@@ -170,7 +171,9 @@ export class Renderer {
     ctx.imageSmoothingEnabled = false;
 
     const level = game.level;
-    const cam = cameraTileRect(game.hero.x, game.hero.y, vw, vh, level.w, level.h);
+    const heroePaso = pasoDe('heroe', game.hero.x, game.hero.y);
+    const heroeVis = { x: heroePaso.x, y: heroePaso.y };
+    const cam = cameraTileRect(heroeVis.x, heroeVis.y, vw, vh, level.w, level.h);
     this.camX = cam.camX;
     this.camY = cam.camY;
 
@@ -216,17 +219,22 @@ export class Renderer {
     }
 
     // Mobs (only when actually visible).
+    const vivos = new Set<string>(['heroe']);
     for (const m of game.mobs) {
       const i = level.idx(m.x, m.y);
+      const id = 'm' + (m.id ?? m.sprite + ':' + i);
+      vivos.add(id);
       if (!level.visible[i]) continue;
+      const v = posSuave(id, m.x, m.y);
       ctx.drawImage(
         this.entitySprite(m.sprite),
-        (m.x - this.camX) * TILE_PX,
-        (m.y - this.camY) * TILE_PX,
+        (v.x - this.camX) * TILE_PX,
+        (v.y - this.camY) * TILE_PX,
         TILE_PX,
         TILE_PX,
       );
     }
+    limpiaSalvo(vivos);
 
     // Tap-to-move path preview.
     ctx.fillStyle = 'rgba(255,255,255,0.55)';
@@ -240,10 +248,22 @@ export class Renderer {
       ctx.fill();
     }
 
-    // Hero.
-    const hx = (game.hero.x - this.camX) * TILE_PX;
-    const hy = (game.hero.y - this.camY) * TILE_PX;
-    ctx.drawImage(this.entitySprite(game.hero.sprite), hx, hy, TILE_PX, TILE_PX);
+    // Hero: cuadro de caminata mientras se mueve, y volteado hacia donde va.
+    const hx = (heroeVis.x - this.camX) * TILE_PX;
+    const hy = (heroeVis.y - this.camY) * TILE_PX;
+    const cuadro = heroePaso.caminando
+      ? 'hero_run' + (Math.floor(heroePaso.avance * 6) % 6)
+      : game.hero.sprite;
+    const dibujo = this.entitySprite(cuadro);
+    if (heroePaso.mira < 0) {
+      ctx.save();
+      ctx.translate(hx + TILE_PX, hy);
+      ctx.scale(-1, 1);
+      ctx.drawImage(dibujo, 0, 0, TILE_PX, TILE_PX);
+      ctx.restore();
+    } else {
+      ctx.drawImage(dibujo, hx, hy, TILE_PX, TILE_PX);
+    }
   }
 
   /** Sprite for a terrain cell (hidden traps/doors render as their cover). */

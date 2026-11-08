@@ -13,6 +13,7 @@ import {
   mobsToPlaced,
 } from './seams.js';
 import { entradaRegion } from '../orbarak/regiones.js';
+import { olvidaTodo } from '../orbarak/suave.js';
 import { memoriaDe, sacaKashia, honduraDe, marcaPasado, preguntaPorton } from '../orbarak/porton.js';
 
 export interface GameDeps {
@@ -390,6 +391,7 @@ export class Game {
   }
 
   private changeDepth(depth: number): void {
+    olvidaTodo();   // nadie se desliza de un piso a otro
     this.level = this.deps.gen.generate(this.rng, depth, this.run);
     for (const m of this.mobs) this.scheduler.remove(m);
     this.mobs = this.deps.mechanics.spawnMobs(this.rng, this.level);
