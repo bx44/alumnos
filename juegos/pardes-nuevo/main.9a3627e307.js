@@ -12623,7 +12623,9 @@ function mobsToPlaced(mobs) {
 }
 
 // src/orbarak/suave.ts
-var PASO_MS = 110;
+var PASO_MS = 100;
+var CUADROS_POR_SEG = 20;
+var CUADROS_CAMINATA = 6;
 var rastros = new Map;
 function ahora() {
   return typeof performance !== "undefined" ? performance.now() : Date.now();
@@ -12656,8 +12658,7 @@ function posSuave(id, x, y) {
   };
 }
 function avance(r, t) {
-  const bruto = Math.min(1, Math.max(0, (t - r.inicio) / PASO_MS));
-  return bruto * bruto * (3 - 2 * bruto);
+  return Math.min(1, Math.max(0, (t - r.inicio) / PASO_MS));
 }
 function olvidaTodo() {
   rastros.clear();
@@ -12672,10 +12673,12 @@ function pasoDe(id, x, y) {
   const v = posSuave(id, x, y);
   const r = rastros.get(id);
   if (r === undefined)
-    return { ...v, caminando: false, mira: 1, avance: 1 };
-  const p = avance(r, ahora());
+    return { ...v, caminando: false, mira: 1, avance: 1, cuadro: 0 };
+  const t = ahora();
+  const p = avance(r, t);
   const quieto = r.deX === r.aX && r.deY === r.aY;
-  return { x: v.x, y: v.y, caminando: !quieto && p < 1, mira: r.mira, avance: p };
+  const cuadro = Math.floor(t / 1000 * CUADROS_POR_SEG) % CUADROS_CAMINATA;
+  return { x: v.x, y: v.y, caminando: !quieto && p < 1, mira: r.mira, avance: p, cuadro };
 }
 
 // src/orbarak/banco.ts
@@ -13459,7 +13462,7 @@ class Renderer {
     }
     const hx = (heroeVis.x - this.camX) * TILE_PX;
     const hy = (heroeVis.y - this.camY) * TILE_PX;
-    const cuadro = heroePaso.caminando ? "hero_run" + Math.floor(heroePaso.avance * 6) % 6 : game.hero.sprite;
+    const cuadro = heroePaso.caminando ? "hero_run" + heroePaso.cuadro : game.hero.sprite;
     const dibujo = this.entitySprite(cuadro);
     if (heroePaso.mira < 0) {
       ctx.save();
@@ -13766,11 +13769,13 @@ class InputHandler {
     }
     const here = level.idx(hero.x, hero.y);
     const tapped = level.idx(tx, ty);
-    const hayAlgo = level.items.some((it) => it.pos === tapped);
-    if (hayAlgo && tapped === here) {
+    const algoAhi = level.items.some((it) => it.pos === tapped);
+    const enemigosALaVista = game.mobs.some((m) => m.hostile && level.visible[level.idx(m.x, m.y)] === 1);
+    if (algoAhi && tapped === here) {
       game.queueIntent({ kind: "pickup" });
       return;
     }
+    const hayAlgo = algoAhi && !enemigosALaVista;
     if (tapped === level.stairsDown && here === level.stairsDown) {
       game.queueIntent({ kind: "descend" });
       return;
