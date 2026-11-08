@@ -253,7 +253,7 @@ describe('trade price math (WndTradeItem.java:168-199)', () => {
       pos: 1,
       itemId: 'potion_healing',
       qty: 2,
-      name: 'potion of healing',
+      name: 'poción de curación',
       sprite: 'potion_red',
       unitPrice: 20,
     };
@@ -283,7 +283,7 @@ describe('buy flow (WndTradeItem.buy, WndTradeItem.java:201-212)', () => {
       pos: 100,
       itemId: 'potion_healing',
       qty: 1,
-      name: 'potion of healing',
+      name: 'poción de curación',
       sprite: 'potion_red',
       unitPrice: 20,
     };
@@ -303,7 +303,7 @@ describe('buy flow (WndTradeItem.buy, WndTradeItem.java:201-212)', () => {
       pos: 100,
       itemId: 'potion_healing',
       qty: 1,
-      name: 'potion of healing',
+      name: 'poción de curación',
       sprite: 'potion_red',
       unitPrice: 20,
     };
@@ -324,7 +324,7 @@ describe('buy flow (WndTradeItem.buy, WndTradeItem.java:201-212)', () => {
       pos: 100,
       itemId: 'potion_healing',
       qty: 1,
-      name: 'potion of healing',
+      name: 'poción de curación',
       sprite: 'potion_red',
       unitPrice: 20,
     };
@@ -337,7 +337,7 @@ describe('sell flow (WndTradeItem.sell/sellOne, WndTradeItem.java:168-195)', () 
     return {
       slot: 0,
       itemId: 'potion_healing',
-      name: 'potion of healing',
+      name: 'poción de curación',
       sprite: 'potion_red',
       qty,
       equipped: false,
@@ -386,7 +386,7 @@ describe('sell flow (WndTradeItem.sell/sellOne, WndTradeItem.java:168-195)', () 
     const entry = {
       slot: -1,
       itemId: 'shortsword',
-      name: 'short sword',
+      name: 'espada corta',
       sprite: 'shortsword',
       qty: 1,
       equipped: true,

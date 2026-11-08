@@ -65,7 +65,7 @@ import {
  */
 export const DM300_DEF: MobDef = {
   id: 'dm300',
-  name: 'DM-300',
+  name: 'el Camión',
   sprite: 'mob_dm300',
   hp: DM300_HT,
   atk: DM300_ATTACK,
@@ -115,7 +115,7 @@ export class DM300Mob extends ContentMob {
     if (level.getAt(this.pos) === Terrain.TRAP_INACTIVE && this.hp < this.ht) {
       this.hp = dm300Repair(rng, this.hp, this.ht);
       if (level.visible[this.pos] !== 0 && heroOf(ctx).isAlive()) {
-        ctx.log('DM-300 repairs itself!'); // GLog.n, DM300.java:89
+        ctx.log('¡El Camión se repara solo!'); // GLog.n, DM300.java:89
       }
     }
 
@@ -150,7 +150,7 @@ export class DM300Mob extends ContentMob {
 
   /** DM300.notice (DM300.java:147-150). */
   protected override onNotice(ctx: ActionContext): void {
-    ctx.log('Unauthorised personnel detected.'); // yell, DM300.java:149
+    ctx.log('Personal no autorizado detectado.'); // yell, DM300.java:149
   }
 
   /**
@@ -164,7 +164,7 @@ export class DM300Mob extends ContentMob {
     // via dropItemAt's depth-15 dispatch): the first skeleton key re-opens
     // the collapsed arena door (DM300.java:132; CavesBossLevel.java:247-258).
     dropItemAt(ctx, this.pos, 'skeleton_key');
-    ctx.log('Mission failed. Shutting down.'); // DM300.yell, DM300.java:136
+    ctx.log('Misión fallida. Apagando.'); // DM300.yell, DM300.java:136
   }
 }
 

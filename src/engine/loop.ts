@@ -189,7 +189,7 @@ export class Game {
     this.changeDepth(depth);
     // Vanilla Hero.actDescend: depth transitions cost hunger (unless starving).
     this.deps.mechanics.applyTransitionHunger(this.hero);
-    this.logMsg(`You descend to depth ${depth}.`);
+    this.logMsg(`Bajas al piso ${depth}.`);
   }
 
   /** Ascend (no-op on depth 1). */
@@ -202,7 +202,7 @@ export class Game {
     this.changeDepth(depth);
     // Vanilla Hero.actAscend: depth transitions cost hunger (unless starving).
     this.deps.mechanics.applyTransitionHunger(this.hero);
-    this.logMsg(`You ascend to depth ${depth}.`);
+    this.logMsg(`Subes al piso ${depth}.`);
   }
 
   /** Intent 'descend': only works standing on the down stairs. */
@@ -328,7 +328,7 @@ export class Game {
     if (!this.hero.isAlive() && !this.gameOver) {
       this.gameOver = true;
       // Buff kills already logged their own vanilla death line (e.g.
-      // "You burned to death...") via tickBuffs/tickHeroClock; only add the
+      // "Te quemaste...") via tickBuffs/tickHeroClock; only add the
       // generic fallback when nothing specific was logged.
       const last = this.log[this.log.length - 1] ?? '';
       if (!DEATH_MESSAGE_RE.test(last) && last !== 'You died...') {

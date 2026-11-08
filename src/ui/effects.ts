@@ -121,7 +121,7 @@ export class Effects {
         this.floats.push(this.mkFloat(hero.x, hero.y, `+${hero.hp - s.hp}`, UI.heal, 14));
       }
       if (hlvl > s.lvl) {
-        this.banner = { text: 'LEVEL UP!', sub: `Welcome to level ${hlvl}`, age: 0, ttl: 1.6 };
+        this.banner = { text: 'LEVEL UP!', sub: `Ahora eres nivel ${hlvl}`, age: 0, ttl: 1.6 };
         this.burst(hero.x, hero.y, UI.gold, 14);
       }
       this.heroSnap = { hp: hero.hp, x: hero.x, y: hero.y, lvl: hlvl };

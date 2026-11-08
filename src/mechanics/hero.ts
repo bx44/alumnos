@@ -21,7 +21,7 @@ import { eraseArmorMagic, eraseWeaponMagic, upgradeItem } from './durability.js'
  *  max = max0() = 12 at level 0 (ShortSword.java:60-62 overrides MeleeWeapon
  *  max0; MeleeWeapon.max(): max0 + level*tier, MeleeWeapon.java:55-57). */
 export const SHORT_SWORD: WeaponDef = {
-  name: 'short sword',
+  name: 'espada corta',
   tier: 1,
   level: 0,
   min: 1,
@@ -34,7 +34,7 @@ export const SHORT_SWORD: WeaponDef = {
 
 /** Dart: min 1 / max 4 (Dart.java:41-46); STR default 10 (Weapon.java:47). */
 export const DART: WeaponDef = {
-  name: 'dart',
+  name: 'dardo',
   tier: 1,
   level: 0,
   min: 1,
@@ -49,7 +49,7 @@ export const DART: WeaponDef = {
  *  = 9 (Armor.java:289-291); DR() = tier * (2 + effectiveLevel()) = 2 at
  *  level 0 (Armor.java:145-147). */
 export const CLOTH_ARMOR: ArmorDef = {
-  name: 'cloth armor',
+  name: 'armadura de tela',
   level: 0,
   str: 9,
   dr: 2,

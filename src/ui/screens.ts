@@ -32,7 +32,7 @@ export const CONTROLS: { key: string; action: string }[] = [
   { key: 'Arrows / WASD / QEZC', action: 'Move (8 directions)' },
   { key: 'Space / .', action: 'Wait a turn' },
   { key: 'G', action: 'Pick up item' },
-  { key: 'I', action: 'Inventory' },
+  { key: 'I', action: 'Mochila' },
   { key: 'M', action: 'Minimap' },
   { key: '>  /  <', action: 'Descend / ascend stairs' },
   { key: 'Esc', action: 'Pause / resume' },
@@ -68,11 +68,11 @@ export class Screens {
     const bx = (view.w - bw) / 2;
     const cy = view.h * 0.52;
     const buttons: Button[] = [
-      { id: 'new', rect: { x: bx, y: cy, w: bw, h: 52 }, label: 'New Run', primary: true },
+      { id: 'new', rect: { x: bx, y: cy, w: bw, h: 52 }, label: 'Partida nueva', primary: true },
       {
         id: 'continue',
         rect: { x: bx, y: cy + 62, w: bw, h: 52 },
-        label: 'Continue',
+        label: 'Seguir',
         disabled: !this.hasSave(),
       },
     ];
@@ -316,8 +316,8 @@ export class Screens {
     const bx = (view.w - bw) / 2;
     const by = view.h * 0.22 + 56 + 6 * 30 + 40;
     this.buttons = [
-      { id: 'retry', rect: { x: bx, y: by, w: bw, h: 52 }, label: 'Try Again', primary: true },
-      { id: 'to-title', rect: { x: bx, y: by + 62, w: bw, h: 52 }, label: 'Title Screen' },
+      { id: 'retry', rect: { x: bx, y: by, w: bw, h: 52 }, label: 'Otra vez', primary: true },
+      { id: 'to-title', rect: { x: bx, y: by + 62, w: bw, h: 52 }, label: 'Al principio' },
     ];
     for (const b of this.buttons) drawButton(ctx, b.rect, b.label, { primary: b.primary, fontSize: 17 });
   }
@@ -349,10 +349,10 @@ export class Screens {
     const bx = px + 20;
     let by = py + 64 + 7 * 24 + 12;
     this.buttons = [
-      { id: 'resume', rect: { x: bx, y: by, w: bw, h: 50 }, label: 'Resume', primary: true },
-      { id: 'help', rect: { x: bx, y: (by += 60), w: bw, h: 50 }, label: 'All Controls' },
-      { id: 'save-quit', rect: { x: bx, y: (by += 60), w: bw, h: 50 }, label: 'Save & Quit to Title' },
-      { id: 'abandon', rect: { x: bx, y: (by += 60), w: bw, h: 50 }, label: 'Abandon Run' },
+      { id: 'resume', rect: { x: bx, y: by, w: bw, h: 50 }, label: 'Seguir jugando', primary: true },
+      { id: 'help', rect: { x: bx, y: (by += 60), w: bw, h: 50 }, label: 'Todos los controles' },
+      { id: 'save-quit', rect: { x: bx, y: (by += 60), w: bw, h: 50 }, label: 'Guardar y salir' },
+      { id: 'abandon', rect: { x: bx, y: (by += 60), w: bw, h: 50 }, label: 'Dejar la partida' },
     ];
     for (const b of this.buttons) drawButton(ctx, b.rect, b.label, { primary: b.primary, fontSize: 16 });
   }
@@ -382,7 +382,7 @@ export class Screens {
     });
 
     const bw = pw - 40;
-    this.buttons = [{ id: 'back-pause', rect: { x: px + 20, y: py + ph - 62, w: bw, h: 50 }, label: 'Back', primary: true }];
+    this.buttons = [{ id: 'back-pause', rect: { x: px + 20, y: py + ph - 62, w: bw, h: 50 }, label: 'Atrás', primary: true }];
     for (const b of this.buttons) drawButton(ctx, b.rect, b.label, { primary: b.primary, fontSize: 16 });
   }
 }

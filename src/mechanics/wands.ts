@@ -94,7 +94,7 @@ export const WAND_SPECS: readonly WandSpec[] = [
     className: 'WandOfRegrowth',
     name: 'Wand of Regrowth',
     desc:
-      '"When life ceases new life always begins to grow... The eternal cycle always remains!"',
+      '"Cuando una vida se acaba siempre empieza a crecer otra... ¡La rueda nunca se detiene!"',
     wood: 'teak',
     sprite: 'item_wand_regrowth',
     initialCharges: 2,
@@ -394,23 +394,23 @@ export function regrowthSeedAmount(power: number): number {
 /* ------------------------------------------------------------------ */
 
 /** Wand.zapper: target == curUser.pos (Wand.java:243). */
-export const TXT_SELF_TARGET = "You can't target yourself";
+export const TXT_SELF_TARGET = "No te puedes apuntar a ti mismo";
 
 /** Wand.zapper fizzle (Wand.java:253-256). */
-export const TXT_FIZZLES = 'your wand fizzles; it must be out of charges for now';
+export const TXT_FIZZLES = 'la varita chisporrotea; se le acabaron las cargas por ahora';
 
-/** Item.identify prompt (Wand.wandUsed, Wand.java:274): "You are now familiar enough with your %s." */
+/** Item.identify prompt (Wand.wandUsed, Wand.java:274): "Ya le agarraste el modo a tu %s." */
 export function txtWandIdentified(wandName: string): string {
-  return `You are now familiar enough with your ${wandName}.`;
+  return `Ya le agarraste el modo a tu ${wandName}.`;
 }
 
-/** WandOfReach transport (WandOfReach.java:43-44): "You have magically transported %s into your backpack". */
+/** WandOfReach transport (WandOfReach.java:43-44): "%s aparece en tu mochila como por arte de magia". */
 export function txtReachTransported(itemName: string): string {
-  return `You have magically transported ${itemName} into your backpack`;
+  return `${itemName} aparece en tu mochila como por arte de magia`;
 }
 
 /** WandOfPoison/Amok/Slowness no-target (WandOfPoison.java:60 etc.): "nothing happened". */
-export const TXT_NOTHING_HAPPENED = 'nothing happened';
+export const TXT_NOTHING_HAPPENED = 'no pasó nada';
 
 
 /* ------------------------------------------------------------------ */

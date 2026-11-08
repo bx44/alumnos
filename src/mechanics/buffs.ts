@@ -225,7 +225,7 @@ export function paralysisDuration(): number {
 // ---------------------------------------------------------------------------
 
 /** Burning.java:45 — GLog.w when a scroll or mystery meat burns in the pack. */
-export const MSG_BURNS_UP = '%s burns up!';
+export const MSG_BURNS_UP = '¡%s se quema!';
 /** Burning.java:46 — Burning.onDeath (Burning.java:147-153), GLog.n. */
 export const MSG_BURNED_TO_DEATH = 'You burned to death...';
 /** Poison.java:94 — Poison.onDeath (Poison.java:90-95), GLog.n. */
@@ -236,7 +236,7 @@ export const MSG_DIED_FROM_POISON = 'You died from poison...';
  */
 export const MSG_OOZE_KILLED = 'Caustic ooze killed you...';
 /** Bleeding.java:77 — logged in Bleeding.act on hero death, GLog.n. */
-export const MSG_BLED_TO_DEATH = 'You bled to death...';
+export const MSG_BLED_TO_DEATH = 'Te desangraste...';
 /** Hunger.java:41 — Hunger.onDeath (Hunger.java:151-157), GLog.n. */
 export const MSG_STARVED_TO_DEATH = 'You starved to death...';
 /** Hunger.java:39 — crossing the HUNGRY threshold (Hunger.java:91), GLog.w. */
@@ -244,7 +244,7 @@ export const MSG_HUNGRY = 'You are hungry.';
 /** Hunger.java:40 — crossing the STARVING threshold (Hunger.java:84), GLog.n. */
 export const MSG_STARVING = 'You are starving!';
 /** Combo.java:27 — on combo count increase (Combo.java:46-50), GLog.p. */
-export const MSG_COMBO = '%d hit combo!';
+export const MSG_COMBO = '¡combo de %d golpes!';
 
 /** Matches the vanilla death log lines these messages produce. */
 export const DEATH_MESSAGE_RE =

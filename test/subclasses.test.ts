@@ -132,11 +132,11 @@ describe('HeroSubClass enum texts (HeroSubClass.java)', () => {
 describe('Tome of Mastery / Remastery (items/TomeOfMastery.java)', () => {
   test('TIME_TO_READ is 10; blind message verbatim', () => {
     expect(TIME_TO_READ).toBe(10);
-    expect(TOME_BLINDED_MSG).toBe("You can't read while blinded");
+    expect(TOME_BLINDED_MSG).toBe("No puedes leer estando ciego");
   });
 
   test('name becomes Tome of Remastery once a subclass is chosen', () => {
-    expect(tomeDisplayName('none')).toBe('Tome of Mastery');
+    expect(tomeDisplayName('none')).toBe('tomo de maestría');
     expect(tomeDisplayName('berserker')).toBe('Tome of Remastery');
     expect(tomeNameFor('gladiator')).toBe('Tome of Remastery');
   });
@@ -161,7 +161,7 @@ describe('Tome of Mastery / Remastery (items/TomeOfMastery.java)', () => {
     const r = tomeChoose('berserker', 20, 20);
     expect(r.subClass).toBe('berserker');
     expect(r.timeCost).toBe(10);
-    expect(r.log).toBe('You have chosen the way of the Berserker!');
+    expect(r.log).toBe('¡Escogiste el camino de Berserker!');
     expect(r.gainFury).toBe(false); // full HP: 20 <= 20*0.4 is false
   });
 
@@ -193,7 +193,7 @@ describe('Tome of Mastery / Remastery (items/TomeOfMastery.java)', () => {
     expect(TOME_ITEMS).toHaveLength(1);
     const def = TOME_ITEMS[0]!;
     expect(def.id).toBe(TOME_OF_MASTERY_ID);
-    expect(def.name).toBe('Tome of Mastery');
+    expect(def.name).toBe('tomo de maestría');
     expect(def.sprite).toBe('item_tome_mastery');
     expect(def.stackable).toBe(false);
     expect(def.price).toBe(0); // Item.price() default (Item.java:444-446)
@@ -244,8 +244,8 @@ describe('Combo — Gladiator (actors/buffs/Combo.java)', () => {
     expect(r.count).toBe(3);
     expect(r.bonus).toBe(20); // (int)(100 * 1 / 5f)
     expect(r.duration).toBeCloseTo(1.11, 10);
-    expect(r.log).toBe('3 hit combo!');
-    expect(comboMessage(3)).toBe('3 hit combo!');
+    expect(r.log).toBe('¡combo de 3 golpes!');
+    expect(comboMessage(3)).toBe('¡combo de 3 golpes!');
   });
 
   test('later hits scale: (int)(damage*(count-2)/5), duration shrinks', () => {
@@ -329,7 +329,7 @@ describe('heroSubclassAttackProc (Hero.attackProc, Hero.java:803-841)', () => {
     const r = heroSubclassAttackProc({ ...base, comboCount: 2 });
     expect(r.damage).toBe(120); // 100 + (int)(100*1/5)
     expect(r.combo!.count).toBe(3);
-    expect(r.combo!.log).toBe('3 hit combo!');
+    expect(r.combo!.log).toBe('¡combo de 3 golpes!');
     expect(r.sniperMark).toBeNull();
     expect(r.wand).toBeNull();
   });

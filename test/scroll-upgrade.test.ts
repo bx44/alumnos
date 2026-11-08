@@ -99,7 +99,7 @@ function midRng(): MechanicsRng {
 describe('Scroll of Upgrade catalog', () => {
   test('scroll_upgrade def is registered and auto-identified', () => {
     const def = ITEMS['scroll_upgrade']!;
-    expect(def.name).toBe('Scroll of Upgrade');
+    expect(def.name).toBe('pergamino de mejora');
     expect(def.type).toBe('scroll');
     expect(def.stackable).toBe(true);
     expect(def.sprite).toBe('scroll_upgrade');
@@ -209,10 +209,10 @@ describe('upgrade mechanics (Item.java / Armor.java / MeleeWeapon.java)', () => 
   });
 
   test('gearDisplayName adds the vanilla +N suffix', () => {
-    expect(gearDisplayName({ name: 'short sword', level: 0 })).toBe(
+    expect(gearDisplayName({ name: 'espada corta', level: 0 })).toBe(
       'short sword',
     );
-    expect(gearDisplayName({ name: 'short sword', level: 2 })).toBe(
+    expect(gearDisplayName({ name: 'espada corta', level: 2 })).toBe(
       'short sword +2',
     );
   });

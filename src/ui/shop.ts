@@ -4,11 +4,11 @@
  * src/ui/inventory.ts.
  *
  * Vanilla has two windows: tapping a FOR_SALE heap opens
- * `WndTradeItem(heap)` ("FOR SALE: %s - %dg" + a "Buy for %dg" button,
+ * `WndTradeItem(heap)` ("FOR SALE: %s - %dg" + a "Comprar por %d" button,
  * disabled when the purse is short), and talking to the shopkeeper opens
- * the FOR_SALE bag ("Select an item to sell") whose pick opens
- * `WndTradeItem(item)` ("Sell for %dg", or "Sell 1 for %dg" / "Sell all
- * for %dg" for stacks, plus "Never mind"). This panel unifies both as two
+ * the FOR_SALE bag ("Escoge qué vender") whose pick opens
+ * `WndTradeItem(item)` ("Vender por %d", or "Vender 1 por %d" / "Sell all
+ * for %dg" for stacks, plus "Mejor no"). This panel unifies both as two
  * tabs — Buy (the shop's stock) and Sell (the hero's sellable items) — with
  * the same labels and the same gold math (see src/content/shopkeeper.ts).
  *
@@ -78,7 +78,7 @@ export class ShopPanel {
     const pw = wide ? Math.min(480, view.w - 48) : view.w - 16;
     const maxRows = Math.max(1, Math.min(Math.max(rowCount, 1), Math.floor((view.h * 0.55) / ROW_H)));
     // The action row always exists (vanilla windows always have buttons;
-    // an empty shop still offers "Never mind").
+    // an empty shop still offers "Mejor no").
     const actionH = 64;
     const noticeH = this.notice ? 26 : 0;
     const ph = HEADER_H + TAB_H + maxRows * ROW_H + actionH + noticeH + 12;
@@ -114,29 +114,29 @@ export class ShopPanel {
     if (this.tab === 'buy') {
       const stock = readShopStock(game);
       const e = stock[this.selected];
-      if (!e) return [mk(0, 2, 'cancel', 'Never mind')];
+      if (!e) return [mk(0, 2, 'cancel', 'Mejor no')];
       const price = stockBuyPrice(e, game.level.depth);
       const hero = game.hero as unknown as { gold: number };
       return [
-        mk(0, 2, 'buy', `Buy for ${price}g`, hero.gold < price, true),
-        mk(1, 2, 'cancel', 'Never mind'),
+        mk(0, 2, 'buy', `Comprar por ${price}`, hero.gold < price, true),
+        mk(1, 2, 'cancel', 'Mejor no'),
       ];
     }
     const sellable = readSellable(game);
     const e = sellable[this.selected];
-    if (!e) return [mk(0, 2, 'cancel', 'Never mind')];
+    if (!e) return [mk(0, 2, 'cancel', 'Mejor no')];
     const all = shopSellAllPrice(e.unitPrice, e.qty);
     if (e.qty > 1) {
       const one = shopSellOnePrice(all, e.qty);
       return [
-        mk(0, 3, 'sell-one', `Sell 1 for ${one}g`),
-        mk(1, 3, 'sell-all', `Sell all for ${all}g`, false, true),
-        mk(2, 3, 'cancel', 'Never mind'),
+        mk(0, 3, 'sell-one', `Vender 1 por ${one}`),
+        mk(1, 3, 'sell-all', `Vender todo por ${all}`, false, true),
+        mk(2, 3, 'cancel', 'Mejor no'),
       ];
     }
     return [
-      mk(0, 2, 'sell-all', `Sell for ${all}g`, false, true),
-      mk(1, 2, 'cancel', 'Never mind'),
+      mk(0, 2, 'sell-all', `Vender por ${all}`, false, true),
+      mk(1, 2, 'cancel', 'Mejor no'),
     ];
   }
 
@@ -188,14 +188,14 @@ export class ShopPanel {
 
   private press(id: string, game: Game): void {
     if (id === 'cancel') {
-      this.close(); // TXT_CANCEL — "Never mind" (WndTradeItem.java:27)
+      this.close(); // TXT_CANCEL — "Mejor no" (WndTradeItem.java:27)
       return;
     }
     if (id === 'buy' && this.tab === 'buy') {
       const e = readShopStock(game)[this.selected];
       if (!e) return;
       const r = buyFromShop(game, e);
-      this.notice = r.ok ? `Bought ${e.name}.` : r.reason === 'no-gold' ? 'Not enough gold.' : 'That item is gone.';
+      this.notice = r.ok ? `Compraste ${e.name}.` : r.reason === 'no-gold' ? 'Not enough gold.' : 'That item is gone.';
       this.selected = 0;
       return;
     }
@@ -204,9 +204,9 @@ export class ShopPanel {
       if (!e) return;
       const r = sellToShop(game, e, id === 'sell-one' ? 'one' : 'all');
       this.notice = r.ok
-        ? `Sold ${e.name} for ${r.price}g.`
+        ? `Vendiste ${e.name} por ${r.price} de oro.`
         : r.reason === 'cursed'
-          ? "You can't sell cursed gear while it's equipped!"
+          ? "¡No puedes vender algo maldito que traes puesto!"
           : 'That item is gone.';
       this.selected = 0;
     }

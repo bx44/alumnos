@@ -590,7 +590,7 @@ describe('tengu boss', () => {
     ).toBe(true);
     // No tome_of_mastery in this build's catalog: skipped, never invented.
     expect(ctx.level.items.some((it) => it.itemId === 'tome_of_mastery')).toBe(false);
-    expect(c.logs.slice(before).some((l) => l.includes('Free at last...'))).toBe(true);
+    expect(c.logs.slice(before).some((l) => l.includes('Por fin libre...'))).toBe(true);
   });
 
   test('save/revive round-trips timeToJump', () => {

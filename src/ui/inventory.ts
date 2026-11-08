@@ -100,7 +100,7 @@ export function defaultInventoryAdapter(game: Game): UiItem[] {
     items.push({
       slot: slot++,
       id: 'dart',
-      name: 'dart',
+      name: 'dardo',
       sprite: 'dart',
       qty: darts,
       kind: 'missile',
@@ -118,7 +118,7 @@ export function defaultInventoryAdapter(game: Game): UiItem[] {
     items.push({
       slot: slot++,
       id: 'ration',
-      name: 'ration of food',
+      name: 'ración de comida',
       sprite: 'ration',
       qty: 1,
       kind: 'food',
@@ -263,7 +263,7 @@ export class InventoryPanel {
       rows,
       actions,
       closeBtn: { x: px + pw - 52, y: py + 6, w: TAP, h: TAP },
-      title: 'Inventory',
+      title: 'Mochila',
     };
   }
 

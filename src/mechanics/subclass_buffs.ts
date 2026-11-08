@@ -217,7 +217,7 @@ export const SHADOWS_NAME = 'Shadowmelded';
 /** SnipersMark.toString (SnipersMark.java:47). Icon: bufficon_mark (BuffIndicator.MARK). */
 export const SNIPERS_MARK_NAME = 'Zeroed in';
 /** "%d hit combo!" (Combo.java:27). */
-export const COMBO_MESSAGE = '%d hit combo!';
+export const COMBO_MESSAGE = '¡combo de %d golpes!';
 
 /** Format the combo log line (GLog.p, Combo.java:49). */
 export function comboMessage(count: number): string {

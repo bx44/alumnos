@@ -58,7 +58,7 @@ import type { ContentHero } from './hero.js';
  */
 export const TENGU_DEF: MobDef = {
   id: 'tengu',
-  name: 'Tengu',
+  name: 'el Bilbul',
   sprite: 'mob_tengu',
   hp: TENGU_HT,
   atk: TENGU_ATTACK,
@@ -182,7 +182,7 @@ export class TenguMob extends ContentMob {
   protected override onNotice(_ctx: ActionContext): void {
     // yell("Gotcha, " + Dungeon.hero.heroClass.title() + "!") — the port's
     // M1 hero has no class system yet; the only hero is the warrior.
-    _ctx.log('Gotcha, warrior!');
+    _ctx.log('¡Te atrapé, guerrero!');
   }
 
   /**
@@ -204,7 +204,7 @@ export class TenguMob extends ContentMob {
     // PrisonBossLevel has no arena seal (unlike SewerBossLevel), so nothing
     // to unseal.
     dropItemAt(ctx, this.pos, 'skeleton_key'); // Tengu.java:100
-    ctx.log('Free at last...'); // Tengu.yell, Tengu.java:105
+    ctx.log('Por fin libre...'); // Tengu.yell, Tengu.java:105
   }
 }
 

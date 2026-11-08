@@ -179,7 +179,7 @@ export function buyFromShop(game: Game, entry: ShopStockEntry, haggling = false)
   game.level.items.splice(entry.levelIndex, 1);
   const { defId, qty } = parseItemId(entry.itemId);
   addToInventory(hero, defId, qty);
-  game.logMsg(`You've bought ${entry.name} for ${price}g.`); // TXT_BOUGHT (WndTradeItem.java:30)
+  game.logMsg(`Compraste ${entry.name} por ${price} de oro.`); // TXT_BOUGHT (WndTradeItem.java:30)
   return { ok: true, price };
 }
 
@@ -232,7 +232,7 @@ export function sellToShop(game: Game, entry: SellableEntry, which: 'one' | 'all
     hero.inventory.splice(hero.inventory.indexOf(stack), 1);
   }
   hero.gold += price;
-  game.logMsg(`You've sold your ${entry.name} for ${price}g.`); // TXT_SOLD (WndTradeItem.java:32)
+  game.logMsg(`Vendiste ${entry.name} por ${price} de oro.`); // TXT_SOLD (WndTradeItem.java:32)
   return { ok: true, price };
 }
 
@@ -271,7 +271,7 @@ export class Shopkeeper {
   readonly name = 'shopkeeper'; // Shopkeeper.java:28
   readonly sprite = 'mob_shopkeeper'; // ShopkeeperSprite.java (idle frame 0, 14x14)
 
-  /** Vanilla interact(): sell() — "Select an item to sell" (Shopkeeper.java:82-98). */
+  /** Vanilla interact(): sell() — "Escoge qué vender" (Shopkeeper.java:82-98). */
   onTalk(ctx: ShopTalkCtx): void {
     ctx.openShop('sell');
   }

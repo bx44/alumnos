@@ -68,8 +68,8 @@ function warriorHero() {
     exp: 0,
     attackSkill: 10,
     defenseSkill: 5,
-    weapon: { name: 'short sword', tier: 1, level: 0, min: 1, max: 12, str: 11, acu: 1, dly: 1, missile: false },
-    armor: { name: 'cloth armor', str: 9, dr: 2 },
+    weapon: { name: 'espada corta', tier: 1, level: 0, min: 1, max: 12, str: 11, acu: 1, dly: 1, missile: false },
+    armor: { name: 'armadura de tela', str: 9, dr: 2 },
     rangedWeapon: null,
     darts: 8,
     // ContentHero shape: the content inventory adapter (registered by
@@ -318,7 +318,7 @@ describe('Effects', () => {
   test('goo pump-up telegraphs', () => {
     const fx = new Effects();
     const g = fxGame();
-    const goo = { id: 9, x: 6, y: 6, hp: 80, ht: 80, name: 'Goo', sprite: 'mob_goo', pumpedUp: false };
+    const goo = { id: 9, x: 6, y: 6, hp: 80, ht: 80, name: 'el Shiamún', sprite: 'mob_goo', pumpedUp: false };
     g.mobs.push(goo as never);
     fx.watch(g as never, 1000);
     expect(fx.gooTelegraphOn).toBe(false);
@@ -331,7 +331,7 @@ describe('Effects', () => {
   test('draw does not crash headless (incl. boss bar)', () => {
     const fx = new Effects();
     const g = fxGame();
-    const goo = { id: 9, x: 6, y: 6, hp: 60, ht: 80, name: 'Goo', sprite: 'mob_goo', pumpedUp: true };
+    const goo = { id: 9, x: 6, y: 6, hp: 60, ht: 80, name: 'el Shiamún', sprite: 'mob_goo', pumpedUp: true };
     g.mobs.push(goo as never);
     (g.level.visible as Uint8Array)[6 * 32 + 6] = 1;
     fx.watch(g as never, 1000);

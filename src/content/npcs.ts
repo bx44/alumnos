@@ -419,8 +419,8 @@ export class NpcMob extends ContentMob {
 const TXT_ROSE1 =
   'Hello adventurer... Once I was like you - strong and confident... ' +
   "And now I'm dead... But I can't leave this place... Not until I have my _dried rose_... " +
-  "It's very important to me... Some monster stole it from my body...";
-const TXT_ROSE2 = 'Please... Help me... _Find the rose_...';
+  "Es muy importante para mí... Un monstruo me lo quitó del cuerpo...";
+const TXT_ROSE2 = 'Por favor... ayúdame... _encuentra la rosa_...';
 const TXT_ROSE3 =
   'Yes! Yes!!! This is it! Please give it to me! ' +
   'And you can take one of these items, maybe they ' +
@@ -429,7 +429,7 @@ const TXT_RAT1 =
   'Hello adventurer... Once I was like you - strong and confident... ' +
   "And now I'm dead... But I can't leave this place... Not until I have my revenge... " +
   'Slay the _fetid rat_, that has taken my life...';
-const TXT_RAT2 = 'Please... Help me... _Slay the abomination_...';
+const TXT_RAT2 = 'Por favor... ayúdame... _acaba con esa cosa_...';
 const TXT_RAT3 =
   'Yes! The ugly creature is slain and I can finally rest... ' +
   'Please take one of these items, maybe they ' +
@@ -442,9 +442,9 @@ const TXT_CURSE2 =
   'Thank you, %s! The curse is broken and I can finally rest... ' +
   'Please take one of these items, maybe they ' +
   'will be useful to you in your journey...';
-const TXT_CURSE_YES = 'Yes, I will do it for you';
-const TXT_CURSE_NO = "No, I can't help you";
-const TXT_FAREWELL_GHOST = 'The sad ghost yells: Farewell, adventurer!';
+const TXT_CURSE_YES = 'Sí, yo te lo hago';
+const TXT_CURSE_NO = "No, no te puedo ayudar";
+const TXT_FAREWELL_GHOST = 'El fantasma triste grita: ¡Adiós, aventurero!';
 
 // Vanilla WndSadGhost (WndSadGhost.java:30-67): title "Sad ghost",
 // reward choice labels.
@@ -490,7 +490,7 @@ export class GhostMob extends NpcMob {
       const slot = questItemSlot(hero, 'dried_rose');
       if (slot !== -1) {
         await showDialog({
-          title: 'Sad ghost',
+          title: 'Fantasma triste',
           sprite: this.sprite,
           text: TXT_ROSE3,
           choices: [
@@ -499,11 +499,11 @@ export class GhostMob extends NpcMob {
           ],
         }).then((v) => grantGhostReward(ctx, this, 'dried_rose', v));
       } else {
-        await showDialog({ title: 'Sad ghost', sprite: this.sprite, text: TXT_ROSE2, choices: [] });
+        await showDialog({ title: 'Fantasma triste', sprite: this.sprite, text: TXT_ROSE2, choices: [] });
         relocateGhost(ctx, this);
       }
     } else {
-      await showDialog({ title: 'Sad ghost', sprite: this.sprite, text: TXT_ROSE1, choices: [] });
+      await showDialog({ title: 'Fantasma triste', sprite: this.sprite, text: TXT_ROSE1, choices: [] });
       ghostQuest.given = true;
       // Journal.add( Journal.Feature.GHOST ): no journal in Stage 1.
     }
@@ -515,7 +515,7 @@ export class GhostMob extends NpcMob {
       const slot = questItemSlot(hero, 'rat_skull');
       if (slot !== -1) {
         await showDialog({
-          title: 'Sad ghost',
+          title: 'Fantasma triste',
           sprite: this.sprite,
           text: TXT_RAT3,
           choices: [
@@ -524,11 +524,11 @@ export class GhostMob extends NpcMob {
           ],
         }).then((v) => grantGhostReward(ctx, this, 'rat_skull', v));
       } else {
-        await showDialog({ title: 'Sad ghost', sprite: this.sprite, text: TXT_RAT2, choices: [] });
+        await showDialog({ title: 'Fantasma triste', sprite: this.sprite, text: TXT_RAT2, choices: [] });
         relocateGhost(ctx, this);
       }
     } else {
-      await showDialog({ title: 'Sad ghost', sprite: this.sprite, text: TXT_RAT1, choices: [] });
+      await showDialog({ title: 'Fantasma triste', sprite: this.sprite, text: TXT_RAT1, choices: [] });
       ghostQuest.given = true;
       // Journal.add( Journal.Feature.GHOST ): no journal in Stage 1.
     }
@@ -539,7 +539,7 @@ export class GhostMob extends NpcMob {
       // The curse personification is dead and replaced by this passive
       // ghost (CursePersonification.die, CursePersonification.java:92-96).
       await showDialog({
-        title: 'Sad ghost',
+        title: 'Fantasma triste',
         sprite: this.sprite,
         text: fillClassName(TXT_CURSE2),
         choices: [
@@ -554,7 +554,7 @@ export class GhostMob extends NpcMob {
     // player dismisses without choosing.
     // Journal.add( Journal.Feature.GHOST ): no journal in Stage 1.
     const choice = await showDialog({
-      title: 'Sad ghost',
+      title: 'Fantasma triste',
       sprite: this.sprite,
       text: TXT_CURSE1,
       choices: [
@@ -619,7 +619,7 @@ function grantGhostReward(
     // Vanilla: doPickUp into the pack, else drop at the ghost's position.
     // The port's pack is unbounded (M1), so the drop fallback is unreachable.
     addToInventory(hero, rewardId, 1);
-    ctx.log(`You now have the ${getItem(rewardId).name}.`); // Hero.TXT_YOU_NOW_HAVE
+    ctx.log(`Ahora traes ${getItem(rewardId).name}.`); // Hero.TXT_YOU_NOW_HAVE
   }
   ctx.log(TXT_FAREWELL_GHOST); // Ghost.TXT_FAREWELL
   killMob(ctx, ghost, {}); // ghost.die(null): EXP 0, no loot
@@ -669,25 +669,25 @@ const TXT_BERRY1 =
   "a _Rotberry seed_. Being a magic user, I'm quite able to defend myself against local monsters, " +
   "but I'm getting lost in no time, it's very embarrassing. Probably you could help me? I would be " +
   'happy to pay for your service with one of my best wands.';
-const TXT_BERRY2 = 'Any luck with a _Rotberry seed_, %s? No? Don\'t worry, I\'m not in a hurry.';
+const TXT_BERRY2 = '¿Cómo vas con la _semilla de baya podrida_, %s? ¿No? No te apures, no tengo prisa.';
 const TXT_DUST1 =
   'Oh, what a pleasant surprise to meet a decent person in such place! I came here for a rare ingredient - ' +
   '_corpse dust_. It can be gathered from skeletal remains and there is an ample number of them in the dungeon. ' +
   "Being a magic user, I'm quite able to defend myself against local monsters, but I'm getting lost in no time, " +
   "it's very embarrassing. Probably you could help me? I would be happy to pay for your service with one of my best wands.";
-const TXT_DUST2 = 'Any luck with _corpse dust_, %s? Bone piles are the most obvious places to look.';
+const TXT_DUST2 = '¿Cómo vas con el _polvo de cadáver_, %s? Los montones de huesos son el lugar obvio.';
 const TXT_FISH1 =
   'Oh, what a pleasant surprise to meet a decent person in such place! I came here for a rare ingredient: ' +
   "a _phantom fish_. You can catch it with your bare hands, but it's very hard to notice in the water. " +
   "Being a magic user, I'm quite able to defend myself against local monsters, but I'm getting lost in no time, " +
   "it's very embarrassing. Probably you could help me? I would be happy to pay for your service with one of my best wands.";
-const TXT_FISH2 = 'Any luck with a _phantom fish_, %s? You may want to try searching for it in one of the local pools.';
-const TXT_FAREWELL_WANDMAKER = 'Good luck in your quest, %s!';
+const TXT_FISH2 = '¿Cómo vas con el _pez fantasma_, %s? Busca en alguno de los charcos de por aquí.';
+const TXT_FAREWELL_WANDMAKER = '¡Suerte con el encargo, %s!';
 
 // Vanilla WndWandmaker (WndWandmaker.java:34-76): title "Old wandmaker",
 // reward choice labels.
-const TXT_BATTLE = 'Battle wand';
-const TXT_NON_BATTLE = 'Non-battle wand';
+const TXT_BATTLE = 'Varita de pelea';
+const TXT_NON_BATTLE = 'Varita que no es de pelea';
 
 /**
  * Vanilla Wandmaker (Wandmaker.java:46-95): name "old wandmaker", passive,
@@ -720,7 +720,7 @@ export class WandmakerMob extends NpcMob {
       const slot = questItemSlot(heroOf(ctx), texts.item);
       if (slot !== -1) {
         await showDialog({
-          title: 'Old wandmaker',
+          title: 'El viejo de las varitas',
           sprite: this.sprite,
           text: fillClassName(
             type === 'berry' ? TXT_BERRY_REWARD : type === 'dust' ? TXT_DUST_REWARD : TXT_FISH_REWARD,
@@ -732,14 +732,14 @@ export class WandmakerMob extends NpcMob {
         }).then((v) => grantWandReward(ctx, this, texts.item, v));
       } else {
         await showDialog({
-          title: 'Old wandmaker',
+          title: 'El viejo de las varitas',
           sprite: this.sprite,
           text: fillClassName(texts.q2),
           choices: [],
         });
       }
     } else {
-      await showDialog({ title: 'Old wandmaker', sprite: this.sprite, text: texts.q1, choices: [] });
+      await showDialog({ title: 'El viejo de las varitas', sprite: this.sprite, text: texts.q1, choices: [] });
       wandmakerQuest.given = true;
       placeWandmakerItem(ctx, type);
       // Journal.add( Journal.Feature.WANDMAKER ): no journal in Stage 1.
@@ -779,7 +779,7 @@ function grantWandReward(
     if (parsed) identifyWandType(parsed.wandId, ctx.log);
     addToInventory(hero, grantId, 1);
     // The reward is an instance id; its def comes from the wand module.
-    ctx.log(`You now have the ${instanceItemDef(grantId)?.name ?? grantId}.`); // Hero.TXT_YOU_NOW_HAVE
+    ctx.log(`Ahora traes ${instanceItemDef(grantId)?.name ?? grantId}.`); // Hero.TXT_YOU_NOW_HAVE
   }
   ctx.log(fillClassName('The old wandmaker yells: ' + TXT_FAREWELL_WANDMAKER));
   ctx.removeMob(wandmaker); // wandmaker.destroy(): silent, no death pipeline
@@ -885,7 +885,7 @@ export class FetidRatMob extends ContentMob {
       id,
       {
         id: 'fetidrat',
-        name: 'fetid rat',
+        name: 'rata fétida',
         sprite: 'mob_fetidrat',
         hp: 15,
         def: 5,
@@ -934,7 +934,7 @@ export class CurseMob extends ContentMob {
       id,
       {
         id: 'curse',
-        name: 'curse personification',
+        name: 'maldición hecha carne',
         sprite: 'mob_curse',
         hp: 10 + depth * 3,
         def: 10 + depth,
@@ -1046,25 +1046,25 @@ const TXT_GOLD_1 =
   "Hey human! Wanna be useful, eh? Take dis pickaxe and mine me some _dark gold ore_, _15 pieces_ should be enough. " +
   "What do you mean, how am I gonna pay? You greedy...\n" +
   "Ok, ok, I don't have money to pay, but I can do some smithin' for you. Consider yourself lucky, " +
-  "I'm the only blacksmith around.";
+  "Soy el único herrero por aquí.";
 const TXT_BLOOD_1 =
   "Hey human! Wanna be useful, eh? Take dis pickaxe and _kill a bat_ wit' it, I need its blood on the head. " +
   "What do you mean, how am I gonna pay? You greedy...\n" +
   "Ok, ok, I don't have money to pay, but I can do some smithin' for you. Consider yourself lucky, " +
-  "I'm the only blacksmith around.";
-const TXT2 = "Are you kiddin' me? Where is my pickaxe?!";
-const TXT3 = "Dark gold ore. 15 pieces. Seriously, is it dat hard?";
-const TXT4 = "I said I need bat blood on the pickaxe. Chop chop!";
-const TXT_COMPLETED = "Oh, you have returned... Better late dan never.";
+  "Soy el único herrero por aquí.";
+const TXT2 = "¿Me estás viendo la cara? ¿Y mi pico?";
+const TXT3 = "Mineral de oro oscuro. Quince pedazos. ¿Tan difícil está?";
+const TXT4 = "Dije que necesito sangre de murciélago en el pico. ¡Ándale!";
+const TXT_COMPLETED = "Ah, volviste... Más vale tarde que nunca.";
 const TXT_GET_LOST = "I'm busy. Get lost!";
 /** Blacksmith.TXT_LOOKS_BETTER (Blacksmith.java:68): GLog.p on reforge. */
-const TXT_LOOKS_BETTER = "your %s certainly looks better now";
+const TXT_LOOKS_BETTER = "tu %s se ve mucho mejor";
 /** WndBlacksmith.TXT_PROMPT (WndBlacksmith.java:49-51). */
 const TXT_REFORGE_PROMPT =
   "Ok, a deal is a deal, dat's what I can do for you: I can reforge " +
   "2 items and turn them into one of a better quality.";
 /** WndBlacksmith.TXT_SELECT (WndBlacksmith.java:52-53). */
-const TXT_REFORGE_SELECT = "Select an item to reforge";
+const TXT_REFORGE_SELECT = "Escoge qué reforjar";
 /** WndBlacksmith.TXT_REFORGE (WndBlacksmith.java:54-55). */
 const TXT_REFORGE_BUTTON = "Reforge them";
 
@@ -1113,7 +1113,7 @@ export class BlacksmithMob extends NpcMob {
       // WndQuest(TXT_GOLD_1/TXT_BLOOD_1); onBackPressed gives the pickaxe
       // (Blacksmith.java:83-107).
       await showDialog({
-        title: 'Troll blacksmith',
+        title: 'Herrero trol',
         sprite: this.sprite,
         text: q.alternative ? TXT_BLOOD_1 : TXT_GOLD_1,
         choices: [],
@@ -1121,7 +1121,7 @@ export class BlacksmithMob extends NpcMob {
       q.given = true;
       q.completed = false;
       addToInventory(hero, 'pickaxe', 1);
-      ctx.log('You now have pickaxe'); // Hero.TXT_YOU_NOW_HAVE
+      ctx.log('Ahora traes un pico'); // Hero.TXT_YOU_NOW_HAVE
       return;
     }
 
@@ -1136,7 +1136,7 @@ export class BlacksmithMob extends NpcMob {
     }
 
     await showDialog({
-      title: 'Troll blacksmith',
+      title: 'Herrero trol',
       sprite: this.sprite,
       text: TXT_GET_LOST,
       choices: [],
@@ -1198,7 +1198,7 @@ export class BlacksmithMob extends NpcMob {
   /** WndQuest(this, text) (Blacksmith.java:154-156). */
   private tell(text: string): Promise<string> {
     return showDialog({
-      title: 'Troll blacksmith',
+      title: 'Herrero trol',
       sprite: this.sprite,
       text,
       choices: [],
@@ -1220,7 +1220,7 @@ export class BlacksmithMob extends NpcMob {
       // Vanilla shows the error inline and disables the reforge button
       // (WndBlacksmith.java:113-122); the dialog flow restarts selection.
       await showDialog({
-        title: 'Troll blacksmith',
+        title: 'Herrero trol',
         sprite: this.sprite,
         text: err,
         choices: [],
@@ -1228,12 +1228,12 @@ export class BlacksmithMob extends NpcMob {
       return;
     }
     const confirm = await showDialog({
-      title: 'Troll blacksmith',
+      title: 'Herrero trol',
       sprite: this.sprite,
-      text: `Reforge the ${first.label} and the ${second.label} into one?`,
+      text: `¿Fundir ${first.label} y ${second.label} en uno solo?`,
       choices: [
         { label: TXT_REFORGE_BUTTON, value: 'yes' },
-        { label: 'Never mind', value: 'no' },
+        { label: 'Mejor no', value: 'no' },
       ],
     });
     if (confirm === 'yes') {
@@ -1257,7 +1257,7 @@ export class BlacksmithMob extends NpcMob {
     );
     if (candidates.length === 0) {
       await showDialog({
-        title: 'Troll blacksmith',
+        title: 'Herrero trol',
         sprite: this.sprite,
         text: 'You have nothing I can reforge.',
         choices: [],
@@ -1265,7 +1265,7 @@ export class BlacksmithMob extends NpcMob {
       return null;
     }
     const value = await showDialog({
-      title: 'Troll blacksmith',
+      title: 'Herrero trol',
       sprite: this.sprite,
       text: prompt,
       choices: candidates.map((c) => ({ label: c.label, value: c.key })),
@@ -1349,10 +1349,10 @@ export function verifyReforge(
   const g1 = reforgeGear(hero, c1);
   const g2 = reforgeGear(hero, c2);
   if ((g1?.cursed || g2?.cursed) === true) {
-    return "I don't work with cursed items!";
+    return "¡Yo no trabajo cosas malditas!";
   }
   if ((g1?.level ?? 0) < 0 || (g2?.level ?? 0) < 0) {
-    return "It's a junk, the quality is too poor!";
+    return "¡Esto es basura, está muy corriente!";
   }
   if (g1?.upgradable === false || g2?.upgradable === false) {
     return "I can't reforge these items!";

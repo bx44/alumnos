@@ -464,7 +464,7 @@ describe('arena entry: PrisonBossLevel.press (PrisonBossLevel.java:303-328)', ()
     // Step 1: bump the locked door with the key -> unlock (no step in).
     moveHero(ctx, hero, dx - from.x, dy - from.y);
     expect(level.get(dx, dy)).toBe(Terrain.DOOR);
-    expect(logs).toContain('You unlock the door.');
+    expect(logs).toContain('Abres la puerta.');
 
     // Step 2: step onto the door cell.
     moveHero(ctx, hero, dx - from.x, dy - from.y);
@@ -476,7 +476,7 @@ describe('arena entry: PrisonBossLevel.press (PrisonBossLevel.java:303-328)', ()
     expect(mobs.length).toBe(1);
     const tengu = mobs[0] as unknown as { state: string };
     expect(tengu.state).toBe('hunting');
-    expect(logs).toContain('Gotcha, warrior!');
+    expect(logs).toContain('¡Te atrapé, guerrero!');
     expect(level.get(dx, dy)).toBe(Terrain.DOOR_LOCKED);
   });
 });

@@ -9,7 +9,7 @@
  * initializer reads Dungeon.hero.subClass). Reading it (10 time units)
  * presents the class's two subclass choices; reading it again after
  * choosing offers a respec to the other subclass (WndChooseWay).
- * Reading is impossible while blinded ("You can't read while blinded").
+ * Reading is impossible while blinded ("No puedes leer estando ciego").
  *
  * The choice/choose logic and the WndChooseWay texts live in
  * src/mechanics/subclasses.ts (tomeChoices, tomeChoose, respecPrompt);
@@ -42,7 +42,7 @@ export const TOME_OF_MASTERY_ID = 'tome_of_mastery';
 /** Tome of Mastery (items/TomeOfMastery.java). */
 const TOME_OF_MASTERY: ItemDef = {
   id: TOME_OF_MASTERY_ID,
-  name: 'Tome of Mastery',
+  name: 'tomo de maestría',
   sprite: 'item_tome_mastery',
   type: 'misc',
   stackable: false,

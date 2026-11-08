@@ -57,17 +57,17 @@ const GLYPH_ORDER: GlyphId[] = [
 ];
 
 export const GLYPH_INFO: Record<GlyphId, { name: string }> = {
-  affection: { name: '%s of affection' },
-  antiEntropy: { name: '%s of anti-entropy' },
-  autoRepair: { name: '%s of auto-repair' },
-  bounce: { name: '%s of bounce' },
-  displacement: { name: '%s of displacement' },
-  entanglement: { name: '%s of entanglement' },
-  metabolism: { name: '%s of metabolism' },
-  multiplicity: { name: '%s of multiplicity' },
-  potential: { name: '%s of potential' },
-  stench: { name: '%s of stench' },
-  viscosity: { name: '%s of viscosity' },
+  affection: { name: '%s del encanto' },
+  antiEntropy: { name: '%s de la antientropía' },
+  autoRepair: { name: '%s que se repara sola' },
+  bounce: { name: '%s del rebote' },
+  displacement: { name: '%s del desplazamiento' },
+  entanglement: { name: '%s del enredo' },
+  metabolism: { name: '%s del metabolismo' },
+  multiplicity: { name: '%s de la multiplicidad' },
+  potential: { name: '%s del potencial' },
+  stench: { name: '%s de la peste' },
+  viscosity: { name: '%s de la viscosidad' },
 };
 
 /** Glyph.random() (Glyph.java): uniform over the 11 glyphs. */

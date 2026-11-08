@@ -373,7 +373,7 @@ export const contentMechanics: MechanicsHooks = {
 
     // Paralysed hero can't act (Mob.act / Hero.act, Mob.java:149-153).
     if (hero.paralysed) {
-      ctx.log('You are paralysed!');
+      ctx.log('¡Te quedaste tieso!');
       return 1;
     }
 
@@ -396,7 +396,7 @@ export const contentMechanics: MechanicsHooks = {
           (m) => m.id === intent.targetId && m.isAlive(),
         ) as ContentMob | undefined;
         if (!target || mobChebyshev(hero.pos, target.pos, ctx.level.w) > 1) {
-          ctx.log('No target in range.');
+          ctx.log('No hay nadie a tiro.');
           cost = 1;
           break;
         }
@@ -425,7 +425,7 @@ export const contentMechanics: MechanicsHooks = {
           (m) => m.id === intent.targetId && m.isAlive(),
         );
         if (!target) {
-          ctx.log('Your target is gone.');
+          ctx.log('Tu objetivo ya no está.');
           cost = 1;
           break;
         }
@@ -463,12 +463,12 @@ export const contentMechanics: MechanicsHooks = {
           (m) => m.id === intent.targetId && m.isAlive(),
         ) as NpcMob | undefined;
         if (!npc || typeof npc.onTalk !== 'function') {
-          ctx.log('Nobody there.');
+          ctx.log('Ahí no hay nadie.');
           cost = 0;
           break;
         }
         if (mobChebyshev(hero.pos, npc.pos, ctx.level.w) > 1) {
-          ctx.log('You are too far away to talk.');
+          ctx.log('Estás muy lejos para hablar.');
           cost = 0;
           break;
         }

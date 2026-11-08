@@ -92,7 +92,7 @@ export const MOB_DEFS: Readonly<Record<string, MobDef>> = {
   /** Rat.java:31-48 — HP/HT 8, def 3, atk 8, NormalIntRange(1,5), dr 1,
    *  maxLvl 5, EXP default 1 (Mob.java:68). */
   rat: {
-    id: 'rat', name: 'marsupial rat', sprite: 'mob_rat',
+    id: 'rat', name: 'rata marsupial', sprite: 'mob_rat',
     hp: 8, atk: 8, def: 3, dmgMin: 1, dmgMax: 5, triangular: true, dr: 1,
     exp: MOB_EXP.rat.exp, maxLvl: MOB_EXP.rat.maxLvl, // single-sourced
     speed: 1, flying: false, ability: null, attackDelay: 1,
@@ -101,7 +101,7 @@ export const MOB_DEFS: Readonly<Record<string, MobDef>> = {
   /** Gnoll.java:32-53 — HP/HT 12, def 4, atk 11, NormalIntRange(2,5), dr 2,
    *  EXP 2, maxLvl 8, loot Gold 0.5. */
   gnoll: {
-    id: 'gnoll', name: 'gnoll scout', sprite: 'mob_gnoll',
+    id: 'gnoll', name: 'gnoll explorador', sprite: 'mob_gnoll',
     hp: 12, atk: 11, def: 4, dmgMin: 2, dmgMax: 5, triangular: true, dr: 2,
     exp: MOB_EXP.gnoll.exp, maxLvl: MOB_EXP.gnoll.maxLvl, // single-sourced
     speed: 1, flying: false, ability: null, attackDelay: 1,
@@ -111,7 +111,7 @@ export const MOB_DEFS: Readonly<Record<string, MobDef>> = {
    *  NormalIntRange(3,6), dr 4, EXP 3, maxLvl 9, loot MysteryMeat 0.167
    *  (M1: mystery meat has no mechanics yet — no loot, documented). */
   crab: {
-    id: 'crab', name: 'sewer crab', sprite: 'mob_crab',
+    id: 'crab', name: 'cangrejo de alcantarilla', sprite: 'mob_crab',
     hp: 15, atk: 12, def: 5, dmgMin: 3, dmgMax: 6, triangular: true, dr: 4,
     exp: MOB_EXP.crab.exp, maxLvl: MOB_EXP.crab.maxLvl, // single-sourced
     speed: 2, flying: false, ability: null, attackDelay: 1,
@@ -122,7 +122,7 @@ export const MOB_DEFS: Readonly<Record<string, MobDef>> = {
    *  (Swarm.java:76-107); loot PotionOfHealing 1/(5*(generation+1))
    *  (Swarm.java:123-128). */
   swarm: {
-    id: 'swarm', name: 'swarm of flies', sprite: 'mob_swarm',
+    id: 'swarm', name: 'enjambre de moscas', sprite: 'mob_swarm',
     hp: 80, atk: 12, def: 5, dmgMin: 1, dmgMax: 4, triangular: true, dr: 0,
     exp: MOB_EXP.swarm.exp, maxLvl: MOB_EXP.swarm.maxLvl, // single-sourced
     speed: 1, flying: true, ability: 'swarm', attackDelay: 1,
@@ -132,7 +132,7 @@ export const MOB_DEFS: Readonly<Record<string, MobDef>> = {
    *  dr 5, EXP 5, maxLvl 10, death burst (Skeleton.java:54-76),
    *  immune to Death (Skeleton.java:107-115; M1: no death effects exist). */
   skeleton: {
-    id: 'skeleton', name: 'skeleton', sprite: 'mob_skeleton',
+    id: 'skeleton', name: 'esqueleto', sprite: 'mob_skeleton',
     hp: 25, atk: 12, def: 9, dmgMin: 3, dmgMax: 8, triangular: true, dr: 5,
     exp: MOB_EXP.skeleton.exp, maxLvl: MOB_EXP.skeleton.maxLvl, // single-sourced
     speed: 1, flying: false, ability: 'skeleton', attackDelay: 1,
@@ -144,7 +144,7 @@ export const MOB_DEFS: Readonly<Record<string, MobDef>> = {
    *  (Thief.java:114-121), drops the stolen item on death
    *  (Thief.java:94-100). RingOfHaggler loot 0.01 (M1: no rings — none). */
   thief: {
-    id: 'thief', name: 'crazy thief', sprite: 'mob_thief',
+    id: 'thief', name: 'ladrón loco', sprite: 'mob_thief',
     hp: 20, atk: 12, def: 12, dmgMin: 1, dmgMax: 7, triangular: true, dr: 3,
     exp: MOB_EXP.thief.exp, maxLvl: MOB_EXP.thief.maxLvl, // single-sourced
     speed: 1, flying: false, ability: 'thief', attackDelay: 0.5,
@@ -155,7 +155,7 @@ export const MOB_DEFS: Readonly<Record<string, MobDef>> = {
    *  melee NormalIntRange(2,6), dr 4, EXP 6, maxLvl 14, resists Electricity
    *  ('lightning'); loot: Generator.Category.SCROLL @ 0.33 (Shaman.java:54). */
   shaman: {
-    id: 'shaman', name: 'gnoll shaman', sprite: 'mob_shaman',
+    id: 'shaman', name: 'gnoll chamán', sprite: 'mob_shaman',
     hp: 18, atk: 11, def: 8, dmgMin: 2, dmgMax: 6, triangular: true, dr: 4,
     exp: MOB_EXP.shaman.exp, maxLvl: MOB_EXP.shaman.maxLvl, // single-sourced
     speed: 1, flying: false, ability: null, attackDelay: 1,
@@ -166,7 +166,7 @@ export const MOB_DEFS: Readonly<Record<string, MobDef>> = {
    *  heals min(damage, HT-HP) per landed hit (Bat.java:69-79),
    *  loot PotionOfHealing @ 0.125 (Bat.java:44), resists Leech. */
   bat: {
-    id: 'bat', name: 'vampire bat', sprite: 'mob_bat',
+    id: 'bat', name: 'murciélago vampiro', sprite: 'mob_bat',
     hp: 30, atk: 16, def: 15, dmgMin: 6, dmgMax: 12, triangular: true, dr: 4,
     exp: MOB_EXP.bat.exp, maxLvl: MOB_EXP.bat.maxLvl, // single-sourced
     speed: 2, flying: true, ability: null, attackDelay: 1,
@@ -176,7 +176,7 @@ export const MOB_DEFS: Readonly<Record<string, MobDef>> = {
    *  NormalIntRange(8,18) / enraged NormalIntRange(10,40), dr 8, EXP 8,
    *  maxLvl 15, immune to Terror ('terror'), loot Gold @ 0.5 (Brute.java:145). */
   brute: {
-    id: 'brute', name: 'gnoll brute', sprite: 'mob_brute',
+    id: 'brute', name: 'gnoll bruto', sprite: 'mob_brute',
     hp: 40, atk: 20, def: 15, dmgMin: 8, dmgMax: 18, triangular: true, dr: 8,
     exp: MOB_EXP.brute.exp, maxLvl: MOB_EXP.brute.maxLvl, // single-sourced
     speed: 1, flying: false, ability: null, attackDelay: 1,
@@ -185,7 +185,7 @@ export const MOB_DEFS: Readonly<Record<string, MobDef>> = {
   /** Albino.java:27-50 — "albino rat" (Rat variant): HP/HT 15, Rat stats
    *  otherwise (EXP 1, maxLvl 5); no dedicated loot table. */
   albino: {
-    id: 'albino', name: 'albino rat', sprite: 'mob_albino',
+    id: 'albino', name: 'rata albina', sprite: 'mob_albino',
     hp: 15, atk: 8, def: 3, dmgMin: 1, dmgMax: 5, triangular: true, dr: 1,
     exp: MOB_EXP.albino.exp, maxLvl: MOB_EXP.albino.maxLvl, // single-sourced
     speed: 1, flying: false, ability: null, attackDelay: 1,
@@ -194,7 +194,7 @@ export const MOB_DEFS: Readonly<Record<string, MobDef>> = {
   /** Bandit.java:29-55 — "crazy bandit" (Thief variant): Thief stats
    *  (EXP 5, maxLvl 10); steal prolongs Blindness (Bandit.steal). */
   bandit: {
-    id: 'bandit', name: 'crazy bandit', sprite: 'mob_bandit',
+    id: 'bandit', name: 'bandido loco', sprite: 'mob_bandit',
     hp: 20, atk: 12, def: 12, dmgMin: 1, dmgMax: 7, triangular: true, dr: 3,
     exp: MOB_EXP.bandit.exp, maxLvl: MOB_EXP.bandit.maxLvl, // single-sourced
     speed: 1, flying: false, ability: 'thief', attackDelay: 0.5,
@@ -203,7 +203,7 @@ export const MOB_DEFS: Readonly<Record<string, MobDef>> = {
   /** Shielded.java:25-46 — "shielded brute" (Brute variant): def 20, dr 10,
    *  defenseVerb "blocked"; Brute stats otherwise (EXP 8, maxLvl 15). */
   shielded: {
-    id: 'shielded', name: 'shielded brute', sprite: 'mob_shielded',
+    id: 'shielded', name: 'bruto con escudo', sprite: 'mob_shielded',
     hp: 40, atk: 20, def: 20, dmgMin: 8, dmgMax: 18, triangular: true, dr: 10,
     exp: MOB_EXP.shielded.exp, maxLvl: MOB_EXP.shielded.maxLvl, // single-sourced
     speed: 1, flying: false, ability: null, attackDelay: 1,
@@ -215,7 +215,7 @@ export const MOB_DEFS: Readonly<Record<string, MobDef>> = {
    *  ('poison'), immune to Roots ('roots'); loot MysteryMeat @ 0.125
    *  (Spinner.java:44) — M1's only food is the ration (crab pattern). */
   spinner: {
-    id: 'spinner', name: 'cave spinner', sprite: 'mob_spinner',
+    id: 'spinner', name: 'araña de cueva', sprite: 'mob_spinner',
     hp: 50, atk: 20, def: 14, dmgMin: 12, dmgMax: 16, triangular: true, dr: 6,
     exp: MOB_EXP.spinner.exp, maxLvl: MOB_EXP.spinner.maxLvl, // single-sourced
     speed: 1, flying: false, ability: null, attackDelay: 1,
@@ -228,7 +228,7 @@ export const MOB_DEFS: Readonly<Record<string, MobDef>> = {
    *  PotionOfLiquidFlame @ 0.1 (Elemental.java:47) — not in the item
    *  catalog yet, gated like Tengu's tome. */
   elemental: {
-    id: 'elemental', name: 'fire elemental', sprite: 'mob_elemental',
+    id: 'elemental', name: 'elemental de fuego', sprite: 'mob_elemental',
     hp: 65, atk: 25, def: 20, dmgMin: 16, dmgMax: 20, triangular: true, dr: 5,
     exp: MOB_EXP.elemental.exp, maxLvl: MOB_EXP.elemental.maxLvl, // single-sourced
     speed: 1, flying: true, ability: null, attackDelay: 1,
@@ -240,7 +240,7 @@ export const MOB_DEFS: Readonly<Record<string, MobDef>> = {
    *  forward-looking — no such buffs in the port yet); loot Food @ 0.083
    *  (Monk.java:43) — the port's ration is Food.java-based. */
   monk: {
-    id: 'monk', name: 'dwarf monk', sprite: 'mob_monk',
+    id: 'monk', name: 'monje enano', sprite: 'mob_monk',
     hp: 70, atk: 30, def: 30, dmgMin: 12, dmgMax: 16, triangular: true, dr: 2,
     exp: MOB_EXP.monk.exp, maxLvl: MOB_EXP.monk.maxLvl, // single-sourced
     speed: 1, flying: false, ability: null, attackDelay: 0.5,
@@ -347,7 +347,7 @@ export function tickBuffs(
         }
       }
     }
-    logBuffDeath('burning'); // "You burned to death...", Burning.java:152
+    logBuffDeath('burning'); // "Te quemaste...", Burning.java:152
     if (t.detached) delete b.burning;
     else b.burning.left = t.left;
     if (applied.paralysisBroken) {
@@ -359,7 +359,7 @@ export function tickBuffs(
     const t = poisonTick(b.poison.left);
     const applied = applyDamage(rng, buffTarget(ch), t.damage, 'poison');
     ch.hp = applied.hp;
-    logBuffDeath('poison'); // "You died from poison...", Poison.java:94
+    logBuffDeath('poison'); // "Te mató el veneno...", Poison.java:94
     if (t.detached) delete b.poison;
     else b.poison.left = t.left;
     if (applied.paralysisBroken) {
@@ -371,7 +371,7 @@ export function tickBuffs(
     const t = oozeTick(inWater);
     const applied = applyDamage(rng, buffTarget(ch), t.damage, 'ooze');
     ch.hp = applied.hp;
-    logBuffDeath('ooze'); // "Caustic ooze killed you...", Ooze.java:50
+    logBuffDeath('ooze'); // "La baba cáustica te mató...", Ooze.java:50
     if (t.detached) delete b.ooze;
     if (applied.paralysisBroken) {
       ch.paralysed = false;
@@ -1152,13 +1152,13 @@ export class ShamanMob extends ContentMob {
         hero.paralysed = false;
         delete hero.buffs.paralysis;
       }
-      ctx.log(`The ${this.name}'s lightning hits you for ${dmg}.`);
+      ctx.log(`El rayo de ${this.name} te pega (${dmg}).`);
       if (applied.died) {
-        ctx.log(`${this.name}'s lightning bolt killed you...`); // TXT_LIGHTNING_KILLED, Shaman.java:42
+        ctx.log(`El rayo de ${this.name} te mató...`); // TXT_LIGHTNING_KILLED, Shaman.java:42
       }
     } else {
       // enemy.sprite.showStatus(NEUTRAL, enemy.defenseVerb()) (Shaman.java:114-118)
-      ctx.log(`The ${this.name}'s lightning misses you.`);
+      ctx.log(`El rayo de ${this.name} falla.`);
     }
     return 2 * this.getSpeed();
   }
@@ -1373,7 +1373,7 @@ export class MonkMob extends ContentMob {
       dropItemAt(ctx, hero.pos, hero.weaponId); // Dungeon.level.drop(weapon, hero.pos)
       hero.weapon = null;
       hero.weaponId = null;
-      ctx.log(`${this.name} has knocked the ${def.name} from your hands!`); // TXT_DISARM, Monk.java:34
+      ctx.log(`¡${this.name} te tiró ${def.name} de las manos!`); // TXT_DISARM, Monk.java:34
     }
     return damage;
   }
@@ -1486,14 +1486,14 @@ export function thiefSteal(
   const i = ctx.rng.int(0, hero.inventory.length);
   const stack = hero.inventory.splice(i, 1)[0]!;
   thief.stolen = { ...stack };
-  ctx.log(`The ${thief.name} stole ${stackLabel(stack)} from you!`); // TXT_STOLE
+  ctx.log(`¡${thief.name} te robó ${stackLabel(stack)}!`); // TXT_STOLE
   thief.state = 'fleeing';
   return true;
 }
 
 function stackLabel(stack: ItemStack): string {
   const def = getItem(stack.itemId);
-  return stack.qty > 1 ? `${stack.qty}x ${def.name}` : `your ${def.name}`;
+  return stack.qty > 1 ? `${stack.qty}x ${def.name}` : `tu ${def.name}`;
 }
 
 /**
@@ -1624,7 +1624,7 @@ export function killMob(ctx: ActionContext, mob: ContentMob, _opts: object): voi
     if (exp > 0) {
       const gained = earnExp(hero, exp); // Hero.earnExp
       ctx.log(`+${exp} EXP`);
-      if (gained > 0) ctx.log(`You level up! Welcome to level ${hero.lvl}.`);
+      if (gained > 0) ctx.log(`¡Subes de nivel! Ahora eres nivel ${hero.lvl}.`);
     }
   }
 
@@ -1647,7 +1647,7 @@ export function killMob(ctx: ActionContext, mob: ContentMob, _opts: object): voi
     skeletonBurst(ctx, mob);
   }
 
-  ctx.log(`The ${mob.name} dies.`);
+  ctx.log(`${mob.name} cae.`);
   ctx.killMob(mob);
 }
 
@@ -1673,8 +1673,8 @@ function skeletonBurst(ctx: ActionContext, mob: ContentMob): void {
           dmg,
         );
         hero.hp = applied.hp;
-        ctx.log(`The skeleton's explosion hits you for ${dmg}.`);
-        if (applied.died) ctx.log('You were killed by the explosion of bones...'); // TXT_HERO_KILLED
+        ctx.log(`La explosión del esqueleto te pega (${dmg}).`);
+        if (applied.died) ctx.log('Te mató una explosión de huesos...'); // TXT_HERO_KILLED
       } else {
         damageMobDirect(ctx, ch as ContentMob, dmg);
       }
@@ -1948,14 +1948,14 @@ export function strikeHeroVsMob(
   });
   if (!seq.hit) {
     // TXT_YOU_MISSED "%s %s your attack" (Char.java:69, 196-203).
-    ctx.log(`The ${mob.name} ${mob.defenseVerb()} your attack.`);
+    ctx.log(`${mob.name} ${mob.defenseVerb()} tu ataque.`);
     return;
   }
   if (mob.invulnerable) {
     // Vanilla NPC.damage() is a no-op (NPC.java:33-37): the sad ghost and
     // wandmaker cannot be hurt. The hit roll above still runs (defense 1000
     // -> a miss in practice); a rolled hit deals nothing.
-    ctx.log(`You hit the ${mob.name}, but do no damage.`);
+    ctx.log(`Le pegas a ${mob.name}, pero no le haces nada.`);
     return;
   }
   const applied = applyDamage(
@@ -1976,8 +1976,8 @@ export function strikeHeroVsMob(
   mob.justAlerted = true;
   ctx.log(
     seq.damageDealt > 0
-      ? `You hit the ${mob.name} for ${seq.damageDealt}.`
-      : `You hit the ${mob.name}, but do no damage.`,
+      ? `Le pegas a ${mob.name} (${seq.damageDealt}).`
+      : `Le pegas a ${mob.name}, pero no le haces nada.`,
   );
   if (applied.died) {
     killMob(ctx, mob, {});
@@ -2027,7 +2027,7 @@ export function strikeMobVsHero(
     },
   });
   if (!seq.hit) {
-    ctx.log(`The ${mob.name} misses you.`);
+    ctx.log(`${mob.name} falla.`);
     return;
   }
   const applied = applyDamage(
@@ -2042,10 +2042,10 @@ export function strikeMobVsHero(
   }
   ctx.log(
     seq.damageDealt > 0
-      ? `The ${mob.name} hits you for ${seq.damageDealt}.`
-      : `The ${mob.name} hits you, but does no damage.`,
+      ? `${mob.name} te pega (${seq.damageDealt}).`
+      : `${mob.name} te pega, pero no te hace nada.`,
   );
-  if (applied.died) ctx.log(`You were killed by the ${mob.name}...`);
+  if (applied.died) ctx.log(`Te mató ${mob.name}...`);
   // A glyph proc (Potential) can kill the attacker mid-sequence; vanilla
   // runs Mob.die() inside that lightning damage (Potential.java:42-50).
   if (!mob.isAlive()) {
@@ -2077,7 +2077,7 @@ export class MirrorImageMob extends ContentMob {
       id,
       {
         id: 'mirrorimage',
-        name: 'mirror image',
+        name: 'imagen de espejo',
         sprite: 'mirror_image', // TODO(worker6): extract MirrorSprite frames
         hp: 1,
         atk: stats.attackSkill,

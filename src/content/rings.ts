@@ -323,7 +323,7 @@ export function equipRing(
   st.cursedKnown = true;
   if (st.cursed) {
     ctx.log(
-      `your ${ringDisplayName(st.ringId)} tightens around your finger painfully`,
+      `${ringDisplayName(st.ringId)} te aprieta el dedo y duele`,
     );
   }
   syncRingBuffs(hero);
@@ -346,7 +346,7 @@ export function unequipRing(
   const st = ringStates.get(instanceId);
   if (!st) return false;
   if (st.cursed) {
-    ctx.log(`You can't remove the ${ringDisplayName(st.ringId)}!`);
+    ctx.log(`¡No te puedes quitar ${ringDisplayName(st.ringId)}!`);
     return false;
   }
   ringSlots[finger - 1] = null;

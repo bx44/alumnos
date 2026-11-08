@@ -73,7 +73,7 @@ import type { ContentHero } from './hero.js';
  */
 export const GOO_DEF: MobDef = {
   id: 'goo',
-  name: 'Goo',
+  name: 'el Shiamún',
   sprite: 'mob_goo',
   hp: GOO_HT,
   atk: GOO_ATTACK,
@@ -113,14 +113,14 @@ export class GooMob extends ContentMob {
 
   /** Goo.notice: yells "GLURP-GLURP!" (Goo.java:207-210). */
   protected override onNotice(ctx: ActionContext): void {
-    ctx.log('GLURP-GLURP!'); // TXT_NOTICE
+    ctx.log('¡GLUP-GLUP!'); // TXT_NOTICE
   }
 
   /** Goo.move: seal the arena (Goo.java:186-191 -> SewerBossLevel.seal). */
   protected override afterMove(ctx: ActionContext, _oldPos: number): void {
     if (!ctx.level.sealed) {
       sealArena(ctx.level);
-      ctx.log('The dungeon seals shut behind you!');
+      ctx.log('¡El lugar se cierra detrás de ti!');
     }
     const s = gooAfterMove({
       hp: this.hp,
@@ -137,7 +137,7 @@ export class GooMob extends ContentMob {
   override onDeath(ctx: ActionContext): void {
     unsealArena(ctx.level); // SewerBossLevel.unseal()
     dropItemAt(ctx, this.pos, 'skeleton_key'); // Goo.java:196
-    ctx.log('glurp... glurp...'); // Goo.yell, Goo.java:200
+    ctx.log('glup... glup...'); // Goo.yell, Goo.java:200
   }
 
   /**
@@ -169,7 +169,7 @@ export class GooMob extends ContentMob {
     switch (action.kind) {
       case 'pump': {
         // Goo.java:158-167: pumpedUp = true (jumped untouched), spend(2).
-        ctx.log('Goo is pumping itself up!'); // GLog.n, Goo.java:164
+        ctx.log('¡El Shiamún se está inflando!'); // GLog.n, Goo.java:164
         this.applyGooAfter(action);
         return PUMP_UP_DELAY * this.getSpeed(); // spend(PUMP_UP_DELAY), Goo.java:159
       }
@@ -198,7 +198,7 @@ export class GooMob extends ContentMob {
         // before the hero along the jump trace (Ballistica.trace[distance-2]).
         this.jumped = true;
         this.pos = this.jumpDest(ctx, hero);
-        ctx.log('Goo jumps!');
+        ctx.log('¡El Shiamún salta!');
         this.gooStrike(ctx, hero, gooAttackSkill(true, this.jumped), true);
         this.applyGooAfter(action);
         return 1 * this.getSpeed(); // spend(attackDelay())
@@ -224,7 +224,7 @@ export class GooMob extends ContentMob {
         // The warning text is Hero.add's Ooze branch (Hero.java:1091).
         if (gooOozeRoll(rng)) {
           hero.buffs.ooze = { kind: 'ooze', left: 0 }; // duration-less (Ooze.java)
-          ctx.log('Caustic ooze eats your flesh. Wash away it!');
+          ctx.log('La baba cáustica te está comiendo la piel. ¡Quítatela con agua!');
         }
         return damage;
       },

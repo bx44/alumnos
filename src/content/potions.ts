@@ -390,7 +390,7 @@ export function drinkPotion(
 ): number {
   const stack = hero.inventory[slot];
   if (!stack || !isPotionId(stack.itemId)) {
-    ctx.log('Nothing in that slot.');
+    ctx.log('Ahí no traes nada.');
     return 1;
   }
   if (isKnownSafe(stack.itemId) && HARMFUL_DRINK_IDS.has(stack.itemId)) {
@@ -399,10 +399,10 @@ export function drinkPotion(
       itemId: stack.itemId,
       mode: 'drink',
       cell: -1,
-      title: 'Harmful potion!', // TXT_HARMFUL (Potion.java:44)
+      title: '¡Poción mala!', // TXT_HARMFUL (Potion.java:44)
       question: 'Are you sure you want to drink it?', // TXT_R_U_SURE_DRINK
     };
-    ctx.log('Harmful potion! Are you sure you want to drink it?');
+    ctx.log('¡Es una poción mala! ¿Seguro que te la quieres tomar?');
     return 0;
   }
   return drinkPotionConfirmed(ctx, hero, slot);
@@ -440,20 +440,20 @@ function applyDrinkEffect(
       delete hero.buffs.cripple;
       delete hero.buffs.bleeding;
       hero.weakened = false;
-      ctx.log('Your wounds heal completely.'); // TXT_VALUE
+      ctx.log('Tus heridas cierran por completo.'); // TXT_VALUE
       break;
     }
     case 'potion_strength': {
       // PotionOfStrength.java:36-45
       hero.str += 1;
-      ctx.log('Newfound strength surges through your body.'); // TXT_VALUE
+      ctx.log('Sientes una fuerza nueva en el cuerpo.'); // TXT_VALUE
       break;
     }
     case 'potion_experience': {
       // PotionOfExperience.java:34-41: earnExp(hero.maxExp() - hero.exp)
       const need = maxExp(hero.lvl) - hero.exp;
       earnExp(hero, need);
-      ctx.log('You feel more experienced.'); // TXT_VALUE
+      ctx.log('Te sientes con más tablas.'); // TXT_VALUE
       break;
     }
     case 'potion_might': {
@@ -461,7 +461,7 @@ function applyDrinkEffect(
       hero.str += 1;
       hero.ht += 5;
       hero.hp += 5;
-      ctx.log('You feel stronger.'); // TXT_VALUE
+      ctx.log('Te sientes más fuerte.'); // TXT_VALUE
       break;
     }
     case 'potion_mindvision': {
@@ -474,19 +474,19 @@ function applyDrinkEffect(
       affectBuff(hero.buffs, 'levitation', 20); // Levitation.DURATION
       hero.flying = true;
       delete hero.buffs.roots;
-      ctx.log('You float into the air!'); // TXT_VALUE
+      ctx.log('¡Te elevas en el aire!'); // TXT_VALUE
       break;
     }
     case 'potion_invisibility': {
       // PotionOfInvisibility.java:34-41
       affectBuff(hero.buffs, 'invisibility', 15); // Invisibility.DURATION
-      ctx.log('You vanish!'); // TXT_VALUE
+      ctx.log('¡Desapareces!'); // TXT_VALUE
       break;
     }
     case 'potion_purity': {
       // PotionOfPurity.java:34-41: drink grants GasesImmunity(5)
       affectBuff(hero.buffs, 'gasesimmunity', 5); // GasesImmunity.DURATION
-      ctx.log('You feel cleansed of impurities.'); // TXT_FRESHNESS
+      ctx.log('Te sientes limpio.'); // TXT_FRESHNESS
       break;
     }
     default: {
@@ -520,7 +520,7 @@ export function throwPotion(
 ): number {
   const stack = hero.inventory[slot];
   if (!stack || !isPotionId(stack.itemId)) {
-    ctx.log('Nothing in that slot.');
+    ctx.log('Ahí no traes nada.');
     return 1;
   }
   if (isKnownSafe(stack.itemId) && BENEFICIAL_THROW_IDS.has(stack.itemId)) {
@@ -529,10 +529,10 @@ export function throwPotion(
       itemId: stack.itemId,
       mode: 'throw',
       cell,
-      title: 'Beneficial potion', // TXT_BENEFICIAL (Potion.java:45)
+      title: 'Poción buena', // TXT_BENEFICIAL (Potion.java:45)
       question: 'Are you sure you want to shatter it?', // TXT_R_U_SURE_THROW
     };
-    ctx.log('Beneficial potion. Are you sure you want to shatter it?');
+    ctx.log('Es una poción buena. ¿Seguro que la quieres romper?');
     return 0;
   }
   return throwPotionConfirmed(ctx, hero, slot, cell);

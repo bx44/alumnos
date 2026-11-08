@@ -64,9 +64,9 @@ class StubMob extends Actor implements MobActor {
 function attackMob(target: MobActor, ctx: ActionContext): number {
   const dmg = ctx.rng.intRange(1, 4);
   target.hp -= dmg;
-  ctx.log(`You hit the ${target.name} for ${dmg}.`);
+  ctx.log(`Le pegas a ${target.name} (${dmg}).`);
   if (target.hp <= 0) {
-    ctx.log(`The ${target.name} dies.`);
+    ctx.log(`${target.name} cae.`);
     ctx.killMob(target);
   }
   return 1;
@@ -97,28 +97,28 @@ export const stubMechanics: MechanicsHooks = {
         const item = level.itemAt(hero.x, hero.y);
         if (item) {
           level.items = level.items.filter((it) => it !== item);
-          ctx.log(`You pick up ${item.itemId}. (stub: no inventory yet)`);
+          ctx.log(`Levantas ${item.itemId}. (falta: todavía no hay mochila)`);
         } else {
-          ctx.log('There is nothing here to pick up.');
+          ctx.log('Aquí no hay nada que levantar.');
         }
         return 1;
       }
       case 'attack': {
         const target = ctx.mobs.find((m) => m.id === intent.targetId);
         if (!target) {
-          ctx.log('Nothing to attack.');
+          ctx.log('No hay a quién pegarle.');
           return 1;
         }
         return attackMob(target, ctx);
       }
       case 'useItem':
-        ctx.log('(stub: item use not implemented yet)');
+        ctx.log('(falta: usar ese objeto todavía no está hecho)');
         return 1;
       default:
         // UI-proposed intents (equip/drop/throwItem) land here until the real
         // mechanics hooks implement them. Never fall through: an undefined
         // cost would corrupt the scheduler clock.
-        ctx.log('(stub: that item action is not implemented yet)');
+        ctx.log('(falta: esa acción todavía no está hecha)');
         return 1;
       case 'descend':
       case 'ascend':

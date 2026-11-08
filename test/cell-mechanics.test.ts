@@ -161,7 +161,7 @@ describe('chasm', () => {
     c.hero.hp = 5;
     heroFall(c.ctx, c.hero);
     expect(c.hero.isAlive()).toBe(false);
-    expect(c.logs).toContain('You fell to death...');
+    expect(c.logs).toContain('Te caíste y te mataste...');
   });
 
   test('mobFall destroys the mob outright (no exp/loot path)', () => {
@@ -394,7 +394,7 @@ describe('locked chests', () => {
     level.items.push(item);
     const cost = openLockedChest(c.ctx, c.hero, item);
     expect(cost).toBe(0);
-    expect(c.logs).toContain("This chest is locked and you don't have matching key");
+    expect(c.logs).toContain("El cofre está cerrado y no traes la llave que abre");
     expect(level.items).toContain(item);
   });
 

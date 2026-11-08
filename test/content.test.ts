@@ -827,7 +827,7 @@ describe('goo (Goo.java)', () => {
     }
     expect(seen.length).toBeGreaterThan(0);
     for (const l of seen) {
-      expect(l).toBe('Caustic ooze eats your flesh. Wash away it!');
+      expect(l).toBe('La baba cáustica te está comiendo la piel. ¡Quítatela con agua!');
     }
   });
 
@@ -955,7 +955,7 @@ describe('interactions', () => {
     level.set(hx + 1, hy, Terrain.DOOR_LOCKED);
     const costNoKey = moveHero(c.ctx, c.hero, 1, 0);
     expect(level.get(hx + 1, hy)).toBe(Terrain.DOOR_LOCKED);
-    expect(c.logs.some((l) => l.includes("You don't have a matching key"))).toBe(true);
+    expect(c.logs.some((l) => l.includes("No traes la llave que abre"))).toBe(true);
     expect(costNoKey).toBe(0);
     expect(c.hero.pos).not.toBe(doorPos);
     addToInventory(c.hero, 'iron_key', 1);
@@ -1193,7 +1193,7 @@ describe('burning side effects (Burning.java:76-98)', () => {
 });
 
 describe('buff death messages', () => {
-  test('burning kill logs "You burned to death..." (Burning.java:152)', () => {
+  test('burning kill logs "Te quemaste..." (Burning.java:152)', () => {
     const level = makeLevel();
     const c = makeCtx(level, 51);
     c.hero.hp = 1;
@@ -1202,7 +1202,7 @@ describe('buff death messages', () => {
     expect(c.logs).toContain('You burned to death...');
   });
 
-  test('poison kill logs "You died from poison..." (Poison.java:94)', () => {
+  test('poison kill logs "Te mató el veneno..." (Poison.java:94)', () => {
     const level = makeLevel();
     const c = makeCtx(level, 51);
     c.hero.hp = 1;
@@ -1211,7 +1211,7 @@ describe('buff death messages', () => {
     expect(c.logs).toContain('You died from poison...');
   });
 
-  test('ooze kill logs "Caustic ooze killed you..." (Ooze.java:50)', () => {
+  test('ooze kill logs "La baba cáustica te mató..." (Ooze.java:50)', () => {
     const level = makeLevel();
     const c = makeCtx(level, 51);
     c.hero.hp = 1;

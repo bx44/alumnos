@@ -32,7 +32,7 @@ export const HONEYPOT_THROW_TIME = 1;
 
 export const HONEYPOT_DEF: ItemDef = {
   id: HONEYPOT_ID,
-  name: 'honeypot',
+  name: 'tarro de miel',
   sprite: 'item_honeypot',
   type: 'misc',
   stackable: true,
@@ -123,7 +123,7 @@ export function shatterHoneypotInHands(
 ): number {
   const stack = hero.inventory[slot];
   if (!stack || stack.itemId !== HONEYPOT_ID) {
-    ctx.log('Nothing in that slot.');
+    ctx.log('Ahí no traes nada.');
     return 1;
   }
   shatterHoneypotAt(ctx, hero, hero.pos);
@@ -144,7 +144,7 @@ export function throwHoneypot(
 ): number {
   const stack = hero.inventory[slot];
   if (!stack || stack.itemId !== HONEYPOT_ID) {
-    ctx.log('Nothing in that slot.');
+    ctx.log('Ahí no traes nada.');
     return 1;
   }
   takeFromSlot(hero, slot, 1);

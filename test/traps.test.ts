@@ -164,7 +164,7 @@ describe('pressTrapCell (Level.press trap portion)', () => {
     c.hero.pos = cell;
     pressTrapCell(c.ctx, cell, c.hero as unknown as TrapHero, () => {});
     expect(c.logs).toContain(TXT_HIDDEN_PLATE_CLICKS);
-    expect(TXT_HIDDEN_PLATE_CLICKS).toBe('A hidden pressure plate clicks!');
+    expect(TXT_HIDDEN_PLATE_CLICKS).toBe('¡Una placa escondida hace clic!');
   });
 
   test('hero triggers revealed traps too, and trigger is single-use', () => {
@@ -377,7 +377,7 @@ describe('tickBleeding (Bleeding.act, Bleeding.java:58-81)', () => {
     tickBleeding(c.ctx, scriptedRng([2]), c.hero as unknown as TrapHero);
     expect(c.hero.hp).toBeLessThanOrEqual(0);
     expect(c.logs).toContain(TXT_BLEEDING_DEATH);
-    expect(TXT_BLEEDING_DEATH).toBe('You bled to death...');
+    expect(TXT_BLEEDING_DEATH).toBe('Te desangraste...');
   });
 });
 

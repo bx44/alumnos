@@ -57,12 +57,12 @@ import {
 import type { BlobWorld } from './blobs.js';
 
 /** Exact strings from the Java source. */
-export const TXT_HIDDEN_PLATE_CLICKS = 'A hidden pressure plate clicks!'; // Level.java:94
+export const TXT_HIDDEN_PLATE_CLICKS = '¡Una placa escondida hace clic!'; // Level.java:94
 export const TXT_ALARM_SOUND =
   'The trap emits a piercing sound that echoes throughout the dungeon!'; // AlarmTrap.java
 export const TXT_LIGHTNING_DEATH =
   'You were killed by a discharge of a lightning trap...'; // LightningTrap.java
-export const TXT_BLEEDING_DEATH = 'You bled to death...'; // Bleeding.java:70
+export const TXT_BLEEDING_DEATH = 'Te desangraste...'; // Bleeding.java:70
 
 /** The 8 trap kinds, in vanilla levels/traps/ order. */
 export type TrapKind =

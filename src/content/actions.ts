@@ -74,7 +74,7 @@ export function pickupAt(ctx: ActionContext, hero: ContentHero): number {
   const level = ctx.level;
   const item = level.items.find((it) => it.pos === hero.pos);
   if (!item) {
-    ctx.log('There is nothing here to pick up.');
+    ctx.log('Aquí no hay nada que levantar.');
     return 1;
   }
   level.items = level.items.filter((it) => it !== item);
@@ -87,11 +87,11 @@ export function pickupAt(ctx: ActionContext, hero: ContentHero): number {
   const def = getItem(defId);
   if (def.type === 'gold') {
     hero.gold += qty;
-    ctx.log(`You pick up ${qty} gold.`); // TXT_VALUE %d
+    ctx.log(`Levantas ${qty} de oro.`); // TXT_VALUE %d
   } else {
     addToInventory(hero, defId, qty);
     const label = qty > 1 ? `${qty}x ${def.name}` : def.name;
-    ctx.log(`You pick up the ${label}.`);
+    ctx.log(`Levantas ${label}.`);
   }
   return 1;
 }
@@ -107,7 +107,7 @@ export function useInventorySlot(
 ): number {
   const stack = hero.inventory[slot];
   if (!stack) {
-    ctx.log('Nothing in that slot.');
+    ctx.log('Ahí no traes nada.');
     return 1;
   }
   const def = getItem(stack.itemId);
@@ -116,7 +116,7 @@ export function useInventorySlot(
   // catalog) — route by id. The wand-zap and ring-equip use-paths land with
   // their worker; until then the inventory UI offers nothing for these.
   if (isWandId(stack.itemId) || isRingId(stack.itemId)) {
-    ctx.log('Nothing happens.');
+    ctx.log('No pasa nada.');
     return 1;
   }
   switch (def.type) {
@@ -131,7 +131,7 @@ export function useInventorySlot(
     case 'armor':
       return equipArmorFromInventory(ctx, hero, slot, stack);
     case 'missile':
-      ctx.log('Choose a target to throw the dart at.'); // M1: throwItem intent
+      ctx.log('Escoge a quién le avientas el dardo.'); // M1: throwItem intent
       return 0;
     case 'key':
       return useKey(ctx, hero, slot, stack);
@@ -199,7 +199,7 @@ function eatFood(
   if (hero.hp < hero.ht) {
     hero.hp = Math.min(hero.hp + 5, hero.ht); // Food.java:77-79
   }
-  ctx.log('That food tasted delicious!'); // Food.java:82
+  ctx.log('¡Eso estuvo buenísimo!'); // Food.java:82
   return 3; // TIME_TO_EAT (Food.java:35)
 }
 
@@ -216,7 +216,7 @@ function equipWeaponFromInventory(
 ): number {
   const def = getItem(stack.itemId);
   if (!def.weapon) {
-    ctx.log("You can't wield that.");
+    ctx.log("Eso no se agarra como arma.");
     return 1;
   }
   // The old weapon must come off first (doUnequip fails when cursed).
@@ -238,7 +238,7 @@ function equipWeaponFromInventory(
   if (oldId && oldWeapon) {
     addToInventory(hero, oldId, 1, { weapon: oldWeapon });
   }
-  ctx.log(`You equip the ${def.name}.`);
+  ctx.log(`Te pones ${def.name}.`);
   if (inst.cursed) {
     ctx.log(TXT_EQUIP_CURSED_WEAPON.replace('%s', inst.name));
   }
@@ -257,7 +257,7 @@ function equipArmorFromInventory(
 ): number {
   const def = getItem(stack.itemId);
   if (!def.armor) {
-    ctx.log("You can't wear that.");
+    ctx.log("Eso no se usa encima.");
     return 1;
   }
   if (hero.armor?.cursed) {
@@ -277,7 +277,7 @@ function equipArmorFromInventory(
   if (oldId && oldArmor) {
     addToInventory(hero, oldId, 1, { armor: oldArmor });
   }
-  ctx.log(`You equip the ${def.name}.`);
+  ctx.log(`Te pones ${def.name}.`);
   if (inst.cursed) {
     ctx.log(TXT_EQUIP_CURSED_ARMOR.replace('%s', inst.name));
   }
@@ -310,11 +310,11 @@ function useKey(
       if (level.inBounds(nx, ny) && level.get(nx, ny) === Terrain.DOOR_LOCKED) {
         level.set(nx, ny, Terrain.DOOR); // Door.unlock (Door.java:75-93)
         removeFromInventory(hero, slot, 1);
-        ctx.log('You unlock the door.'); // TXT_UNLOCK
+        ctx.log('Abres la puerta.'); // TXT_UNLOCK
         return 1; // TIME_TO_UNLOCK
       }
     }
-    ctx.log('There is no locked door nearby.');
+    ctx.log('No hay ninguna puerta cerrada cerca.');
     return 1;
   }
   if (stack.itemId === 'skeleton_key') {
@@ -322,14 +322,14 @@ function useKey(
       if (level.inBounds(nx, ny) && level.get(nx, ny) === Terrain.EXIT_LOCKED) {
         level.set(nx, ny, Terrain.EXIT); // LockedExit.unlock (SewerBossLevel)
         removeFromInventory(hero, slot, 1);
-        ctx.log('You unlock the way down with the skeleton key.');
+        ctx.log('Abres la bajada con la llave maestra.');
         return 1;
       }
     }
-    ctx.log('There is no locked exit nearby.');
+    ctx.log('No hay ninguna salida cerrada cerca.');
     return 1;
   }
-  ctx.log("You can't use that here.");
+  ctx.log("Aquí eso no sirve.");
   return 1;
 }
 
@@ -347,7 +347,7 @@ export function throwDart(
 ): number {
   const stack = hero.inventory[slot];
   if (!stack || stack.itemId !== 'dart') {
-    ctx.log('You have no darts to throw.');
+    ctx.log('No traes dardos.');
     return 1;
   }
   const level = ctx.level;
@@ -380,7 +380,7 @@ export function throwDart(
   }
   // Miss: the dart lands at the end of the trace.
   dropDartAt(level, trace.landCell);
-  ctx.log('The dart clatters to the floor.'); // MissileWeapon.onThrow miss
+  ctx.log('El dardo cae al piso.'); // MissileWeapon.onThrow miss
   return 1;
 }
 
@@ -400,11 +400,11 @@ export function equipSlot(
 ): number {
   if (slot === -1) {
     if (!hero.weaponId) {
-      ctx.log('You wield nothing.');
+      ctx.log('No traes nada en la mano.');
       return 1;
     }
     // EquipableItem.doUnequip (EquipableItem.java:70-90): cursed gear
-    // cannot come off ("You can't remove cursed %s!").
+    // cannot come off ("¡No te puedes quitar %s, está maldito!").
     if (hero.weapon?.cursed) {
       ctx.log(TXT_UNEQUIP_CURSED.replace('%s', hero.weapon.name));
       return 1;
@@ -414,12 +414,12 @@ export function equipSlot(
     addToInventory(hero, hero.weaponId, 1, inst ? { weapon: inst } : undefined);
     hero.weapon = null;
     hero.weaponId = null;
-    ctx.log(`You unwield the ${def.name}.`);
+    ctx.log(`Guardas ${def.name}.`);
     return 1;
   }
   if (slot === -2) {
     if (!hero.armorId) {
-      ctx.log('You wear nothing.');
+      ctx.log('No traes nada puesto.');
       return 1;
     }
     if (hero.armor?.cursed) {
@@ -431,18 +431,18 @@ export function equipSlot(
     addToInventory(hero, hero.armorId, 1, inst ? { armor: inst } : undefined);
     hero.armor = null;
     hero.armorId = null;
-    ctx.log(`You take off the ${def.name}.`);
+    ctx.log(`Te quitas ${def.name}.`);
     return 1;
   }
   const stack = hero.inventory[slot];
   if (!stack) {
-    ctx.log('Nothing in that slot.');
+    ctx.log('Ahí no traes nada.');
     return 1;
   }
   const def = getItem(stack.itemId);
   if (def.type === 'weapon') return equipWeaponFromInventory(ctx, hero, slot, stack);
   if (def.type === 'armor') return equipArmorFromInventory(ctx, hero, slot, stack);
-  ctx.log("You can't equip that.");
+  ctx.log("Eso no te lo puedes poner.");
   return 1;
 }
 
@@ -458,7 +458,7 @@ export function dropSlot(
   if (slot === -1 || slot === -2) {
     const equippedId = slot === -1 ? hero.weaponId : hero.armorId;
     if (!equippedId) {
-      ctx.log('Nothing in that slot.');
+      ctx.log('Ahí no traes nada.');
       return 1;
     }
     // Dropping equipped gear unequips it first (Item.doDrop -> detach);
@@ -481,12 +481,12 @@ export function dropSlot(
       itemId: equippedId,
       sprite: def.sprite,
     });
-    ctx.log(`You drop the ${def.name}.`);
+    ctx.log(`Sueltas ${def.name}.`);
     return 0.5;
   }
   const stack = hero.inventory[slot];
   if (!stack) {
-    ctx.log('Nothing in that slot.');
+    ctx.log('Ahí no traes nada.');
     return 1;
   }
   const removed = removeFromInventory(hero, slot, stack.qty);
@@ -496,7 +496,7 @@ export function dropSlot(
     itemId: removed!.itemId,
     sprite: def.sprite,
   });
-  ctx.log(`You drop the ${def.name}.`);
+  ctx.log(`Sueltas ${def.name}.`);
   return 0.5;
 }
 
@@ -547,7 +547,7 @@ function stepTowardChasm(
     return heroFall(ctx, hero);
   }
   chasmArmed = { from, to };
-  ctx.log('Do you really want to jump into the chasm? You can probably die.'); // TXT_JUMP (Chasm.java:35-36)
+  ctx.log('¿De verdad te quieres aventar al abismo? Lo más seguro es que te mates.'); // TXT_JUMP (Chasm.java:35-36)
   return 0; // interrupted for free (Hero.getCloser, Hero.java:921-924)
 }
 
@@ -572,7 +572,7 @@ function stepTowardChasm(
 export function heroFall(ctx: ActionContext, hero: ContentHero): number {
   chasmArmed = null; // jumpConfirmed = false (Chasm.java:55)
   // SND_FALLING + InterlevelScene.Mode.FALL: engine seam needed (see above).
-  ctx.log('You fall into the chasm!');
+  ctx.log('¡Te caes al abismo!');
   // Chasm.heroLand (Chasm.java:74-87): Buff.prolong(hero, Cripple.class,
   // Cripple.DURATION) — prolong sets the remaining duration to DURATION.
   hero.buffs.cripple = { kind: 'cripple', left: CRIPPLE_DURATION };
@@ -592,7 +592,7 @@ export function heroFall(ctx: ActionContext, hero: ContentHero): number {
     // Hero.Doom.onDeath (Chasm.java:80-86): Badges.validateDeathFromFalling
     // + Dungeon.fail(FALL) are Stage 6 (badges/rankings); the player-facing
     // message is GLog.n("You fell to death...").
-    ctx.log('You fell to death...');
+    ctx.log('Te caíste y te mataste...');
   }
   return 1; // TIME_TO_MOVE (Hero.java:36)
 }
@@ -728,7 +728,7 @@ export function openLockedChest(
   const level = ctx.level;
   const keySlot = hero.inventory.findIndex((s) => s.itemId === 'golden_key');
   if (keySlot === -1) {
-    ctx.log("This chest is locked and you don't have matching key"); // TXT_LOCKED_CHEST (Hero.java:124)
+    ctx.log("El cofre está cerrado y no traes la llave que abre"); // TXT_LOCKED_CHEST (Hero.java:124)
     return 0; // ready(), no time spent (Hero.java:631-633)
   }
   removeFromInventory(hero, keySlot, 1); // theKey.detach (Hero.java:1280-1283)
@@ -740,10 +740,10 @@ export function openLockedChest(
   const label = qty > 1 ? `${qty}x ${def.name}` : def.name;
   if (def.type === 'gold') {
     hero.gold += qty; // Gold.doPickUp adds to the purse (Gold.java:65-75)
-    ctx.log(`You unlock the chest and take ${qty} gold.`);
+    ctx.log(`Abres el cofre y sacas ${qty} de oro.`);
   } else {
     addToInventory(hero, defId, qty);
-    ctx.log(`You unlock the chest and take the ${label}.`); // SND_UNLOCK in vanilla; no audio here
+    ctx.log(`Abres el cofre y sacas ${label}.`); // SND_UNLOCK in vanilla; no audio here
   }
   return 1; // Key.TIME_TO_UNLOCK (Key.java:26)
 }
@@ -818,7 +818,7 @@ export function mineDarkGold(
 ): number {
   const stack = hero.inventory[slot];
   if (!stack || stack.itemId !== 'pickaxe') {
-    ctx.log('Nothing to mine with.');
+    ctx.log('No traes con qué picar.');
     return 0;
   }
   if (ctx.level.depth < 11 || ctx.level.depth > 15) {
@@ -851,14 +851,14 @@ export function mineDarkGold(
   // conversion — no tile-map change is needed.
   // DarkGold.doPickUp → "You now have dark gold ore" (Hero.TXT_YOU_NOW_HAVE).
   addToInventory(hero, 'darkgold', 1);
-  ctx.log('You now have dark gold ore');
+  ctx.log('Ahora traes mineral de oro oscuro');
   if (hero.hungerLevel < STARVING) {
     hero.hungerLevel = satisfy(hero.hungerLevel, -STARVING / 10);
   }
   return 2; // TIME_TO_MINE
 }
 
-const TXT_NO_VEIN = 'There is no dark gold vein near you to mine';
+const TXT_NO_VEIN = 'No hay ninguna veta de oro oscuro cerca';
 
 /**
  * Sign.read (Sign.java:72-102). Vanilla trigger: a Move action that cannot
@@ -878,7 +878,7 @@ export function readSign(ctx: ActionContext, hero: ContentHero): number {
     // sound in vanilla — the port logs the message (TXT_BURN, Sign.java:70-71).
     cells.delete(hero.pos);
     ctx.level.set(hero.x, hero.y, Terrain.EMBERS);
-    ctx.log('As you try to read the sign it bursts into greenish flames.'); // TXT_BURN
+    ctx.log('Apenas intentas leer el letrero, se prende en llamas verdosas.'); // TXT_BURN
   }
   return 0; // reading costs no time (Hero.actMove → ready(), Hero.java:493-497)
 }
@@ -952,7 +952,7 @@ export function moveHero(
     if (keySlot === -1) {
       // actUnlock without a matching key: warning, no time spent
       // (GLog.w + ready(), Hero.java:688-691).
-      ctx.log("You don't have a matching key"); // TXT_LOCKED_DOOR (Hero.java:125)
+      ctx.log("No traes la llave que abre"); // TXT_LOCKED_DOOR (Hero.java:125)
       return 0;
     }
     // Vanilla HeroAction.Unlock with the key (Hero.java:680-687, 1264-1277):
@@ -961,7 +961,7 @@ export function moveHero(
     // (Door.enter via press, Level.java:695-706).
     level.set(nx, ny, Terrain.DOOR);
     removeFromInventory(hero, keySlot, 1);
-    ctx.log('You unlock the door.'); // SND_UNLOCK in vanilla; no audio here
+    ctx.log('Abres la puerta.'); // SND_UNLOCK in vanilla; no audio here
     return 1; // TIME_TO_UNLOCK (Key.java:26)
   }
   if (!level.isPassable(nx, ny)) return 1;
@@ -1083,7 +1083,7 @@ export function searchIntentional(
     }
   }
   if (found) {
-    ctx.log('You noticed something'); // TXT_NOTICED_SMTH (Hero.java:126)
+    ctx.log('Notaste algo'); // TXT_NOTICED_SMTH (Hero.java:126)
     // Hero.interrupt() (Hero.java:1386) is a no-op in the target: intents
     // are discrete single actions, so there is no continued action to cancel.
   }

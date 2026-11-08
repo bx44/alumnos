@@ -394,7 +394,7 @@ describe('canTryToSummon (King.java:106-113)', () => {
     expect(getUndeadCount()).toBe(1); // summoned, not a strike
     expect(c.hero.hp).toBe(hpBefore); // hero untouched
     expect(king.nextPedestal).toBe(false); // toggled (King.java:157)
-    expect(c.logs).toContain('Arise, slaves!');
+    expect(c.logs).toContain('¡Levántense, esclavos!');
     const undead = c.mobs.find((m) => m instanceof UndeadMob);
     expect(undead).toBeDefined();
     expect(undead!.state).toBe('wandering');
@@ -445,7 +445,7 @@ describe('notice and death (King.java:121-133, 194-197)', () => {
   test('notice yells "How dare you!"', () => {
     const { king, c } = makeKing();
     king.notice(c.ctx);
-    expect(c.logs).toContain('How dare you!');
+    expect(c.logs).toContain('¡Cómo te atreves!');
   });
 
   test('death drops the skeleton key and yells (King.java:126-132)', () => {
@@ -454,7 +454,7 @@ describe('notice and death (King.java:121-133, 194-197)', () => {
     const drops = c.ctx.level.items.filter((it) => it.pos === king.pos);
     expect(drops.some((d) => d.itemId === 'skeleton_key')).toBe(true);
     expect(c.logs).toContain(
-      'You cannot kill me, warrior... I am... immortal...',
+      'No me puedes matar, guerrero... yo soy... inmortal...',
     );
   });
 });
@@ -471,7 +471,7 @@ describe('arena entry (CityBossLevel.java:176-200)', () => {
     expect(king).toBeInstanceOf(KingMob);
     expect(king.state).toBe('hunting');
     expect(c.mobs).toContain(king);
-    expect(c.logs).toContain('How dare you!');
+    expect(c.logs).toContain('¡Cómo te atreves!');
     expect(king.name).toBe('King of Dwarves');
   });
 
@@ -480,7 +480,7 @@ describe('arena entry (CityBossLevel.java:176-200)', () => {
     const level = makeLevel();
     const c = makeCtx(level);
     spawnKingArena(c.ctx, 40);
-    expect(c.logs).not.toContain('How dare you!');
+    expect(c.logs).not.toContain('¡Cómo te atreves!');
   });
 
   test('spawnKingArena: undead name when not at deepest floor', () => {

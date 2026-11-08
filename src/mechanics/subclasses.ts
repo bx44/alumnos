@@ -127,7 +127,7 @@ export function heroDisplayName(
 export const TIME_TO_READ = 10;
 
 /** TomeOfMastery.TXT_BLINDED (TomeOfMastery.java:24). */
-export const TOME_BLINDED_MSG = "You can't read while blinded";
+export const TOME_BLINDED_MSG = "No puedes leer estando ciego";
 
 /** TomeOfMastery.AC_READ (TomeOfMastery.java:28). */
 export const TOME_READ_ACTION = 'READ';
@@ -156,11 +156,11 @@ export function tomeChoices(
   return { respec: false, options: [sc1!, sc2!] };
 }
 
-/** "Which way will you follow?" (WndChooseWay, WndChooseWay.java:38). */
+/** "¿Qué camino vas a seguir?" (WndChooseWay, WndChooseWay.java:38). */
 export const WND_MASTERY_TITLE = 'Which way will you follow?';
 /** "I'll decide later" (WndChooseWay.java:39). */
 export const WND_MASTERY_CANCEL = "I'll decide later";
-/** "Do you want to respec into %s?" (WndChooseWay.java:77). */
+/** "¿Quieres cambiarte a %s?" (WndChooseWay.java:77). */
 export const WND_REMASTERY_PROMPT = 'Do you want to respec into %s?';
 /** "Yes, I want to respec" (WndChooseWay.java:79). */
 export const WND_REMASTERY_OK = 'Yes, I want to respec';
@@ -181,7 +181,7 @@ export interface TomeChooseResult {
   subClass: HeroSubClass;
   /** Time spent reading (TomeOfMastery.choose: curUser.spend(TIME_TO_READ)). */
   timeCost: number;
-  /** "You have chosen the way of the %s!" (TomeOfMastery.java:133). */
+  /** "¡Escogiste el camino de %s!" (TomeOfMastery.java:133). */
   log: string;
   /** Berserker chosen while at/below the fury threshold gains Fury immediately
    *  (TomeOfMastery.java:136-138). Note: no 0 < HP guard here, unlike Hero.damage. */
@@ -201,7 +201,7 @@ export function tomeChoose(
   return {
     subClass: way,
     timeCost: TIME_TO_READ,
-    log: `You have chosen the way of the ${capitalizeTitle(SUBCLASS_TITLES[way])}!`,
+    log: `¡Escogiste el camino de ${capitalizeTitle(SUBCLASS_TITLES[way])}!`,
     gainFury: way === 'berserker' && hp <= ht * FURY_LEVEL,
   };
 }

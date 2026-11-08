@@ -192,8 +192,8 @@ export class UiManager {
   private deathCause(g: Game): string {
     for (let i = g.log.length - 1; i >= Math.max(0, g.log.length - 20); i--) {
       const line = g.log[i];
-      // Matches the vanilla buff death lines ("You burned to death...",
-      // "You died from poison...", "Caustic ooze killed you...") as well as
+      // Matches the vanilla buff death lines ("Te quemaste...",
+      // "Te mató el veneno...", "La baba cáustica te mató...") as well as
       // the generic fallback.
       if (/killed by|slain|you died|to death\.\.\.|killed you\.\.\./i.test(line)) return line;
     }

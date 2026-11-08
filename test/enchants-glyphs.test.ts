@@ -167,7 +167,7 @@ function makeWeapon(
   }> = {},
 ) {
   return {
-    name: 'sword',
+    name: 'espada',
     level: 0,
     durability: 80,
     enchantment: null,
@@ -872,7 +872,7 @@ describe('durability', () => {
       'Because of frequent use, your dagger is going to break soon.',
     );
     expect(TXT_HAS_BROKEN.replace('%s', 'dagger')).toBe(
-      'Because of frequent use, your dagger has broken.',
+      'De tanto usarlo, tu dagger se rompió.',
     );
   });
 
@@ -894,7 +894,7 @@ describe('durability', () => {
 describe('curses', () => {
   test('exact unequip refusal message', () => {
     expect(TXT_UNEQUIP_CURSED.replace('%s', 'cursed sword')).toBe(
-      "You can't remove cursed cursed sword!",
+      "¡No te puedes quitar cursed sword, está maldito!",
     );
   });
 
@@ -904,7 +904,7 @@ describe('curses', () => {
       'you wince as your grip involuntarily tightens around your %s',
     );
     expect(TXT_EQUIP_CURSED_ARMOR).toBe(
-      'your %s constricts around you painfully',
+      'tu %s te aprieta y duele',
     );
   });
 });
@@ -980,7 +980,7 @@ describe('pickaxe and dark gold', () => {
   test('darkgold catalog: stackable quest ore, price 1', async () => {
     const { getItem } = await import('../src/content/items.js');
     const def = getItem('darkgold');
-    expect(def.name).toBe('dark gold ore');
+    expect(def.name).toBe('mineral de oro oscuro');
     expect(def.sprite).toBe('item_darkgold');
     expect(def.stackable).toBe(true);
     expect(def.price).toBe(1);
@@ -1024,7 +1024,7 @@ describe('pickaxe and dark gold', () => {
     expect(gold).toBeDefined();
     expect(gold!.qty).toBe(1);
     expect(hero.hungerLevel).toBe(136); // +36 (STARVING/10)
-    expect(logs.some((m: string) => m.includes('dark gold ore'))).toBe(true);
+    expect(logs.some((m: string) => m.includes('mineral de oro oscuro'))).toBe(true);
   });
 
   test('mining twice consumes two veins', () => {
@@ -1046,21 +1046,21 @@ describe('pickaxe and dark gold', () => {
     // Third attempt: no veins left.
     const cost = mineDarkGold(ctx as never, hero, slot);
     expect(cost).toBe(0);
-    expect(logs[logs.length - 1]).toBe('There is no dark gold vein near you to mine');
+    expect(logs[logs.length - 1]).toBe('No hay ninguna veta de oro oscuro cerca');
   });
 
   test('mining failure spends no time (vanilla Pickaxe.execute)', () => {
     const { hero, ctx, slot, logs, mineDarkGold } = miningSetup(12, null);
     const cost = mineDarkGold(ctx, hero, slot);
     expect(cost).toBe(0);
-    expect(logs[0]).toBe('There is no dark gold vein near you to mine');
+    expect(logs[0]).toBe('No hay ninguna veta de oro oscuro cerca');
     expect(hero.inventory.some((s: { itemId: string }) => s.itemId === 'darkgold')).toBe(false);
   });
 
   test('mining outside depths 11-15 fails', () => {
     const { hero, ctx, slot, logs, mineDarkGold } = miningSetup(10, 56);
     expect(mineDarkGold(ctx, hero, slot)).toBe(0);
-    expect(logs[0]).toBe('There is no dark gold vein near you to mine');
+    expect(logs[0]).toBe('No hay ninguna veta de oro oscuro cerca');
     const deep = miningSetup(16, 56);
     expect(deep.mineDarkGold(deep.ctx, deep.hero, deep.slot)).toBe(0);
   });
@@ -1081,7 +1081,7 @@ describe('pickaxe and dark gold', () => {
     const def = getItem('pickaxe');
     hero.weapon = {
       ...def.weapon!,
-      name: 'pickaxe',
+      name: 'pico',
       level: 0,
       durability: 70,
       enchantment: null,

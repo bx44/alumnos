@@ -101,7 +101,7 @@ export { setKingPedestals };
  */
 export const KING_DEF: MobDef = {
   id: 'king',
-  name: 'King of Dwarves',
+  name: 'Gaavá',
   sprite: 'mob_king',
   hp: KING_HT,
   atk: KING_ATTACK,
@@ -126,7 +126,7 @@ export const KING_DEF: MobDef = {
  */
 export const UNDEAD_DEF: MobDef = {
   id: 'king_undead',
-  name: 'undead dwarf',
+  name: 'enano no-muerto',
   sprite: 'mob_undead',
   hp: UNDEAD_HT,
   atk: UNDEAD_ATTACK,
@@ -329,13 +329,13 @@ export class KingMob extends ContentMob {
       // (King.java:180) — particle effect, renderer territory.
     }
 
-    ctx.log('Arise, slaves!'); // King.yell (King.java:192)
+    ctx.log('¡Levántense, esclavos!'); // King.yell (King.java:192)
   }
 
   /** King.notice (King.java:194-197). */
   protected override onNotice(ctx: ActionContext): void {
     super.onNotice(ctx);
-    ctx.log('How dare you!');
+    ctx.log('¡Cómo te atreves!');
   }
 
   /**
@@ -355,7 +355,7 @@ export class KingMob extends ContentMob {
     // worker) turns the arena door into an ordinary door on this drop.
     dropItemAt(ctx, this.pos, 'skeleton_key');
     // Badges.validateBossSlain() (King.java:131) is Stage 6.
-    ctx.log('You cannot kill me, warrior... I am... immortal...'); // King.java:132
+    ctx.log('No me puedes matar, guerrero... yo soy... inmortal...'); // King.java:132
   }
 }
 

@@ -463,7 +463,7 @@ export function beginZap(
 /**
  * Resolve a zap at a target cell (Wand.zapper.onSelect). `targetCell`
  * must be a map position; targeting the hero's own cell is rejected
- * (Wand.zapper: "You can't target yourself").
+ * (Wand.zapper: "No te puedes apuntar a ti mismo").
  *
  * Successful zaps: curCharges--, usagesToKnow--, identify at 40 uses
  * (Wand.zapProc -> usagesToKnow-- -> if (usagesToKnow == 0) setKnown()).
@@ -790,7 +790,7 @@ function effectLightning(
   fx({ kind: 'strike', points });
   // WandOfLightning.onZap: killing yourself fails the run with a message.
   if (!hero.isAlive()) {
-    ctx.log('You killed yourself with your own Wand of Lightning...');
+    ctx.log('Te mataste con tu propia varita de rayos...');
   }
 }
 
@@ -979,7 +979,7 @@ function effectTeleportation(
       if (cell !== -1) {
         hero.pos = cell;
       } else {
-        ctx.log('There is nowhere to teleport to!');
+        ctx.log('¡No hay a dónde aparecerse!');
       }
     } else {
       // WandOfTeleportation.onZap: do-while, up to 11 calls total.
@@ -989,7 +989,7 @@ function effectTeleportation(
         if (pos !== -1) break;
       }
       if (pos === -1) {
-        ctx.log('There is nowhere to teleport to!');
+        ctx.log('¡No hay a dónde aparecerse!');
       } else {
         target.pos = pos;
         ctx.log(`${hero.name} teleported ${target.name} to somewhere`);
@@ -1235,7 +1235,7 @@ function applyZapEffect(
  */
 const SHEEP_DEF: MobDef = {
   id: 'sheep',
-  name: 'sheep',
+  name: 'borrego',
   sprite: 'mob_sheep',
   hp: 1, // NPC default HP (invulnerable; damage is a no-op)
   atk: 0,

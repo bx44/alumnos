@@ -35,7 +35,7 @@ export interface DialogRequest {
   text: string;
   /** NPC sprite key for the title icon (vanilla: the npc's sprite). */
   sprite?: string;
-  /** Buttons. Empty choices render a single "Continue" button that resolves ''. */
+  /** Buttons. Empty choices render a single "Seguir" button that resolves ''. */
   choices: DialogChoice[];
 }
 
@@ -212,7 +212,7 @@ export class Dialogs {
       return;
     }
     const choices =
-      dlg.choices.length > 0 ? dlg.choices : [{ label: 'Continue', value: '' }];
+      dlg.choices.length > 0 ? dlg.choices : [{ label: 'Seguir', value: '' }];
 
     // Scrim.
     ctx.fillStyle = UI.scrim;
@@ -326,7 +326,7 @@ export class Dialogs {
     }
     const n = parseInt(key, 10);
     const choices =
-      dlg.choices.length > 0 ? dlg.choices : [{ label: 'Continue', value: '' }];
+      dlg.choices.length > 0 ? dlg.choices : [{ label: 'Seguir', value: '' }];
     if (!Number.isNaN(n) && n >= 1 && n <= choices.length) {
       resolveDialog(choices[n - 1].value);
       return true;

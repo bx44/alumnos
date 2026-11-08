@@ -179,7 +179,7 @@ describe('shop scrolls (unidentified price base, Scroll.java)', () => {
 describe('bags, misc, and overpriced ration', () => {
   test('bags: price 50, type bag, no use action', () => {
     for (const [id, name] of [
-      ['seed_pouch', 'seed pouch'],
+      ['seed_pouch', 'bolsa de semillas'],
       ['scroll_holder', 'scroll holder'],
       ['wand_holster', 'wand holster'],
     ] as const) {
@@ -204,7 +204,7 @@ describe('bags, misc, and overpriced ration', () => {
 
   test('overpriced ration: energy 100, price 20', () => {
     const def = getItem('overpriced_ration');
-    expect(def.name).toBe('overpriced food ration'); // OverpricedRation.java
+    expect(def.name).toBe('ración carísima'); // OverpricedRation.java
     expect(def.type).toBe('food');
     expect(def.energy).toBe(100); // STARVING - HUNGRY (Hunger.java:36-37)
     expect(def.price).toBe(20); // OverpricedRation.java

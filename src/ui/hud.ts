@@ -146,10 +146,10 @@ export class Hud {
     ctx.textAlign = 'right';
     ctx.font = 'bold 13px system-ui, sans-serif';
     ctx.fillStyle = UI.textLight;
-    ctx.fillText(`Depth ${game.level.depth} · ${regionName}`, view.w - 8, 17);
+    ctx.fillText(`Piso ${game.level.depth} · ${regionName}`, view.w - 8, 17);
     ctx.font = '10px system-ui, sans-serif';
     ctx.fillStyle = '#9a917e';
-    ctx.fillText(`seed ${game.seed}`, view.w - 8, 34);
+    ctx.fillText(`semilla ${game.seed}`, view.w - 8, 34);
     ctx.textAlign = 'left';
 
     // Hunger badge

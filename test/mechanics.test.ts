@@ -503,15 +503,15 @@ describe('buff messages (exact Java strings)', () => {
     expect(MSG_BURNED_TO_DEATH).toBe('You burned to death...'); // Burning.java:46
     expect(MSG_DIED_FROM_POISON).toBe('You died from poison...'); // Poison.java:94
     expect(MSG_OOZE_KILLED).toBe('Caustic ooze killed you...'); // Ooze.java:29 + toString
-    expect(MSG_BLED_TO_DEATH).toBe('You bled to death...'); // Bleeding.java:77
+    expect(MSG_BLED_TO_DEATH).toBe('Te desangraste...'); // Bleeding.java:77
     expect(MSG_STARVED_TO_DEATH).toBe('You starved to death...'); // Hunger.java:41
   });
 
   test('act-time messages are verbatim', () => {
     expect(MSG_HUNGRY).toBe('You are hungry.'); // Hunger.java:39
     expect(MSG_STARVING).toBe('You are starving!'); // Hunger.java:40
-    expect(MSG_BURNS_UP).toBe('%s burns up!'); // Burning.java:45
-    expect(MSG_COMBO).toBe('%d hit combo!'); // Combo.java:27
+    expect(MSG_BURNS_UP).toBe('¡%s se quema!'); // Burning.java:45
+    expect(MSG_COMBO).toBe('¡combo de %d golpes!'); // Combo.java:27
   });
 
   test('buffDeathMessage maps killer buffs, null otherwise', () => {
@@ -542,8 +542,8 @@ describe('buff messages (exact Java strings)', () => {
   });
 
   test('message formatters', () => {
-    expect(burnsUpMessage('a scroll')).toBe('a scroll burns up!');
-    expect(comboMessage(3)).toBe('3 hit combo!');
+    expect(burnsUpMessage('a scroll')).toBe('¡a scroll se quema!');
+    expect(comboMessage(3)).toBe('¡combo de 3 golpes!');
   });
 });
 

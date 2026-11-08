@@ -121,7 +121,7 @@ export function saveGame(game: Game, mechanics: MechanicsHooks, key: string = SA
   try {
     localStorage.setItem(key, JSON.stringify(data));
   } catch (e) {
-    game.logMsg(`Save failed: ${e instanceof Error ? e.message : e}`);
+    game.logMsg(`No se pudo guardar: ${e instanceof Error ? e.message : e}`);
   }
 }
 

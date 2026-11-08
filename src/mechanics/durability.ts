@@ -48,7 +48,7 @@ export const DURABILITY_WARNING_LEVEL = 1 / 6;
 export const TXT_GOING_TO_BREAK =
   'Because of frequent use, your %s is going to break soon.';
 /** GLog.n text when an item breaks (Item.java:58). */
-export const TXT_HAS_BROKEN = 'Because of frequent use, your %s has broken.';
+export const TXT_HAS_BROKEN = 'De tanto usarlo, tu %s se rompió.';
 /** GLog.w when an upgrade erases a weapon enchantment
  *  (Weapon.java:41-42, TXT_INCOMPATIBLE). */
 export const TXT_INCOMPATIBLE_WEAPON =
@@ -57,14 +57,14 @@ export const TXT_INCOMPATIBLE_WEAPON =
  *  (Armor.java:48-49, TXT_INCOMPATIBLE). */
 export const TXT_INCOMPATIBLE_ARMOR =
   'Interaction of different types of magic has erased the glyph on this armor!';
-/** "you wince as your grip involuntarily tightens around your %s"
+/** "haces un gesto: la mano se te cierra sola alrededor de tu %s"
  *  (KindOfWeapon.java:30). */
 export const TXT_EQUIP_CURSED_WEAPON =
   'you wince as your grip involuntarily tightens around your %s';
 /** "your %s constricts around you painfully" (Armor.java:41). */
-export const TXT_EQUIP_CURSED_ARMOR = 'your %s constricts around you painfully';
-/** "You can't remove cursed %s!" (EquipableItem.java). */
-export const TXT_UNEQUIP_CURSED = "You can't remove cursed %s!";
+export const TXT_EQUIP_CURSED_ARMOR = 'tu %s te aprieta y duele';
+/** "¡No te puedes quitar %s, está maldito!" (EquipableItem.java). */
+export const TXT_UNEQUIP_CURSED = "¡No te puedes quitar %s, está maldito!";
 
 /**
  * Maximum durability for a gear kind at a level

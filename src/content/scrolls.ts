@@ -316,12 +316,12 @@ export function readScroll(
 ): number {
   const stack = hero.inventory[slot];
   if (!stack || !isScrollId(stack.itemId)) {
-    ctx.log('Nothing in that slot.');
+    ctx.log('Ahí no traes nada.');
     return 1;
   }
   const id = stack.itemId;
   if (hero.buffs.blindness) {
-    ctx.log("You can't read a scroll while blind!"); // TXT_BLINDNESS
+    ctx.log("¡No puedes leer un pergamino estando ciego!"); // TXT_BLINDNESS
     return 1;
   }
   if (id === 'scroll_upgrade') return readUpgradeScroll(ctx, hero, slot);
@@ -602,7 +602,7 @@ function enchantItem(
   if (t === 'weapon') enchantHooks.enchantWeapon(ctx, hero, targetSlot);
   else if (t === 'armor') enchantHooks.inscribeArmor(ctx, hero, targetSlot);
   enchantHooks.fixItem(hero, targetSlot);
-  ctx.log(`your ${stack.itemId} glows in the dark`); // TXT_GLOWS (name via UI)
+  ctx.log(`tu ${stack.itemId} brilla en lo oscuro`); // TXT_GLOWS (name via UI)
 }
 
 // ---------------------------------------------------------------------------
@@ -640,7 +640,7 @@ function readUpgradeScroll(
   const weapon = hero.weapon;
   const armor = hero.armor;
   if (!weapon && !armor) {
-    ctx.log('You have nothing to upgrade.');
+    ctx.log('No traes nada que mejorar.');
     return TIME_TO_READ;
   }
   removeFromInventory(hero, slot, 1);
@@ -653,14 +653,14 @@ function readUpgradeScroll(
     } else {
       upgradeWeapon(weapon, ctx.rng, { log: (m) => ctx.log(m) });
     }
-    ctx.log(`your ${gearDisplayName(weapon)} certainly looks better now`);
+    ctx.log(`tu ${gearDisplayName(weapon)} se ve mucho mejor`);
   } else {
     if (isBroken(armor!)) {
       fixDurability(armor!, 'armor');
     } else {
       upgradeArmor(armor!, ctx.rng, { log: (m) => ctx.log(m) });
     }
-    ctx.log(`your ${gearDisplayName(armor!)} certainly looks better now`);
+    ctx.log(`tu ${gearDisplayName(armor!)} se ve mucho mejor`);
   }
   return TIME_TO_READ;
 }
@@ -750,7 +750,7 @@ function doMagicMapping(ctx: ActionContext, _hero: ContentHero): void {
     level.revealSecretDoor(x, y);
     level.revealTrap(x, y);
   }
-  ctx.log('You feel fully aware of your surroundings.'); // approximate TXT
+  ctx.log('Entiendes todo lo que te rodea.'); // approximate TXT
 }
 
 /**
@@ -765,11 +765,11 @@ function doTeleportation(ctx: ActionContext, hero: ContentHero): void {
     if (cell !== -1) {
       hero.pos = cell;
       // Hero.press: steps on the destination (traps etc. — engine's move pipeline owns this)
-      ctx.log('You teleport!'); // visual; vanilla has no log (effect-driven)
+      ctx.log('¡Te apareces en otro lado!'); // visual; vanilla has no log (effect-driven)
       return;
     }
   }
-  ctx.log('The scroll fizzles.'); // no valid cell after 10 tries
+  ctx.log('El pergamino se apaga.'); // no valid cell after 10 tries
 }
 
 /**
@@ -819,7 +819,7 @@ function doChallenge(ctx: ActionContext, hero: ContentHero): void {
     }
   }
   // Mimic heaps -> mimics: the port has no heap/mimic system yet (Worker 1/2).
-  ctx.log('You let out a challenging cry!'); // TXT_YELL (vanilla: hero.sprite.yell())
+  ctx.log('¡Sueltas un grito de reto!'); // TXT_YELL (vanilla: hero.sprite.yell())
 }
 
 interface ChallengeMob {
@@ -842,7 +842,7 @@ function doTerror(ctx: ActionContext, hero: ContentHero): void {
       mob.terrorFrom = hero.pos; // Terror.object = hero.id()
     }
   }
-  ctx.log('You unleash a terrifying scream!'); // vanilla: hero.sprite.yell-ish
+  ctx.log('¡Sueltas un grito espantoso!'); // vanilla: hero.sprite.yell-ish
 }
 
 interface TerrorMob {
@@ -866,7 +866,7 @@ function doLullaby(ctx: ActionContext, hero: ContentHero): void {
       mob.putToSleep = true;
     }
   }
-  ctx.log('A soothing melody drifts through the air.'); // TXT_LULLABY-ish
+  ctx.log('Se oye una melodía que calma.'); // TXT_LULLABY-ish
 }
 
 interface LullabyMob {
@@ -898,7 +898,7 @@ function doPsionicBlast(ctx: ActionContext, hero: ContentHero): void {
   affectBuff(hero.buffs, 'blindness', blindFor);
   const heroDmg = rng.intRange(1, Math.floor((hero.ht * 2) / 3));
   hero.hp -= heroDmg; // vanilla damages the hero directly (bypasses dr)
-  ctx.log('A blast of psionic energy erupts!'); // TXT_BLAST
+  ctx.log('¡Estalla una descarga de energía mental!'); // TXT_BLAST
 }
 
 interface BlastMob {
@@ -962,7 +962,7 @@ function doMirrorImage(ctx: ActionContext, hero: ContentHero): void {
     nImages++;
   }
   if (nImages === 0) knowScroll('scroll_mirrorimage');
-  else ctx.log('Mirror images shimmer into being!');
+  else ctx.log('¡Aparecen imágenes de espejo!');
 }
 
 /** MirrorImage.duplicate: attack = hero.attackSkill(hero), damage = hero.damageRoll(). */

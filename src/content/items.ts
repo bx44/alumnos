@@ -70,11 +70,11 @@ export interface ItemDef {
  *  gold variant wants 15 of these plus the pickaxe. */
 const DARK_GOLD: ItemDef = {
   id: 'darkgold',
-  name: 'dark gold ore',
+  name: 'mineral de oro oscuro',
   sprite: 'item_darkgold',
   type: 'misc',
   stackable: true,
-  desc: 'A chunk of dark gold ore, prized by the blacksmith of the caves.',
+  desc: 'Un pedazo de mineral de oro oscuro. Al herrero de las cuevas le encanta.',
   price: 1,
 };
 
@@ -83,13 +83,13 @@ const DARK_GOLD: ItemDef = {
  *  11-15 and can be blood-stained by killing a bat with it. */
 const PICKAXE: ItemDef = {
   id: 'pickaxe',
-  name: 'pickaxe',
+  name: 'pico',
   sprite: 'item_pickaxe',
   type: 'weapon',
   stackable: false,
-  desc: 'A sturdy pickaxe, useful for mining dark gold veins.',
+  desc: 'Un pico resistente, bueno para sacar vetas de oro oscuro.',
   weapon: {
-    name: 'pickaxe',
+    name: 'pico',
     tier: 1,
     level: 0,
     min: 3,
@@ -109,12 +109,12 @@ const PICKAXE: ItemDef = {
  *  max = max0() = 12 (ShortSword.java:60-62). */
 const SHORT_SWORD: ItemDef = {
   id: 'shortsword',
-  name: 'short sword',
+  name: 'espada corta',
   sprite: 'shortsword',
   type: 'weapon',
   stackable: false,
-  desc: 'It is indeed quite short, just a few inches longer than a dagger.',
-  weapon: { name: 'short sword', tier: 1, level: 0, min: 1, max: 12, str: 11, acu: 1, dly: 1, missile: false },
+  desc: 'De veras está corta: apenas unos dedos más larga que una daga.',
+  weapon: { name: 'espada corta', tier: 1, level: 0, min: 1, max: 12, str: 11, acu: 1, dly: 1, missile: false },
   /** MeleeWeapon.price() = 20 * 2^(tier-1), tier 1 (MeleeWeapon.java). */
   price: 20,
 };
@@ -123,12 +123,12 @@ const SHORT_SWORD: ItemDef = {
  *  random() quantity 5..15 (Dart.java:77-80). Thrown via MissileWeapon. */
 const DART: ItemDef = {
   id: 'dart',
-  name: 'dart',
+  name: 'dardo',
   sprite: 'dart',
   type: 'missile',
   stackable: true,
-  desc: 'These simple metal spikes are weighted to fly true and sting their prey with a flick of the wrist.',
-  weapon: { name: 'dart', tier: 1, level: 0, min: 1, max: 4, str: 10, acu: 1, dly: 1, missile: true },
+  desc: 'Estas puntas de metal están balanceadas para volar derecho con un movimiento de muñeca.',
+  weapon: { name: 'dardo', tier: 1, level: 0, min: 1, max: 4, str: 10, acu: 1, dly: 1, missile: true },
   /** Dart.price() = quantity * 2 (Dart.java:64-66) -> 2 per unit. */
   price: 2,
 };
@@ -138,12 +138,12 @@ const DART: ItemDef = {
  *  level 0 (Armor.java:145-147). */
 const CLOTH_ARMOR: ItemDef = {
   id: 'cloth_armor',
-  name: 'cloth armor',
+  name: 'armadura de tela',
   sprite: 'armor_cloth',
   type: 'armor',
   stackable: false,
-  desc: 'This lightweight armor offers basic protection.',
-  armor: { name: 'cloth armor', level: 0, tier: 1, str: 9, dr: 2 },
+  desc: 'Esta armadura ligera protege lo básico.',
+  armor: { name: 'armadura de tela', level: 0, tier: 1, str: 9, dr: 2 },
   /** Armor.price() = 10 * 2^(tier-1), tier 1 (Armor.java). */
   price: 10,
 };
@@ -154,11 +154,11 @@ const CLOTH_ARMOR: ItemDef = {
  *  detach Ooze). TIME_TO_DRINK = 1 (Potion.java:53). */
 const POTION_HEALING: ItemDef = {
   id: 'potion_healing',
-  name: 'potion of healing',
+  name: 'poción de curación',
   sprite: 'potion_red',
   type: 'potion',
   stackable: true,
-  desc: 'An elixir that will instantly return you to full health and cure poison.',
+  desc: 'Un elixir que te deja entero al instante y te quita el veneno.',
   /**
    * Unidentified base price: Potion.price() = 20 (Potion.java). The port has
    * no identification system, so isKnown() is never true and price() never
@@ -172,11 +172,11 @@ const POTION_HEALING: ItemDef = {
  *  TIME_TO_DRINK = 1 (Potion.java:53). */
 const POTION_STRENGTH: ItemDef = {
   id: 'potion_strength',
-  name: 'potion of strength',
+  name: 'poción de fuerza',
   sprite: 'potion_strength',
   type: 'potion',
   stackable: true,
-  desc: 'This powerful liquid will course through your muscles, permanently increasing your strength by one point.',
+  desc: 'Este líquido te recorre los músculos y te sube la fuerza un punto, para siempre.',
   /** PotionOfStrength has no price override: Potion.price() = 20 (Potion.java). */
   price: 20,
 };
@@ -186,11 +186,11 @@ const POTION_STRENGTH: ItemDef = {
  *  (Food.java:74-82); TIME_TO_EAT = 3 (Food.java:34). */
 const RATION: ItemDef = {
   id: 'ration',
-  name: 'ration of food',
+  name: 'ración de comida',
   sprite: 'ration',
   type: 'food',
   stackable: true,
-  desc: 'Nothing fancy here: dried meat, some biscuits - things like that.',
+  desc: 'Nada del otro mundo: carne seca, galletas, cosas así.',
   energy: 260,
   /** Food.price() = 10 (Food.java). */
   price: 10,
@@ -201,11 +201,11 @@ const RATION: ItemDef = {
  *  Vanilla shape: stackable, AC_READ, TIME_TO_READ = 1 (Scroll.java). */
 const SCROLL: ItemDef = {
   id: 'scroll',
-  name: 'scroll',
+  name: 'pergamino',
   sprite: 'scroll',
   type: 'scroll',
   stackable: true,
-  desc: 'A scroll covered in indecipherable runes.',
+  desc: 'Un pergamino lleno de signos que no se entienden.',
   /** Scroll.price() = 15, unidentified base (Scroll.java). */
   price: 15,
 };
@@ -216,7 +216,7 @@ const SCROLL: ItemDef = {
  *  in M2; until then the scroll is readable directly. */
 const SCROLL_UPGRADE: ItemDef = {
   id: 'scroll_upgrade',
-  name: 'Scroll of Upgrade',
+  name: 'pergamino de mejora',
   sprite: 'scroll_upgrade',
   type: 'scroll',
   stackable: true,
@@ -232,11 +232,11 @@ const SCROLL_UPGRADE: ItemDef = {
  *  (Gold.java:100-103). */
 const GOLD: ItemDef = {
   id: 'gold',
-  name: 'gold',
+  name: 'oro',
   sprite: 'gold',
   type: 'gold',
   stackable: true,
-  desc: 'Collect gold coins to spend them later in a shop.',
+  desc: 'Junta monedas de oro para gastarlas luego en una tienda.',
   /** Item.price() base = 0 (Item.java); gold is currency, never sold. */
   price: 0,
 };
@@ -245,11 +245,11 @@ const GOLD: ItemDef = {
  *  Key.TIME_TO_UNLOCK = 1 (Key.java:26). name "iron key" (IronKey.java:34). */
 const IRON_KEY: ItemDef = {
   id: 'iron_key',
-  name: 'iron key',
+  name: 'llave de hierro',
   sprite: 'key_iron',
   type: 'key',
   stackable: true,
-  desc: 'The notches on this ancient iron key are well worn.',
+  desc: 'Los dientes de esta llave vieja de hierro están bien gastados.',
   /** Key has no price override: Item.price() = 0 (Item.java). */
   price: 0,
 };
@@ -258,11 +258,11 @@ const IRON_KEY: ItemDef = {
  *  unlocks LOCKED_EXIT (Hero.actUnlock, Hero.java:666-689). */
 const SKELETON_KEY: ItemDef = {
   id: 'skeleton_key',
-  name: 'skeleton key',
+  name: 'llave maestra',
   sprite: 'key_skeleton',
   type: 'key',
   stackable: true,
-  desc: 'A key carved from bone. It must open the way down.',
+  desc: 'Una llave tallada en hueso. Ha de abrir la bajada.',
   /** Key has no price override: Item.price() = 0 (Item.java). */
   price: 0,
 };
@@ -273,11 +273,11 @@ const SKELETON_KEY: ItemDef = {
  *  yet — a golden key opens any locked chest (same gap as iron keys). */
 const GOLDEN_KEY: ItemDef = {
   id: 'golden_key',
-  name: 'golden key',
+  name: 'llave dorada',
   sprite: 'key_gold',
   type: 'key',
   stackable: true,
-  desc: 'The notches on this golden key are tiny and intricate. Maybe it can open some chest lock?',
+  desc: 'Los dientes de esta llave dorada son chiquitos y complicados. ¿Abrirá algún cofre?',
   /** Key has no price override: Item.price() = 0 (Item.java). */
   price: 0,
 };
@@ -291,11 +291,11 @@ const GOLDEN_KEY: ItemDef = {
  *  takes the direct-heal branch (Dewdrop.java:45). */
 const DEWDROP: ItemDef = {
   id: 'dewdrop',
-  name: 'dewdrop',
+  name: 'gota de rocío',
   sprite: 'dewdrop',
   type: 'dewdrop',
   stackable: true,
-  desc: 'A crystal clear dewdrop.',
+  desc: 'Una gota de rocío, transparente.',
   /** Dewdrop has no price override: Item.price() = 0 (Item.java). */
   price: 0,
 };
@@ -308,11 +308,11 @@ const DEWDROP: ItemDef = {
  *  The trample drop probabilities are exact (HighGrass.java). */
 const SEED: ItemDef = {
   id: 'seed',
-  name: 'seed',
+  name: 'semilla',
   sprite: 'seed',
   type: 'seed',
   stackable: true,
-  desc: 'A strange seed. Perhaps it can be planted.',
+  desc: 'Una semilla rara. A lo mejor se puede sembrar.',
   /** Plant.Seed has no price override: Item.price() = 0 (Item.java). */
   price: 0,
 };
@@ -328,26 +328,26 @@ const SEED: ItemDef = {
  */
 const DRIED_ROSE: ItemDef = {
   id: 'dried_rose',
-  name: 'dried rose',
+  name: 'rosa seca',
   sprite: 'rose',
   type: 'quest',
   stackable: false,
-  desc: 'The rose has dried long ago, but it has kept all its petals somehow.',
+  desc: 'La rosa se secó hace mucho, pero de algún modo conserva todos sus pétalos.',
 };
 
 const RAT_SKULL: ItemDef = {
   id: 'rat_skull',
-  name: 'giant rat skull',
+  name: 'cráneo de rata gigante',
   sprite: 'skull',
   type: 'quest',
   stackable: false,
-  desc: 'It could be a nice hunting trophy, but it smells too bad to place it on a wall.',
+  desc: 'Sería un buen trofeo de cacería, pero huele demasiado feo para colgarlo.',
   price: 100, // RatSkull.price() (RatSkull.java:49-51)
 };
 
 const CORPSE_DUST: ItemDef = {
   id: 'corpse_dust',
-  name: 'corpse dust',
+  name: 'polvo de cadáver',
   sprite: 'dust',
   type: 'quest',
   stackable: false,
@@ -358,7 +358,7 @@ const CORPSE_DUST: ItemDef = {
 
 const PHANTOM_FISH: ItemDef = {
   id: 'phantom_fish',
-  name: 'phantom fish',
+  name: 'pez fantasma',
   sprite: 'phantom',
   type: 'quest',
   stackable: false,
@@ -369,11 +369,11 @@ const PHANTOM_FISH: ItemDef = {
 
 const ROTBERRY_SEED: ItemDef = {
   id: 'rotberry_seed',
-  name: 'seed of Rotberry', // Rotberry.Seed: name = "seed of " + plantName (Rotberry.java:52)
+  name: 'semilla de baya podrida', // Rotberry.Seed: name = "seed of " + plantName (Rotberry.java:52)
   sprite: 'seed_rotberry',
   type: 'quest',
   stackable: false,
-  desc: 'A strange seed. Perhaps it can be planted.',
+  desc: 'Una semilla rara. A lo mejor se puede sembrar.',
 };
 
 /**
@@ -387,96 +387,96 @@ const ROTBERRY_SEED: ItemDef = {
 /** Quarterstaff: tier 2 (super(2, 1f, 1f), Quarterstaff.java); shop depth 6. */
 const QUARTERSTAFF: ItemDef = {
   id: 'quarterstaff',
-  name: 'quarterstaff',
+  name: 'bastón',
   sprite: 'weapon_quarterstaff',
   type: 'weapon',
   stackable: false,
-  desc: 'A staff of hardwood, its ends are shod with iron.',
-  weapon: { name: 'quarterstaff', tier: 2, level: 0, min: 2, max: 12, str: 12, acu: 1, dly: 1, missile: false },
+  desc: 'Un bastón de madera dura con los extremos forrados de hierro.',
+  weapon: { name: 'bastón', tier: 2, level: 0, min: 2, max: 12, str: 12, acu: 1, dly: 1, missile: false },
   price: 40,
 };
 
 /** Spear: tier 2 (super(2, 1f, 1.5f), Spear.java); shop depth 6. */
 const SPEAR: ItemDef = {
   id: 'spear',
-  name: 'spear',
+  name: 'lanza',
   sprite: 'weapon_spear',
   type: 'weapon',
   stackable: false,
-  desc: 'A slender wooden rod tipped with sharpened iron.',
-  weapon: { name: 'spear', tier: 2, level: 0, min: 2, max: 18, str: 12, acu: 1, dly: 1.5, missile: false },
+  desc: 'Una vara delgada de madera con punta de hierro afilado.',
+  weapon: { name: 'lanza', tier: 2, level: 0, min: 2, max: 18, str: 12, acu: 1, dly: 1.5, missile: false },
   price: 40,
 };
 
 /** Sword: tier 3 (super(3, 1f, 1f), Sword.java); shop depth 11. */
 const SWORD: ItemDef = {
   id: 'sword',
-  name: 'sword',
+  name: 'espada',
   sprite: 'weapon_sword',
   type: 'weapon',
   stackable: false,
-  desc: 'The razor-sharp length of steel blade shines reassuringly.',
-  weapon: { name: 'sword', tier: 3, level: 0, min: 3, max: 16, str: 14, acu: 1, dly: 1, missile: false },
+  desc: 'La hoja de acero, filosa como navaja, brilla de un modo que tranquiliza.',
+  weapon: { name: 'espada', tier: 3, level: 0, min: 3, max: 16, str: 14, acu: 1, dly: 1, missile: false },
   price: 80,
 };
 
 /** Mace: tier 3 (super(3, 1f, 0.8f), Mace.java); shop depth 11. */
 const MACE: ItemDef = {
   id: 'mace',
-  name: 'mace',
+  name: 'maza',
   sprite: 'weapon_mace',
   type: 'weapon',
   stackable: false,
-  desc: 'The iron head of this weapon inflicts substantial damage.',
-  weapon: { name: 'mace', tier: 3, level: 0, min: 3, max: 12, str: 14, acu: 1, dly: 0.8, missile: false },
+  desc: 'La cabeza de hierro de esta arma hace un daño considerable.',
+  weapon: { name: 'maza', tier: 3, level: 0, min: 3, max: 12, str: 14, acu: 1, dly: 0.8, missile: false },
   price: 80,
 };
 
 /** Longsword: tier 4 (super(4, 1f, 1f), Longsword.java); shop depth 16. */
 const LONGSWORD: ItemDef = {
   id: 'longsword',
-  name: 'longsword',
+  name: 'espada larga',
   sprite: 'weapon_longsword',
   type: 'weapon',
   stackable: false,
-  desc: 'This towering blade inflicts heavy damage by investing its heft into every cut.',
-  weapon: { name: 'longsword', tier: 4, level: 0, min: 4, max: 22, str: 16, acu: 1, dly: 1, missile: false },
+  desc: 'Esta hoja enorme hace mucho daño metiendo todo su peso en cada tajo.',
+  weapon: { name: 'espada larga', tier: 4, level: 0, min: 4, max: 22, str: 16, acu: 1, dly: 1, missile: false },
   price: 160,
 };
 
 /** BattleAxe: tier 4 (super(4, 1.2f, 1f), BattleAxe.java); shop depth 16. */
 const BATTLE_AXE: ItemDef = {
   id: 'battle_axe',
-  name: 'battle axe',
+  name: 'hacha de guerra',
   sprite: 'weapon_battle_axe',
   type: 'weapon',
   stackable: false,
-  desc: 'The enormous steel head of this battle axe puts considerable heft behind each stroke.',
-  weapon: { name: 'battle axe', tier: 4, level: 0, min: 4, max: 18, str: 16, acu: 1.2, dly: 1, missile: false },
+  desc: 'La enorme cabeza de acero de esta hacha le mete todo su peso a cada golpe.',
+  weapon: { name: 'hacha de guerra', tier: 4, level: 0, min: 4, max: 18, str: 16, acu: 1.2, dly: 1, missile: false },
   price: 160,
 };
 
 /** Glaive: tier 5 (super(5, 1f, 1f), Glaive.java); shop depth 21. */
 const GLAIVE: ItemDef = {
   id: 'glaive',
-  name: 'glaive',
+  name: 'guja',
   sprite: 'weapon_glaive',
   type: 'weapon',
   stackable: false,
-  desc: 'A polearm consisting of a sword blade on the end of a pole.',
-  weapon: { name: 'glaive', tier: 5, level: 0, min: 5, max: 30, str: 18, acu: 1, dly: 1, missile: false },
+  desc: 'Un asta larga con una hoja de espada en la punta.',
+  weapon: { name: 'guja', tier: 5, level: 0, min: 5, max: 30, str: 18, acu: 1, dly: 1, missile: false },
   price: 320,
 };
 
 /** WarHammer: tier 5 (super(5, 1.2f, 1f), WarHammer.java); shop depth 21. */
 const WAR_HAMMER: ItemDef = {
   id: 'war_hammer',
-  name: 'war hammer',
+  name: 'martillo de guerra',
   sprite: 'weapon_war_hammer',
   type: 'weapon',
   stackable: false,
   desc: 'Few creatures can withstand the crushing blow of this towering mass of lead and steel, but only the strongest of adventurers can use it effectively.',
-  weapon: { name: 'war hammer', tier: 5, level: 0, min: 5, max: 25, str: 18, acu: 1.2, dly: 1, missile: false },
+  weapon: { name: 'martillo de guerra', tier: 5, level: 0, min: 5, max: 25, str: 18, acu: 1.2, dly: 1, missile: false },
   price: 320,
 };
 
@@ -490,48 +490,48 @@ const WAR_HAMMER: ItemDef = {
 /** LeatherArmor: tier 2 (LeatherArmor.java); shop depth 6. */
 const LEATHER_ARMOR: ItemDef = {
   id: 'leather_armor',
-  name: 'leather armor',
+  name: 'armadura de cuero',
   sprite: 'armor_leather',
   type: 'armor',
   stackable: false,
-  desc: 'Armor made from tanned monster hide. Not as light as cloth armor but provides better protection.',
-  armor: { name: 'leather armor', level: 0, tier: 2, str: 11, dr: 4 },
+  desc: 'Armadura de piel curtida de monstruo. Pesa más que la de tela, pero aguanta mucho más.',
+  armor: { name: 'armadura de cuero', level: 0, tier: 2, str: 11, dr: 4 },
   price: 20,
 };
 
 /** MailArmor: tier 3 (MailArmor.java); shop depth 11. */
 const MAIL_ARMOR: ItemDef = {
   id: 'mail_armor',
-  name: 'mail armor',
+  name: 'cota de malla',
   sprite: 'armor_mail',
   type: 'armor',
   stackable: false,
-  desc: 'Interlocking metal links make for a tough but flexible suit of armor.',
-  armor: { name: 'mail armor', level: 0, tier: 3, str: 13, dr: 6 },
+  desc: 'Anillos de metal entrelazados: dura y a la vez flexible.',
+  armor: { name: 'cota de malla', level: 0, tier: 3, str: 13, dr: 6 },
   price: 40,
 };
 
 /** ScaleArmor: tier 4 (ScaleArmor.java); shop depth 16. */
 const SCALE_ARMOR: ItemDef = {
   id: 'scale_armor',
-  name: 'scale armor',
+  name: 'armadura de escamas',
   sprite: 'armor_scale',
   type: 'armor',
   stackable: false,
-  desc: 'The metal scales sewn onto a leather vest create a flexible, yet protective armor.',
-  armor: { name: 'scale armor', level: 0, tier: 4, str: 15, dr: 8 },
+  desc: 'Las escamas de metal cosidas sobre cuero hacen una armadura flexible pero protectora.',
+  armor: { name: 'armadura de escamas', level: 0, tier: 4, str: 15, dr: 8 },
   price: 80,
 };
 
 /** PlateArmor: tier 5 (PlateArmor.java); shop depth 21. */
 const PLATE_ARMOR: ItemDef = {
   id: 'plate_armor',
-  name: 'plate armor',
+  name: 'armadura de placas',
   sprite: 'armor_plate',
   type: 'armor',
   stackable: false,
   desc: 'Enormous plates of metal are joined together into a suit that provides unmatched protection to any adventurer strong enough to bear its staggering weight.',
-  armor: { name: 'plate armor', level: 0, tier: 5, str: 17, dr: 10 },
+  armor: { name: 'armadura de placas', level: 0, tier: 5, str: 17, dr: 10 },
   price: 160,
 };
 
@@ -545,33 +545,33 @@ const PLATE_ARMOR: ItemDef = {
 /** SeedPouch: "seed pouch" (SeedPouch.java); shop depth 6. */
 const SEED_POUCH: ItemDef = {
   id: 'seed_pouch',
-  name: 'seed pouch',
+  name: 'bolsa de semillas',
   sprite: 'seed_pouch',
   type: 'bag',
   stackable: false,
-  desc: 'This small velvet pouch allows you to store any number of seeds in it. Very convenient.',
+  desc: 'Esta bolsita de terciopelo guarda todas las semillas que quieras. Muy práctica.',
   price: 50,
 };
 
 /** ScrollHolder: "scroll holder" (ScrollHolder.java); shop depth 11. */
 const SCROLL_HOLDER: ItemDef = {
   id: 'scroll_holder',
-  name: 'scroll holder',
+  name: 'portapergaminos',
   sprite: 'scroll_holder',
   type: 'bag',
   stackable: false,
-  desc: 'You can place any number of scrolls into this tubular container. It saves room in your backpack and protects scrolls from fire.',
+  desc: 'Puedes meter todos los pergaminos que quieras en este tubo. Ahorra lugar en la mochila y los protege del fuego.',
   price: 50,
 };
 
 /** WandHolster: "wand holster", size 12 (WandHolster.java); shop depth 16. */
 const WAND_HOLSTER: ItemDef = {
   id: 'wand_holster',
-  name: 'wand holster',
+  name: 'funda de varitas',
   sprite: 'wand_holster',
   type: 'bag',
   stackable: false,
-  desc: 'This slim holder is made of leather of some exotic animal. It allows to compactly carry up to 12 wands.',
+  desc: 'Esta funda delgada es de cuero de algún animal raro. Carga hasta 12 varitas sin estorbar.',
   price: 50,
 };
 
@@ -584,11 +584,11 @@ const WAND_HOLSTER: ItemDef = {
 /** Weightstone: stackable (Weightstone.java); shop depths 6/11/16. */
 const WEIGHTSTONE: ItemDef = {
   id: 'weightstone',
-  name: 'weightstone',
+  name: 'piedra de afilar',
   sprite: 'weightstone',
   type: 'misc',
   stackable: true,
-  desc: 'Using a weightstone, you can balance your melee weapon to increase its speed or accuracy.',
+  desc: 'Con una piedra de afilar puedes balancear tu arma para que sea más rápida o más certera.',
   /** Weightstone.price() = 40 (Weightstone.java). */
   price: 40,
 };
@@ -596,7 +596,7 @@ const WEIGHTSTONE: ItemDef = {
 /** Torch: stackable (Torch.java); shop depth 21 (x2). */
 const TORCH: ItemDef = {
   id: 'torch',
-  name: 'torch',
+  name: 'antorcha',
   sprite: 'torch',
   type: 'misc',
   stackable: true,
@@ -612,7 +612,7 @@ const ANKH: ItemDef = {
   sprite: 'ankh',
   type: 'misc',
   stackable: true,
-  desc: 'The ancient symbol of immortality grants an ability to return to life after death. Upon resurrection all non-equipped items are lost.',
+  desc: 'El símbolo antiguo de la inmortalidad te deja volver a la vida. Al revivir se pierde todo lo que no traigas puesto.',
   /** Ankh.price() = 50 (Ankh.java). */
   price: 50,
 };
@@ -622,11 +622,11 @@ const ANKH: ItemDef = {
  *  price() = 20 (OverpricedRation.java). Shop common stock (x2). */
 const OVERPRICED_RATION: ItemDef = {
   id: 'overpriced_ration',
-  name: 'overpriced food ration',
+  name: 'ración carísima',
   sprite: 'overpriced_ration',
   type: 'food',
   stackable: true,
-  desc: 'It looks exactly like a standard ration of food but smaller.',
+  desc: 'Se ve igual que una ración normal, nada más que más chica.',
   energy: 100,
   price: 20,
 };

@@ -71,17 +71,17 @@ export const ENCHANTMENT_INFO: Record<
   EnchantmentId,
   { name: string; weight: number }
 > = {
-  fire: { name: 'blazing', weight: 10 },
-  poison: { name: 'venomous', weight: 10 },
-  death: { name: 'grim', weight: 1 },
-  paralysis: { name: 'stunning', weight: 2 },
-  leech: { name: 'vampiric', weight: 1 },
-  slow: { name: 'chilling', weight: 2 },
-  shock: { name: 'shocking', weight: 6 },
-  instability: { name: 'unstable', weight: 3 },
-  horror: { name: 'eldritch', weight: 2 },
-  luck: { name: 'lucky', weight: 2 },
-  tempering: { name: 'tempered', weight: 3 },
+  fire: { name: 'ardiente', weight: 10 },
+  poison: { name: 'venenosa', weight: 10 },
+  death: { name: 'siniestra', weight: 1 },
+  paralysis: { name: 'aturdidora', weight: 2 },
+  leech: { name: 'vampírica', weight: 1 },
+  slow: { name: 'helada', weight: 2 },
+  shock: { name: 'eléctrica', weight: 6 },
+  instability: { name: 'inestable', weight: 3 },
+  horror: { name: 'arcana', weight: 2 },
+  luck: { name: 'afortunada', weight: 2 },
+  tempering: { name: 'templada', weight: 3 },
 };
 
 /**
