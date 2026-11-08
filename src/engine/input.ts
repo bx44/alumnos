@@ -133,6 +133,14 @@ export class InputHandler {
     // Tapping stairs while standing on them uses them.
     const here = level.idx(hero.x, hero.y);
     const tapped = level.idx(tx, ty);
+
+    // Tocar algo tirado: si ya estas encima, lo levantas; si no, el camino
+    // te lleva y lo levantas al llegar (Hero.java:981-986).
+    const hayAlgo = level.items.some((it) => it.pos === tapped);
+    if (hayAlgo && tapped === here) {
+      game.queueIntent({ kind: 'pickup' });
+      return;
+    }
     if (tapped === level.stairsDown && here === level.stairsDown) {
       game.queueIntent({ kind: 'descend' });
       return;
@@ -156,7 +164,7 @@ export class InputHandler {
       game.cancelPath();
       return;
     }
-    game.setPath(path);
+    game.setPath(path, hayAlgo);
   }
 }
 

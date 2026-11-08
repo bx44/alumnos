@@ -55,6 +55,7 @@ export class Game {
   /** Tap-to-move path; consumed one step per hero turn. */
   private path: XY[] = [];
   private pendingIntent: HeroIntent | null = null;
+  private recogerAlLlegar = false;
   private readonly deps: GameDeps;
   private readonly logCap: number;
 
@@ -90,16 +91,23 @@ export class Game {
     this.pendingIntent = intent;
   }
 
-  /** Set a tap-to-move path (clears any pending manual intent). */
-  setPath(path: XY[]): void {
+  /**
+   * Set a tap-to-move path (clears any pending manual intent).
+   * `recogerAlLlegar` marca que en la casilla de destino hay algo tirado:
+   * al llegar se levanta solo, como en el original (Hero.java:981-986, un
+   * toque sobre un monton es una accion de recoger, no de caminar).
+   */
+  setPath(path: XY[], recogerAlLlegar = false): void {
     if (this.gameOver) return;
     this.pendingIntent = null;
     this.path = path;
+    this.recogerAlLlegar = recogerAlLlegar;
   }
 
   /** Cancel pathfinding (e.g. new manual input arrived mid-path). */
   cancelPath(): void {
     this.path = [];
+    this.recogerAlLlegar = false;
   }
 
   get pathLength(): number {
@@ -284,6 +292,11 @@ export class Game {
     }
     if (this.path.length > 0) {
       const step = this.path.shift()!;
+      // ultimo paso del camino y en esa casilla hay algo: se levanta al llegar
+      if (this.path.length === 0 && this.recogerAlLlegar) {
+        this.recogerAlLlegar = false;
+        this.pendingIntent = { kind: 'pickup' };
+      }
       const dx = step.x - this.hero.x;
       const dy = step.y - this.hero.y;
       if (Math.max(Math.abs(dx), Math.abs(dy)) > 1) {
