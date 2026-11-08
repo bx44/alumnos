@@ -3621,6 +3621,12 @@ var REGION_TINTS = {
 // src/assets/original_sprites.ts
 var ORIGINAL_SPRITES = {
   hero: { w: 16, h: 16, rgba: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP///wD///8AgICAAICAgACAgIAAAAAAAL45DP++OQz/vjkM/5cxDf8AAAAAgICAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wCXMQ3/lzEN/745DP/ceTf/3Hk3/9x5N//ceTf/lzEN/wAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wB1Kw7/rWk8/8RwOv/ceTf/3Hk3/9x5N//ceTf/3Hk3/8RwOv+XMQ3/AAAAAAAAAAAAAAAAAAAAAP///wD///8AAAAAAHUrDv/EcDr/3LSX///av///2r///9q////av/++f1n/lzEN/wAAAAAAAAAAAAAAAAAAAAD///8A////AHUrDv+taTz/uJd4/7iXeP8AAAD/uJd4/7iXeP8AAAD/hVk4/wAAAAAAAAAAAAAAAAAAAAAAAAAA////AICAgACFWTj/rWk8/7iXeP/ctJf/uJd4/9y0l//ctJf/uJd4/75/Wf+AgIAAAAAAAAAAAAAAAAAAAAAAAP///wCAgIAAgICAAHUrDv+taTz/3LSX/9x5N//ceTf/3Hk3/9x5N/++f1n/gICAAAAAAAAAAAAAAAAAAAAAAAD///8AgICAAICAgAB1Kw7/rWk8/61pPP+XMQ3/lzEN/5cxDf+XMQ3/dSsO/4CAgAAAAAAAAAAAAAAAAAAAAAAA////AP///wCekob/ycG5//vy5//78uf/faPG/wBUpv/ctJf/AEaM/2tjW/////8AAAAAAAAAAAAAAAAAAAAAAP///wA9aJr/AFSm/wBUpv+ln5j/ycG5//vy5/+vwtP/AFSm/6/C0/9rY1v/////AAAAAAAAAAAAAAAAAAAAAAD///8AABNN/9y0l/++f1n/pZ+Y/8nBuf/78uf/+/Ln/32jxv/Jwbn/ABNN/////wAAAAAAAAAAAAAAAAAAAAAA////AP///wCFWTj/a2Nb/8nBuf/Jwbn/ycG5/8nBuf/Jwbn/ycG5/4VZOP////8AAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AJ6Shv/Jwbn/a2Nb/2tjW//35tH/ycG5/2tjW/////8A////AAAAAAAAAAAAAAAAAAAAAAD///8A////AJ6Shv+ln5j/a2Nb/////wD///8AnpKG/8nBuf+ekob/////AP///wAAAAAAAAAAAAAAAAAAAAAA////AP///wCFWTj/hVk4/4VZOP////8A////AIVZOP+FWTj/hVk4/////wD///8AAAAAAAAAAAAAAAAAAAAAAA==" },
+  hero_run0: { w: 16, h: 16, rgba: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wCAgIAAgICAAICAgAAAAAAAvjkM/745DP++OQz/lzEN/wAAAACAgIAAAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AJcxDf+XMQ3/vjkM/9x5N//ceTf/3Hk3/9x5N/+XMQ3/AAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AHUrDv+taTz/xHA6/9x5N//ceTf/3Hk3/9x5N//ceTf/xHA6/5cxDf8AAAAAAAAAAAAAAAAAAAAA////AP///wAAAAAAdSsO/8RwOv/ctJf//9q////av///2r///9q//75/Wf+XMQ3/AAAAAAAAAAAAAAAAAAAAAP///wD///8AdSsO/61pPP+4l3j/uJd4/wAAAP+4l3j/uJd4/wAAAP+FWTj/AAAAAAAAAAAAAAAAAAAAAAAAAACAgIAAgICAAIVZOP+taTz/uJd4/9y0l/+4l3j/3LSX/9y0l/+4l3j/vn9Z/4CAgAAAAAAAAAAAAAAAAAAAAAAAgICAAICAgACAgIAAdSsO/61pPP/ctJf/3Hk3/9x5N//ceTf/3Hk3/75/Wf+AgIAAAAAAAAAAAAAAAAAAAAAAAICAgACAgIAAgICAAHUrDv+taTz/rWk8/5cxDf+XMQ3/lzEN/5cxDf91Kw7/gICAAAAAAAAAAAAAAAAAAAAAAAD///8A////AJ6Shv/Jwbn/ycG5//vy5/99o8b/AFSm/9y0l/8ARoz/a2Nb/////wAAAAAAAAAAAAAAAAAAAAAA////AD1omv8AVKb/AEaM/6WfmP/Jwbn/+/Ln/6/C0/8AVKb/r8LT/2tjW/////8AAAAAAAAAAAAAAAAAAAAAAP///wC+f1n/3LSX/2tjW//Jwbn/ycG5//vy5//78uf/faPG/8nBuf9rY1v/////AAAAAAAAAAAAAAAAAAAAAAD///8A////AIVZOP9rY1v/ycG5/8nBuf/Jwbn/ycG5/8nBuf/35tH/////AP///wAAAAAAAAAAAAAAAAAAAAAA////AP///wD///8A////AJ6Shv/Jwbn/a2Nb/2tjW//Jwbn/npKG/////wD///8AAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AP///wBrY1v/a2Nb/////wCFWTj/a2Nb/////wD///8A////AAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8AhVk4/4VZOP////8A////AP///wD///8A////AP///wAAAAAAAAAAAA==" },
+  hero_run1: { w: 16, h: 16, rgba: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wCAgIAAgICAAICAgAAAAAAAvjkM/745DP++OQz/lzEN/wAAAACAgIAAAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AJcxDf+XMQ3/vjkM/9x5N//ceTf/3Hk3/9x5N/+XMQ3/AAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AHUrDv+taTz/xHA6/9x5N//ceTf/3Hk3/9x5N//ceTf/xHA6/5cxDf8AAAAAAAAAAAAAAAAAAAAA////AP///wAAAAAAdSsO/8RwOv/ctJf//9q////av///2r///9q//75/Wf+XMQ3/AAAAAAAAAAAAAAAAAAAAAP///wD///8AdSsO/61pPP+4l3j/uJd4/wAAAP+4l3j/uJd4/wAAAP+FWTj/AAAAAAAAAAAAAAAAAAAAAAAAAACAgIAAgICAAIVZOP+taTz/uJd4/9y0l/+4l3j/3LSX/9y0l/+4l3j/vn9Z/4CAgAAAAAAAAAAAAAAAAAAAAAAAgICAAICAgACAgIAAdSsO/61pPP/ctJf/3Hk3/9x5N//ceTf/3Hk3/75/Wf+AgIAAAAAAAAAAAAAAAAAAAAAAAICAgACAgIAAgICAAHUrDv+taTz/rWk8/5cxDf+XMQ3/lzEN/5cxDf91Kw7/gICAAAAAAAAAAAAAAAAAAAAAAAD///8A////APfm0f/78uf/+/Ln//vy5/99o8b/AFSm/9y0l/8ARoz/a2Nb/////wAAAAAAAAAAAAAAAAAAAAAA////AJ6Shv/Jwbn/npKG/8nBuf/Jwbn/+/Ln/6/C0/8AVKb/r8LT/2tjW/////8AAAAAAAAAAAAAAAAAAAAAAP///wBrY1v/AFSm/7iXeP++f1n/ycG5//vy5//78uf/faPG//vy5/9rY1v/////AAAAAAAAAAAAAAAAAAAAAAD///8A////AAAcbP+FWTj/ycG5/8nBuf/Jwbn/ycG5/8nBuf/Jwbn/9+bR/////wAAAAAAAAAAAAAAAAAAAAAA////AP///wD///8AnpKG/8nBuf9rY1v/a2Nb/2tjW//Jwbn/a2Nb/////wD///8AAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AGtjW/9rY1v/////AP///wCFWTj/a2Nb/////wD///8A////AAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wCFWTj/hVk4/////wD///8A////AP///wD///8A////AP///wAAAAAAAAAAAA==" },
+  hero_run2: { w: 16, h: 16, rgba: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8AAAAAAAAAAAAAAAAAAAAAAP///wD///8AgICAAICAgACAgIAAAAAAAL45DP++OQz/vjkM/5cxDf8AAAAAgICAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wCXMQ3/lzEN/745DP/ceTf/3Hk3/9x5N//ceTf/lzEN/wAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wB1Kw7/rWk8/8RwOv/ceTf/3Hk3/9x5N//ceTf/3Hk3/8RwOv+XMQ3/AAAAAAAAAAAAAAAAAAAAAP///wD///8AAAAAAHUrDv/EcDr/3LSX///av///2r///9q////av/++f1n/lzEN/wAAAAAAAAAAAAAAAAAAAACAgIAAgICAAHUrDv+taTz/uJd4/7iXeP8AAAD/uJd4/7iXeP8AAAD/hVk4/4CAgAAAAAAAAAAAAAAAAAAAAAAAgICAAICAgACFWTj/rWk8/7iXeP/ctJf/uJd4/9y0l//ctJf/uJd4/75/Wf+AgIAAAAAAAAAAAAAAAAAAAAAAAICAgACAgIAAgICAAHUrDv+taTz/3LSX/9x5N//ceTf/3Hk3/9x5N/++f1n/gICAAAAAAAAAAAAAAAAAAAAAAAD///8AgICAAICAgAB1Kw7/rWk8/61pPP+XMQ3/lzEN/5cxDf+XMQ3/dSsO/4CAgAAAAAAAAAAAAAAAAAAAAAAA////AP///wBrY1v/pZ+Y/8nBuf/Jwbn/faPG/wBUpv/ctJf/AEaM/2tjW/////8AAAAAAAAAAAAAAAAAAAAAAP///wD///8Aa2Nb/wBUpv/ctJf/hVk4//vy5/+vwtP/AFSm/6/C0/9rY1v/////AAAAAAAAAAAAAAAAAAAAAAD///8A////AGtjW/8AE03/hVk4/4VZOP/78uf/+/Ln/32jxv/78uf/a2Nb/////wAAAAAAAAAAAAAAAAAAAAAA////AP///wD///8AhVk4/8nBuf/Jwbn/a2Nb/2tjW/+ln5j/ycG5//fm0f////8AAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AIVZOP9rY1v/a2Nb/////wD///8Aa2Nb/6WfmP+ekob/////AAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AIVZOP+FWTj/hVk4/////wAAAAAAAAAAAA==" },
+  hero_run3: { w: 16, h: 16, rgba: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wCAgIAAgICAAICAgAAAAAAAvjkM/745DP++OQz/lzEN/wAAAACAgIAAAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AJcxDf+XMQ3/vjkM/9x5N//ceTf/3Hk3/9x5N/+XMQ3/AAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AHUrDv+taTz/xHA6/9x5N//ceTf/3Hk3/9x5N//ceTf/xHA6/5cxDf8AAAAAAAAAAAAAAAAAAAAA////AP///wAAAAAAdSsO/8RwOv/ctJf//9q////av///2r///9q//75/Wf+XMQ3/AAAAAAAAAAAAAAAAAAAAAP///wD///8AdSsO/61pPP+4l3j/uJd4/wAAAP+4l3j/uJd4/wAAAP+FWTj/AAAAAAAAAAAAAAAAAAAAAAAAAACAgIAAgICAAIVZOP+taTz/uJd4/9y0l/+4l3j/3LSX/9y0l/+4l3j/vn9Z/4CAgAAAAAAAAAAAAAAAAAAAAAAAgICAAICAgACAgIAAdSsO/61pPP/ctJf/3Hk3/9x5N//ceTf/3Hk3/75/Wf+AgIAAAAAAAAAAAAAAAAAAAAAAAICAgACAgIAAgICAAHUrDv+taTz/rWk8/5cxDf+XMQ3/lzEN/5cxDf91Kw7/gICAAAAAAAAAAAAAAAAAAAAAAAD///8A////AJ6Shv/Jwbn/ycG5//vy5/99o8b/AFSm/9y0l/8ARoz/a2Nb/////wAAAAAAAAAAAAAAAAAAAAAA////AD1omv8AVKb/AEaM/6WfmP/78uf/+/Ln/6/C0/8AVKb/r8LT/2tjW/////8AAAAAAAAAAAAAAAAAAAAAAP///wAAHGz/3LSX/4VZOP/Jwbn/+/Ln//vy5//78uf/faPG/6WfmP8AE03/////AAAAAAAAAAAAAAAAAAAAAAD///8A////AL5/Wf+FWTj/ycG5//vy5//Jwbn/ycG5/8nBuf/Jwbn/hVk4/////wAAAAAAAAAAAAAAAAAAAAAA////AP///wD///8Aa2Nb/6WfmP+ln5j/a2Nb/2tjW/+ln5j/npKG/////wD///8AAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AP///wCFWTj/hVk4/////wBrY1v/ycG5/56Shv////8A////AAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8AhVk4/4VZOP+FWTj/////AP///wAAAAAAAAAAAA==" },
+  hero_run4: { w: 16, h: 16, rgba: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wCAgIAAgICAAICAgAAAAAAAvjkM/745DP++OQz/lzEN/wAAAACAgIAAAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AJcxDf+XMQ3/vjkM/9x5N//ceTf/3Hk3/9x5N/+XMQ3/AAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AHUrDv+taTz/xHA6/9x5N//ceTf/3Hk3/9x5N//ceTf/xHA6/5cxDf8AAAAAAAAAAAAAAAAAAAAA////AP///wAAAAAAdSsO/8RwOv/ctJf//9q////av///2r///9q//75/Wf+XMQ3/AAAAAAAAAAAAAAAAAAAAAP///wD///8AdSsO/61pPP+4l3j/uJd4/wAAAP+4l3j/uJd4/wAAAP+FWTj/AAAAAAAAAAAAAAAAAAAAAAAAAACAgIAAgICAAIVZOP+taTz/uJd4/9y0l/+4l3j/3LSX/9y0l/+4l3j/vn9Z/4CAgAAAAAAAAAAAAAAAAAAAAAAAgICAAICAgACAgIAAdSsO/61pPP/ctJf/3Hk3/9x5N//ceTf/3Hk3/75/Wf+AgIAAAAAAAAAAAAAAAAAAAAAAAICAgACAgIAAgICAAHUrDv+taTz/rWk8/5cxDf+XMQ3/lzEN/5cxDf91Kw7/gICAAAAAAAAAAAAAAAAAAAAAAAD///8A////APfm0f/78uf/ycG5//vy5/99o8b/AFSm/9y0l/8ARoz/ABNN/////wAAAAAAAAAAAAAAAAAAAAAA////AD1omv8AVKb/pZ+Y/6WfmP/78uf/+/Ln/6/C0/8AVKb/r8LT/7iXeP+FWTj/AAAAAAAAAAAAAAAAAAAAAL5/Wf/ctJf/AEaM/2tjW//Jwbn/+/Ln//vy5//78uf/ZIqv/6WfmP+FWTj/hVk4/wAAAAAAAAAAAAAAAAAAAAD///8AhVk4/wATTf9rY1v/ycG5//vy5//78uf/+/Ln/6WfmP9rY1v/////AP///wAAAAAAAAAAAAAAAAAAAAAA////AP///wD///8A////AJ6Shv/Jwbn/npKG/6WfmP9rY1v/////AP///wD///8AAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AP///wCFWTj/hVk4/4VZOP/Jwbn/npKG/////wD///8A////AAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wCFWTj/hVk4/4VZOP////8A////AP///wAAAAAAAAAAAA==" },
+  hero_run5: { w: 16, h: 16, rgba: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8AAAAAAAAAAAAAAAAAAAAAAP///wD///8AgICAAICAgACAgIAAAAAAAL45DP++OQz/vjkM/5cxDf8AAAAAgICAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wCXMQ3/lzEN/745DP/ceTf/3Hk3/9x5N//ceTf/lzEN/wAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wB1Kw7/rWk8/8RwOv/ceTf/3Hk3/9x5N//ceTf/3Hk3/8RwOv+XMQ3/AAAAAAAAAAAAAAAAAAAAAP///wD///8AAAAAAHUrDv/EcDr/3LSX///av///2r///9q////av/++f1n/lzEN/wAAAAAAAAAAAAAAAAAAAACAgIAAgICAAHUrDv+taTz/uJd4/7iXeP8AAAD/uJd4/7iXeP8AAAD/hVk4/4CAgAAAAAAAAAAAAAAAAAAAAAAAgICAAICAgACFWTj/rWk8/7iXeP/ctJf/uJd4/9y0l//ctJf/uJd4/75/Wf+AgIAAAAAAAAAAAAAAAAAAAAAAAICAgACAgIAAgICAAHUrDv+taTz/3LSX/9x5N//ceTf/3Hk3/9x5N/++f1n/gICAAAAAAAAAAAAAAAAAAAAAAAD///8A9+bR//fm0f/Jwbn/rWk8/61pPP+XMQ3/lzEN/5cxDf+XMQ3/dSsO/////wAAAAAAAAAAAAAAAAAAAAAAPWia/32jxv/78uf/ycG5/8nBuf/78uf/faPG/wBUpv/ctJf/AEaM/4VZOP+FWTj/AAAAAAAAAAAAAAAAAAAAAL5/Wf/ctJf/ABxs/2tjW//Jwbn/ycG5//vy5/+vwtP/AFSm/6/C0/+4l3j/hVk4/wAAAAAAAAAAAAAAAAAAAACFWTj/hVk4/////wCekob/+/Ln/8nBuf/Jwbn/+/Ln/32jxv+ekob/ABNN/////wAAAAAAAAAAAAAAAAAAAAAA////AP///wD///8AnpKG/8nBuf/78uf/npKG/6WfmP9rY1v/////AP///wD///8AAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AP///wCekob/ycG5//vy5/+FWTj/////AP///wD///8A////AAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AIVZOP+FWTj/////AP///wD///8A////AP///wAAAAAAAAAAAA==" },
   hero_warrior: { w: 16, h: 16, rgba: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP///wD///8AgICAAICAgACAgIAAAAAAAL45DP++OQz/vjkM/5cxDf8AAAAAgICAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wCXMQ3/lzEN/745DP/ceTf/3Hk3/9x5N//ceTf/lzEN/wAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wB1Kw7/rWk8/8RwOv/ceTf/3Hk3/9x5N//ceTf/3Hk3/8RwOv+XMQ3/AAAAAAAAAAAAAAAAAAAAAP///wD///8AAAAAAHUrDv/EcDr/3LSX///av///2r///9q////av/++f1n/lzEN/wAAAAAAAAAAAAAAAAAAAAD///8A////AHUrDv+taTz/uJd4/7iXeP8AAAD/uJd4/7iXeP8AAAD/hVk4/wAAAAAAAAAAAAAAAAAAAAAAAAAA////AICAgACFWTj/rWk8/7iXeP/ctJf/uJd4/9y0l//ctJf/uJd4/75/Wf+AgIAAAAAAAAAAAAAAAAAAAAAAAP///wCAgIAAgICAAHUrDv+taTz/3LSX/9x5N//ceTf/3Hk3/9x5N/++f1n/gICAAAAAAAAAAAAAAAAAAAAAAAD///8AgICAAICAgAB1Kw7/rWk8/61pPP+XMQ3/lzEN/5cxDf+XMQ3/dSsO/4CAgAAAAAAAAAAAAAAAAAAAAAAA////AP///wCekob/ycG5//vy5//78uf/faPG/wBUpv/ctJf/AEaM/2tjW/////8AAAAAAAAAAAAAAAAAAAAAAP///wA9aJr/AFSm/wBUpv+ln5j/ycG5//vy5/+vwtP/AFSm/6/C0/9rY1v/////AAAAAAAAAAAAAAAAAAAAAAD///8AABNN/9y0l/++f1n/pZ+Y/8nBuf/78uf/+/Ln/32jxv/Jwbn/ABNN/////wAAAAAAAAAAAAAAAAAAAAAA////AP///wCFWTj/a2Nb/8nBuf/Jwbn/ycG5/8nBuf/Jwbn/ycG5/4VZOP////8AAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AJ6Shv/Jwbn/a2Nb/2tjW//35tH/ycG5/2tjW/////8A////AAAAAAAAAAAAAAAAAAAAAAD///8A////AJ6Shv+ln5j/a2Nb/////wD///8AnpKG/8nBuf+ekob/////AP///wAAAAAAAAAAAAAAAAAAAAAA////AP///wCFWTj/hVk4/4VZOP////8A////AIVZOP+FWTj/hVk4/////wD///8AAAAAAAAAAAAAAAAAAAAAAA==" },
   mob_rat: { w: 16, h: 16, rgba: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8AUjwm/1I8Jv8AAAAAUjwm/1I8Jv9SPCb/Ujwm/wAAAAD///8AgICAAICAgAD///8A////AP///wD///8A////AFI8Jv/MfoL/Ujwm/5F8Yv+RfGL/kXxi/5F8Yv9SPCb/AAAAAICAgACAgIAA////AP///wD///8A////AP///wAAAAAAUjwm/3NjT/9zY0///2dM/5F8Yv//Z0z/Ujwm/wAAAACAgIAAgICAAP///wD///8A////AP///wD///8AAAAAAFI8Jv9zY0//c2NP/3NjT/9zY0//kXxi/5F8Yv9SPCb/gICAAICAgAD///8A////AP///wD///8A////AFI8Jv+RfGL/c2NP/3NjT/9zY0//c2NP/3NjT/9zY0//Ujwm/4CAgACAgIAA////AP///wD///8A////AP///wBSPCb/kXxi/5F8Yv9zY0//VUg5/xwUDf8cFA3/HBQN/85PVf+AgIAAgICAAP///wD///8A////AP///wBSPCb/kXxi/3NjT/9zY0//c2NP/3NjT/9VSDn/HBQN/wAAAAAAAAAAgICAAICAgAD///8A////AP///wD///8AUjwm/3NjT/9zY0//c2NP/3NjT/+IQTb/c2NP/4hBNv8AAAAAAAAAAICAgACAgIAA////AP///wD///8A////ADQmGP9zY0//c2NP/1I8Jv9SPCb/kXxi/3NjT/+RfGL/Ujwm/wAAAACAgIAAgICAAP///wD///8A////AP///wAcFA3/VUg5/3NjT/9zY0//c2NP/1I8Jv9zY0//c2NP/1I8Jv8AAAAAgICAAICAgAD///8A////AP///wD///8AHBQN/1VIOf9VSDn/c2NP/3NjT/80Jhj/c2NP/1VIOf80Jhj/AAAAAICAgACAgIAA////APWYnf/1mJ3/5Y6T/8x+gv8cFA3/HBQN/xwUDf+jPkL/zk9V/xwUDf8cFA3/zk9V/wAAAACAgIAAgICAAA==" },
   mob_gnoll: { w: 16, h: 16, rgba: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AP///wAkDQH/AAAAAP///wD///8AJA0B/wAAAAD///8A////AAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8AJA0B/0AWA/+bWBz/m1gc/5tYHP+bWBz/AAAAAP///wAAAAAAAAAAAAAAAAAAAAAA////AP///wD///8AXCAE/4BLGv/HllT/x5ZU/8eWVP/HllT/x5ZU/5tYHP8AAAAAAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AJtYHP/HllT/x5ZU/8eWVP/HllT/x5ZU/8eWVP+bWBz/AAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wBhLgf/x5ZU/51sKv8AAAD/nWwq/51sKv8AAAD/YS4H/wAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wD///8AYS4H/51sKv+unYb/gnRc/66dhv+unYb/QjUh/yQNAf8kDQH/AAAAAAAAAAAAAAAAAAAAAP///wD///8A////AGEuB/+dbCr/rp2G/66dhv+unYb/rp2G/66dhv+unYb/d2FG/wAAAAAAAAAAAAAAAAAAAAD///8A////AP///wBhLgf/nWwq/4J0XP+unYb/d2FG/3dhRv93YUb/d2FG/wAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wCbWBz/x5ZU//fGhP/3xoT/3c64/93OuP+unYb/rp2G/2EuB/8AAAAAAAAAAAAAAAAAAAAAAAAAAP///wCbWBz/x5ZU/66dhv+CdFz/rp2G/93OuP/dzrj/3c64/93OuP9hLgf/AAAAAAAAAAAAAAAAAAAAAAAAAAD///8Am1gc/4BLGv9AFgP/gnRc/66dhv/dzrj/3c64/93OuP+unYb/JA0B/wAAAAAAAAAAAAAAAAAAAAAAAAAA////AAAAAAAkDQH/JA0B/66dhv/dzrj/3c64/66dhv+unYb/rp2G/yQNAf8AAAAAAAAAAAAAAAAAAAAAAAAAAP///wAAAAAA////AGEuB//HllT/YS4H/2EuB/9hLgf/x5ZU/2EuB/8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AAAAAABhLgf/JA0B/wAAAAAAAAAAAAAAAGEuB/9AFgP/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wAAAAAAAAAAACQNAf8kDQH/AAAAAAAAAAAAAAAAJA0B/yQNAf8AAAAAAAAAAAAAAAAAAAAAAAAAAA==" },
@@ -12616,6 +12622,62 @@ function mobsToPlaced(mobs) {
   }));
 }
 
+// src/orbarak/suave.ts
+var PASO_MS = 110;
+var rastros = new Map;
+function ahora() {
+  return typeof performance !== "undefined" ? performance.now() : Date.now();
+}
+function posSuave(id, x, y) {
+  const t = ahora();
+  const r = rastros.get(id);
+  if (r === undefined) {
+    rastros.set(id, { deX: x, deY: y, aX: x, aY: y, inicio: t - PASO_MS, mira: 1 });
+    return { x, y };
+  }
+  if (r.aX !== x || r.aY !== y) {
+    const p = avance(r, t);
+    r.deX = r.deX + (r.aX - r.deX) * p;
+    r.deY = r.deY + (r.aY - r.deY) * p;
+    if (x !== r.aX)
+      r.mira = x > r.aX ? 1 : -1;
+    r.aX = x;
+    r.aY = y;
+    r.inicio = t;
+    if (Math.abs(r.deX - x) > 1.6 || Math.abs(r.deY - y) > 1.6) {
+      r.deX = x;
+      r.deY = y;
+    }
+  }
+  const p = avance(r, t);
+  return {
+    x: r.deX + (r.aX - r.deX) * p,
+    y: r.deY + (r.aY - r.deY) * p
+  };
+}
+function avance(r, t) {
+  const bruto = Math.min(1, Math.max(0, (t - r.inicio) / PASO_MS));
+  return bruto * bruto * (3 - 2 * bruto);
+}
+function olvidaTodo() {
+  rastros.clear();
+}
+function limpiaSalvo(vivos) {
+  for (const id of rastros.keys()) {
+    if (!vivos.has(id))
+      rastros.delete(id);
+  }
+}
+function pasoDe(id, x, y) {
+  const v = posSuave(id, x, y);
+  const r = rastros.get(id);
+  if (r === undefined)
+    return { ...v, caminando: false, mira: 1, avance: 1 };
+  const p = avance(r, ahora());
+  const quieto = r.deX === r.aX && r.deY === r.aY;
+  return { x: v.x, y: v.y, caminando: !quieto && p < 1, mira: r.mira, avance: p };
+}
+
 // src/orbarak/banco.ts
 var PREGUNTAS = [
   { n: 1, p: "¿En qué idioma está escrita casi toda la Guemará?", o: ["Arameo", "Hebreo", "Griego", "Ladino"], c: 0, e: "Arameo babilonio. Por eso cuesta la primera vez." },
@@ -13217,6 +13279,7 @@ class Game {
     }
   }
   changeDepth(depth) {
+    olvidaTodo();
     this.level = this.deps.gen.generate(this.rng, depth, this.run);
     for (const m of this.mobs)
       this.scheduler.remove(m);
@@ -13328,7 +13391,9 @@ class Renderer {
     ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     ctx.imageSmoothingEnabled = false;
     const level = game.level;
-    const cam = cameraTileRect(game.hero.x, game.hero.y, vw, vh, level.w, level.h);
+    const heroePaso = pasoDe("heroe", game.hero.x, game.hero.y);
+    const heroeVis = { x: heroePaso.x, y: heroePaso.y };
+    const cam = cameraTileRect(heroeVis.x, heroeVis.y, vw, vh, level.w, level.h);
     this.camX = cam.camX;
     this.camY = cam.camY;
     ctx.fillStyle = "#000";
@@ -13363,12 +13428,17 @@ class Renderer {
       ctx.drawImage(this.entitySprite(item.sprite), (x - this.camX) * TILE_PX, (y - this.camY) * TILE_PX, TILE_PX, TILE_PX);
       ctx.globalAlpha = 1;
     }
+    const vivos = new Set(["heroe"]);
     for (const m of game.mobs) {
       const i = level.idx(m.x, m.y);
+      const id = "m" + (m.id ?? m.sprite + ":" + i);
+      vivos.add(id);
       if (!level.visible[i])
         continue;
-      ctx.drawImage(this.entitySprite(m.sprite), (m.x - this.camX) * TILE_PX, (m.y - this.camY) * TILE_PX, TILE_PX, TILE_PX);
+      const v = posSuave(id, m.x, m.y);
+      ctx.drawImage(this.entitySprite(m.sprite), (v.x - this.camX) * TILE_PX, (v.y - this.camY) * TILE_PX, TILE_PX, TILE_PX);
     }
+    limpiaSalvo(vivos);
     ctx.fillStyle = "rgba(255,255,255,0.55)";
     for (const p of game.currentPath) {
       const i = level.idx(p.x, p.y);
@@ -13380,9 +13450,19 @@ class Renderer {
       ctx.arc(cx, cy, 4, 0, Math.PI * 2);
       ctx.fill();
     }
-    const hx = (game.hero.x - this.camX) * TILE_PX;
-    const hy = (game.hero.y - this.camY) * TILE_PX;
-    ctx.drawImage(this.entitySprite(game.hero.sprite), hx, hy, TILE_PX, TILE_PX);
+    const hx = (heroeVis.x - this.camX) * TILE_PX;
+    const hy = (heroeVis.y - this.camY) * TILE_PX;
+    const cuadro = heroePaso.caminando ? "hero_run" + Math.floor(heroePaso.avance * 6) % 6 : game.hero.sprite;
+    const dibujo = this.entitySprite(cuadro);
+    if (heroePaso.mira < 0) {
+      ctx.save();
+      ctx.translate(hx + TILE_PX, hy);
+      ctx.scale(-1, 1);
+      ctx.drawImage(dibujo, 0, 0, TILE_PX, TILE_PX);
+      ctx.restore();
+    } else {
+      ctx.drawImage(dibujo, hx, hy, TILE_PX, TILE_PX);
+    }
   }
   tileSprite(level, x, y) {
     const t = level.get(x, y);
