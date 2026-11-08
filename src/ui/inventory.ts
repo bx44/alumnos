@@ -14,6 +14,7 @@
 import type { Game } from '../engine/loop.js';
 import type { Hero } from '../mechanics/char.js';
 import { drawButton, drawPanel, inRect, roundRect, TAP, UI, type Rect, type SpriteSource, type View } from './palette.js';
+import { nombreClase } from '../orbarak/regiones.js';
 
 export type ItemKind = 'weapon' | 'armor' | 'missile' | 'potion' | 'food' | 'scroll' | 'misc';
 export type ItemAction = 'use' | 'equip' | 'drop' | 'throw' | 'shatter' | 'mine';
@@ -166,17 +167,17 @@ export function actionsFor(item: UiItem): ItemAction[] {
 export function actionLabel(action: ItemAction, item: UiItem): string {
   switch (action) {
     case 'use':
-      return item.kind === 'potion' ? 'Drink' : item.kind === 'food' ? 'Eat' : item.kind === 'scroll' ? 'Read' : 'Use';
+      return item.kind === 'potion' ? 'Tomar' : item.kind === 'food' ? 'Comer' : item.kind === 'scroll' ? 'Leer' : 'Usar';
     case 'equip':
-      return item.equipped ? (item.kind === 'armor' ? 'Take off' : 'Unwield') : item.kind === 'armor' ? 'Wear' : 'Wield';
+      return item.equipped ? (item.kind === 'armor' ? 'Quitarse' : 'Guardar') : item.kind === 'armor' ? 'Ponerse' : 'Empuñar';
     case 'drop':
-      return 'Drop';
+      return 'Tirar';
     case 'throw':
-      return 'Throw';
+      return 'Aventar';
     case 'shatter':
-      return 'Shatter'; // Honeypot AC_SHATTER
+      return 'Romper'; // Honeypot AC_SHATTER
     case 'mine':
-      return 'Mine'; // Pickaxe AC_MINE
+      return 'Picar'; // Pickaxe AC_MINE
   }
 }
 
@@ -342,11 +343,11 @@ export class InventoryPanel {
       }
       ctx.fillStyle = UI.text;
       ctx.font = 'bold 14px system-ui, sans-serif';
-      const name = item.identified ? item.name : 'unknown ' + item.kind;
+      const name = item.identified ? item.name : nombreClase(item.kind) + ' sin identificar';
       ctx.fillText(item.qty > 1 ? `${name} ×${item.qty}` : name, r.x + iconSize + 12, r.y + r.h / 2 - 8);
       ctx.font = '12px system-ui, sans-serif';
       ctx.fillStyle = UI.textDim;
-      const sub = item.equipped ? 'equipped' : item.kind;
+      const sub = nombreClase(item.equipped ? 'equipped' : item.kind);
       ctx.fillText(sub, r.x + iconSize + 12, r.y + r.h / 2 + 12);
     });
 

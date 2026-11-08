@@ -28,6 +28,7 @@ import {
   type SpriteSource,
   type View,
 } from './palette.js';
+import { nombreRegion } from '../orbarak/regiones.js';
 
 /** Fading message-log buffer. Pure logic — headless-testable. */
 export interface FadedLine {
@@ -141,15 +142,14 @@ export class Hud {
     ctx.fillText(`Lvl ${hv.lvl}  ${hv.exp}/${hv.maxExp} XP`, 8 + barW + 8, 36);
 
     // Depth + seed, right aligned
-    const region = regionForDepth(game.level.depth);
-    const regionName = region.charAt(0).toUpperCase() + region.slice(1);
+    const regionName = nombreRegion(regionForDepth(game.level.depth));
     ctx.textAlign = 'right';
     ctx.font = 'bold 13px system-ui, sans-serif';
     ctx.fillStyle = UI.textLight;
     ctx.fillText(`Piso ${game.level.depth} · ${regionName}`, view.w - 8, 17);
     ctx.font = '10px system-ui, sans-serif';
     ctx.fillStyle = '#9a917e';
-    ctx.fillText(`semilla ${game.seed}`, view.w - 8, 34);
+    ctx.fillText(`#${game.seed}`, view.w - 8, 34);
     ctx.textAlign = 'left';
 
     // Hunger badge
@@ -260,14 +260,14 @@ export class Hud {
     const potion = items.find((i) => i.kind === 'potion') ?? null;
     const darts = items.find((i) => i.kind === 'missile') ?? null;
 
-    this.drawSlot(ctx, sprites, L.potionBtn, potion?.sprite ?? 'potion_red', potion ? 1 : 0, 'Drink', !potion);
+    this.drawSlot(ctx, sprites, L.potionBtn, potion?.sprite ?? 'potion_red', potion ? 1 : 0, 'Tomar', !potion);
     this.drawSlot(
       ctx,
       sprites,
       L.dartBtn,
       'dart',
       darts ? darts.qty : 0,
-      throwMode ? 'Aim…' : 'Throw',
+      throwMode ? 'Apuntando…' : 'Aventar',
       !darts || darts.qty <= 0,
       throwMode,
     );

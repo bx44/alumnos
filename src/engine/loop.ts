@@ -1,6 +1,6 @@
 import { RNG } from '../core/rng.js';
 import { Scheduler } from '../core/turn.js';
-import type { XY } from '../core/grid.js';
+import { regionForDepth, type XY } from '../core/grid.js';
 import { Level, newRunState, type LevelGen, type RunState } from '../dungeon/level.js';
 import { resetSpecials } from '../dungeon/rooms.js';
 import { DEATH_MESSAGE_RE } from '../mechanics/buffs.js';
@@ -12,6 +12,7 @@ import {
   type MobActor,
   mobsToPlaced,
 } from './seams.js';
+import { entradaRegion } from '../orbarak/regiones.js';
 import { memoriaDe, sacaKashia, honduraDe, marcaPasado, preguntaPorton } from '../orbarak/porton.js';
 
 export interface GameDeps {
@@ -75,7 +76,8 @@ export class Game {
     this.scheduler.add(this.hero);
     for (const m of this.mobs) this.scheduler.add(m);
     this.afterAction();
-    this.logMsg(`Depth 1 — the Sewers. Find the stairs down. (seed ${this.seed})`);
+    this.logMsg(entradaRegion(this.level.region));
+    this.logMsg(`Piso 1. Busca la bajada. (semilla ${this.seed})`);
   }
 
   // --- input API (called by src/engine/input.ts) ---
@@ -189,7 +191,10 @@ export class Game {
     this.changeDepth(depth);
     // Vanilla Hero.actDescend: depth transitions cost hunger (unless starving).
     this.deps.mechanics.applyTransitionHunger(this.hero);
+    const antes = regionForDepth(depth - 1);
+    const ahora = regionForDepth(depth);
     this.logMsg(`Bajas al piso ${depth}.`);
+    if (ahora !== antes) this.logMsg(entradaRegion(ahora));
   }
 
   /** Ascend (no-op on depth 1). */
