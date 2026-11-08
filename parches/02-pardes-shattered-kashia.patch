@@ -1,0 +1,2632 @@
+From d96604ff1a2de180bae62f83722f49f9bb0f4b1d Mon Sep 17 00:00:00 2001
+From: Jonathan Ben-Hamu <jonathan@ben-hamu.com>
+Date: Sun, 8 Nov 2026 12:21:06 -0600
+Subject: [PATCH] Or Barak: porton con kashia, banco de retos y nombres de
+ region
+
+- orbarak/Kashia: banco de preguntas y traducciones desde un .txt editable
+- orbarak/Jazara: memoria de la partida (portones pasados, fallos, rachas)
+- orbarak/WndKashia: la ventana del porton, no se puede saltar
+- orbarak/Palabras: las palabras en hebreo como estampa, porque el font del
+  juego no tiene ni una letra hebrea
+- orbarak/Porton: premio al atinar; al fallar se baja igual, sin premio
+- Level.activateTransition: un solo renglon de enganche
+- tools/palabras.py: dibuja las palabras con nikud
+- Cinco regiones y cinco jefes renombrados al mundo de Or Barak
+---
+ .../messages/actors/actors_es.properties      |  64 ++---
+ .../assets/messages/items/items_es.properties |  32 +--
+ .../messages/journal/journal_es.properties    |  32 +--
+ .../messages/levels/levels_es.properties      |   8 +-
+ .../assets/messages/misc/misc_es.properties   |   4 +-
+ core/src/main/assets/orbarak/kashiot.txt      | 103 +++++++
+ core/src/main/assets/orbarak/palabras.png     | Bin 0 -> 64115 bytes
+ core/src/main/assets/orbarak/palabras.txt     |  49 ++++
+ .../shatteredpixeldungeon/levels/Level.java   |   7 +
+ .../shatteredpixeldungeon/orbarak/Jazara.java | 134 +++++++++
+ .../shatteredpixeldungeon/orbarak/Kashia.java | 272 ++++++++++++++++++
+ .../orbarak/Palabras.java                     |  84 ++++++
+ .../shatteredpixeldungeon/orbarak/Porton.java | 101 +++++++
+ .../orbarak/WndKashia.java                    | 173 +++++++++++
+ tools/palabras.py                             |  86 ++++++
+ 15 files changed, 1079 insertions(+), 70 deletions(-)
+ create mode 100644 core/src/main/assets/orbarak/kashiot.txt
+ create mode 100644 core/src/main/assets/orbarak/palabras.png
+ create mode 100644 core/src/main/assets/orbarak/palabras.txt
+ create mode 100644 core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/Jazara.java
+ create mode 100644 core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/Kashia.java
+ create mode 100644 core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/Palabras.java
+ create mode 100644 core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/Porton.java
+ create mode 100644 core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/WndKashia.java
+ create mode 100644 tools/palabras.py
+
+diff --git a/core/src/main/assets/messages/actors/actors_es.properties b/core/src/main/assets/messages/actors/actors_es.properties
+index bb6d16d..f65a0ec 100644
+--- a/core/src/main/assets/messages/actors/actors_es.properties
++++ b/core/src/main/assets/messages/actors/actors_es.properties
+@@ -1570,21 +1570,21 @@ actors.mobs.dm201.name=DM-201
+ actors.mobs.dm201.vent=¡DM-201 lanza una granada corrosiva!
+ actors.mobs.dm201.desc=Los enanos experimentaron recientemente enfatizando más en la falta de movilidad del DM-200 y crearon algunos modelos DM que son completamente estacionarios. El DM-201 es un DM-200 reconvertido que actúa como una torreta centinela sin capacidad de movimiento. A cambio de la falta de movilidad, los DM-201 tienen significativamente más durabilidad y poder de ataque.\n\nComo los DM-201 no tienen motores para ventilar el humo, en su lugar,  ¡los enanos los equiparon con granadas de gas corrosivo! En cualquier caso, los DM-201 son cuidadosos con esas granadas, y solo las lanzarán cuando sean atacados a distancia.
+ 
+-actors.mobs.dm300.name=DM-300
++actors.mobs.dm300.name=el Camión
+ actors.mobs.dm300.notice=¡PERSONAL NO AUTORIZADO DETECTADO!
+-actors.mobs.dm300.shield=¡DM-300 extrae poder de los cables expuestos y se protege a sí mismo!
++actors.mobs.dm300.shield=¡el Camión extrae poder de los cables expuestos y se protege a sí mismo!
+ actors.mobs.dm300.charging=¡RETENIENDO DAÑO! ¡ACTIVANDO TORRE DE ENERGÍA!
+-actors.mobs.dm300.charging_hint=¡DM-300 es invulnerable mientras está siendo energizado por una torre de energía!
++actors.mobs.dm300.charging_hint=¡el Camión es invulnerable mientras está siendo energizado por una torre de energía!
+ actors.mobs.dm300.supercharged=¡DESTRUIR! ¡DESTRUIR! ¡DESTRUIR!
+ actors.mobs.dm300.charge_lost=¡TORRE DE ENERGÍA DESTRUIDA! ¡REVIRTIENDO A PODER LOCAL!
+ actors.mobs.dm300.pylons_destroyed=¡ALERTA! ¡INESTABILIDAD DETECTADA EN RED DE ENERGÍA!
+-actors.mobs.dm300.rankings_desc=Aplastado por el DM-300
++actors.mobs.dm300.rankings_desc=Aplastado por el el Camión
+ actors.mobs.dm300.def_verb=bloqueado
+ actors.mobs.dm300.defeated=¡DAÑO CRÍTICO! INTENTANDO APAGA-
+-actors.mobs.dm300.desc=DM-300 es la más grande y poderosa 'máquina defensiva' que los enanos jamás hayan creado. Una máquina tan asombrosa es difícil de manufacturar, por lo que los enanos solo construyeron unas pocas para proteger las entradas a su metrópolis subterránea.\n\nEstá equipada con válvulas para expulsar sus desechos tóxicos y un taladro de alta potencia que puede usar tanto para atacar como para quebrantar la tierra. DM-300 también puede conectarse a una red de energía, incrementando aún más su potencia.
+-actors.mobs.dm300.desc_supercharged=DM-300 se encuentra completamente cargado de energía eléctrica. En esta forma el DM-300 no puede ser dañado ¡y se mueve al doble de velocidad! Adicionalmente, su taladro ahora gira lo suficientemente rápido como para _perforar a través de la roca sólida._ Sin embargo, se mueve mucho más lento cuando hace esto.\n\nAtacar al DM-300 directamente es inútil mientras se encuentra sobrealimentado, pero _algo en el área debe estar proporcionándole esta energía._ Destruir eso puede que lo debilite.
++actors.mobs.dm300.desc=el Camión es la más grande y poderosa 'máquina defensiva' que los enanos jamás hayan creado. Una máquina tan asombrosa es difícil de manufacturar, por lo que los enanos solo construyeron unas pocas para proteger las entradas a su metrópolis subterránea.\n\nEstá equipada con válvulas para expulsar sus desechos tóxicos y un taladro de alta potencia que puede usar tanto para atacar como para quebrantar la tierra. el Camión también puede conectarse a una red de energía, incrementando aún más su potencia.
++actors.mobs.dm300.desc_supercharged=el Camión se encuentra completamente cargado de energía eléctrica. En esta forma el el Camión no puede ser dañado ¡y se mueve al doble de velocidad! Adicionalmente, su taladro ahora gira lo suficientemente rápido como para _perforar a través de la roca sólida._ Sin embargo, se mueve mucho más lento cuando hace esto.\n\nAtacar al el Camión directamente es inútil mientras se encuentra sobrealimentado, pero _algo en el área debe estar proporcionándole esta energía._ Destruir eso puede que lo debilite.
+ 
+-actors.mobs.dwarfking.name=Rey de los Enanos
++actors.mobs.dwarfking.name=Gaavá
+ actors.mobs.dwarfking.notice=¡Cómo te atrevés! ¡No tienes ni idea de lo que estás interrumpiendo!
+ actors.mobs.dwarfking.lifelink_1=¡Necesito tu esencia, esclavo!
+ actors.mobs.dwarfking.lifelink_2=¡Sangra para mí, esclavo!
+@@ -1596,12 +1596,12 @@ actors.mobs.dwarfking.wave_3=¡Inútiles! ¡MÁTENLO AHORA!
+ actors.mobs.dwarfking.enraged=No puedes matarme %s. ¡YO. SOY. INMORTAL!
+ actors.mobs.dwarfking.losing=¡No! No puedes hacer eso... no tienes ni idea de lo que hay debajo...
+ actors.mobs.dwarfking.defeated=Tú... nos has condenado a todos...
+-actors.mobs.dwarfking.rankings_desc=Caído Ante el Rey de los Enanos.
+-actors.mobs.dwarfking.desc=Hace mucho tiempo uno de los mayores magos de la corte de los enanos descubrió secretos que le dieron un tremendo poder sobre la vida y la muerte. Pronto puso su poder a prueba, dominando y corrompiendo a sus compañeros, su rey y finalmente a cada ciudadano enano. Ahora él es rey, gobernante de una legión de no-muertos.\n\nEl Rey de los Enanos es un enemigo agresivo, que intentará rodear y arrollar a sus enemigos con su horda de subordinados no-muertos.
+-actors.mobs.dwarfking$dkghoul.rankings_desc=Caído Ante el Rey de los Enanos.
+-actors.mobs.dwarfking$dkmonk.rankings_desc=Caído Ante el Rey de los Enanos.
+-actors.mobs.dwarfking$dkwarlock.rankings_desc=Caído Ante el Rey de los Enanos.
+-actors.mobs.dwarfking$dkgolem.rankings_desc=Caído Ante el Rey de los Enanos.
++actors.mobs.dwarfking.rankings_desc=Caído Ante el Gaavá.
++actors.mobs.dwarfking.desc=Hace mucho tiempo uno de los mayores magos de la corte de los enanos descubrió secretos que le dieron un tremendo poder sobre la vida y la muerte. Pronto puso su poder a prueba, dominando y corrompiendo a sus compañeros, su rey y finalmente a cada ciudadano enano. Ahora él es rey, gobernante de una legión de no-muertos.\n\nEl Gaavá es un enemigo agresivo, que intentará rodear y arrollar a sus enemigos con su horda de subordinados no-muertos.
++actors.mobs.dwarfking$dkghoul.rankings_desc=Caído Ante el Gaavá.
++actors.mobs.dwarfking$dkmonk.rankings_desc=Caído Ante el Gaavá.
++actors.mobs.dwarfking$dkwarlock.rankings_desc=Caído Ante el Gaavá.
++actors.mobs.dwarfking$dkgolem.rankings_desc=Caído Ante el Gaavá.
+ 
+ actors.mobs.ebonymimic.name=mímico de ébano
+ actors.mobs.ebonymimic.reveal=¡Ahí había un mímico!
+@@ -1692,15 +1692,15 @@ actors.mobs.golem.name=golem
+ actors.mobs.golem.def_verb=bloqueado
+ actors.mobs.golem.desc=Los golems son un intento de corregir los defectos anteriores en la maquinaria enana a través del uso de magia recién descubierta por los enanos. Son mucho más compactos y eficientes comparados al DM-300, siendo aún igual de letales.\n\nSi bien los golems siguen siendo demasiado grandes para caber en pasillos, los enanos les han dado nuevas habilidades mágicas para compensar. Los golems pueden teletransportarse entre habitaciones y teletransportar a sus enemigos hacia ellos cuando estos están fuera de su alcance.
+ 
+-actors.mobs.goo.name=Gú
++actors.mobs.goo.name=el Shiamún
+ actors.mobs.goo.notice=¡GLURP-GLURP!
+ actors.mobs.goo.defeated=glurp... glurp...
+ actors.mobs.goo.!!!=!!!
+-actors.mobs.goo.pumpup=¡Gú se está bombeando a sí mismo!
++actors.mobs.goo.pumpup=¡el Shiamún se está bombeando a sí mismo!
+ actors.mobs.goo.enraged=enfurecido
+ actors.mobs.goo.gluuurp=¡GLUUUURP!
+-actors.mobs.goo.rankings_desc=Absorbido por el Gú
+-actors.mobs.goo.desc=Poco se sabe sobre El Gú. Es posible que no sea siquiera una criatura, sino un conglomerado de sustancias viles de las alcantarillas que de alguna manera ganó inteligencia básica. A pesar de esto, la magia oscura es ciertamente lo que ha dejado a Gú existir.\n\nSu naturaleza gelatinosa lo deja absorber un montón de energía negra, y sientes un escalofrío de solo estar cerca. si Gú puede atacarte con esta energía, no viviras por mucho.
++actors.mobs.goo.rankings_desc=Absorbido por el el Shiamún
++actors.mobs.goo.desc=Poco se sabe sobre El el Shiamún. Es posible que no sea siquiera una criatura, sino un conglomerado de sustancias viles de las alcantarillas que de alguna manera ganó inteligencia básica. A pesar de esto, la magia oscura es ciertamente lo que ha dejado a el Shiamún existir.\n\nSu naturaleza gelatinosa lo deja absorber un montón de energía negra, y sientes un escalofrío de solo estar cerca. si el Shiamún puede atacarte con esta energía, no viviras por mucho.
+ 
+ actors.mobs.greatcrab.name=gran cangrejo
+ actors.mobs.greatcrab.noticed=El cangrejo bloquea con su enorme pinza.
+@@ -1816,25 +1816,25 @@ actors.mobs.succubus.desc=Los súcubos son demonios que cambian de forma y manip
+ actors.mobs.swarm.name=enjambre de moscas
+ actors.mobs.swarm.desc=El enjambre mortal de moscas zumba enojado. Cada ataque no mágico lo dividirá en dos enjambres más pequeños pero igualmente peligrosos.
+ 
+-actors.mobs.tengu.name=Tengu
++actors.mobs.tengu.name=el Bilbul
+ actors.mobs.tengu.notice_gotcha=¡Te atrapé, %s!
+ actors.mobs.tengu.interesting=Hagamos esto más interesante...
+ actors.mobs.tengu.notice_have=¡Ahora sí te tengo, %s!
+ actors.mobs.tengu.defeated=Libre al fin...
+-actors.mobs.tengu.rankings_desc=Asesinado por Tengu
+-actors.mobs.tengu.desc=Un famoso y enigmático asesino, cuyo nombre se deriva de la máscara injertada a su cara.\n\nTengu está atrapado con grandes grilletes en sus muñecas y rodillas, aunque parece que se deshizo de sus cadenas hace mucho tiempo.\n\nIntentará usar trampas, magia engañosa y ataques precisos para eliminar lo único que evita su escape: tú.
++actors.mobs.tengu.rankings_desc=Asesinado por el Bilbul
++actors.mobs.tengu.desc=Un famoso y enigmático asesino, cuyo nombre se deriva de la máscara injertada a su cara.\n\nel Bilbul está atrapado con grandes grilletes en sus muñecas y rodillas, aunque parece que se deshizo de sus cadenas hace mucho tiempo.\n\nIntentará usar trampas, magia engañosa y ataques precisos para eliminar lo único que evita su escape: tú.
+ 
+ actors.mobs.tengu$bombability$bombblob.desc=Una nube de humo sobrecalentado ondea aquí. ¡Cuidado, va a explotar!
+ actors.mobs.tengu$bombability$bombitem.name=Bomba de Humo
+ actors.mobs.tengu$bombability$bombitem.cant_pickup=Está pegado al suelo, ¡no puedes moverlo!
+-actors.mobs.tengu$bombability$bombitem.desc=Tengu ha arrojado una bomba de humo de aspecto extraño aquí, que despide un humo espeso y caliente. ¡Está haciendo un fuerte ruido de tictac, como si fuera una cuenta atrás para una explosión!\n\nLa bomba se ha anclado al suelo, por lo que no puedes levantarla.
++actors.mobs.tengu$bombability$bombitem.desc=el Bilbul ha arrojado una bomba de humo de aspecto extraño aquí, que despide un humo espeso y caliente. ¡Está haciendo un fuerte ruido de tictac, como si fuera una cuenta atrás para una explosión!\n\nLa bomba se ha anclado al suelo, por lo que no puedes levantarla.
+ 
+-actors.mobs.tengu$fireability$fireblob.desc=Tengu ha arrojado un polvo fino que parece estar atrapando vapor aquí, ¡está a punto de encenderse!
++actors.mobs.tengu$fireability$fireblob.desc=el Bilbul ha arrojado un polvo fino que parece estar atrapando vapor aquí, ¡está a punto de encenderse!
+ 
+ actors.mobs.tengu$shockerability$shockerblob.desc=Aquí se está acumulando energía eléctrica, ¡todo lo que se encuentre en esta casilla será electrocutado el próximo turno!
+ actors.mobs.tengu$shockerability$shockeritem.name=Shocker
+ actors.mobs.tengu$shockerability$shockeritem.cant_pickup=Está expulsando demasiada electricidad, ¡no puedes agarrarlo!
+-actors.mobs.tengu$shockerability$shockeritem.desc=Tengu ha lanzado un curioso aparato aquí, que parece estar hecho con partes del DM-100. El aparato arquea electricidad constantemente a su alrededor, pero parece seguir un patrón predecible.\n\nCon toda la electricidad que lo rodea, no hay forma de que puedas recoger esto.
++actors.mobs.tengu$shockerability$shockeritem.desc=el Bilbul ha lanzado un curioso aparato aquí, que parece estar hecho con partes del DM-100. El aparato arquea electricidad constantemente a su alrededor, pero parece seguir un patrón predecible.\n\nCon toda la electricidad que lo rodea, no hay forma de que puedas recoger esto.
+ 
+ actors.mobs.thief.name=ladrón loco
+ actors.mobs.thief.stole=¡El ladrón te robó %s!
+@@ -1887,20 +1887,20 @@ actors.mobs.wraith.name=espectro
+ actors.mobs.wraith.desc=Un espectro es un vengativo espíritu de un pecador, cuya tumba fue perturbada. Siendo una entidad etérea, es muy difícil golpearle con un arma regular.
+ actors.mobs.wraith.discover_hint=Puedes encontrar a este enemigo en cualquier lugar de la mazmorra.
+ 
+-actors.mobs.yogdzewa.name=Yog-Dzewa
++actors.mobs.yogdzewa.name=Safek
+ actors.mobs.yogdzewa.notice=YO. TE. VEO.
+ actors.mobs.yogdzewa.darkness=La oscuridad se aproxima...
+ actors.mobs.yogdzewa.hope=TU. ESPERANZA. ES. UNA. ILUSIÓN.
+ actors.mobs.yogdzewa.defeated=...
+-actors.mobs.yogdzewa.rankings_desc=Devorado por Yog-Dzewa
+-actors.mobs.yogdzewa.desc=Yog-Dzewa es un dios Antiguo; una gran monstruosidad que llega a los mundos mortales y los devora para alimentar su ilimitado crecimiento. Los enanos deben haber atraído la atención de este terror cósmico mientras jugaban con magias oscuras, y han tratado de contenerlo desde entonces.\n\nYog-Dzewa procede de una dimensión de caos mágico en bruto, y no puede traer su auténtica forma a este mundo. En lugar de ello crea personificaciones y secuaces demoníacos invocados para hacer su voluntad aquí.\n\nEste ojo gigante es el punto focal del poder de Yog-Dzewa en este mundo. A pesar de que el propio ojo es inmóvil, es capaz de disparar poderosos rayos de magia demoníaca e invocar distintos secuaces para ayudarlo.
+-actors.mobs.yogdzewa.desc_spawners=Puedes sentir olas de energía demónica irradiando hacia el ojo desde los pisos superiores. Algo que quedó vivo arriba debe estar canalizando poder hacia Yog-Dzewa. _¡Yog utilizará esta energía para invocar secuaces más poderosos!_
++actors.mobs.yogdzewa.rankings_desc=Devorado por Safek
++actors.mobs.yogdzewa.desc=Safek es un dios Antiguo; una gran monstruosidad que llega a los mundos mortales y los devora para alimentar su ilimitado crecimiento. Los enanos deben haber atraído la atención de este terror cósmico mientras jugaban con magias oscuras, y han tratado de contenerlo desde entonces.\n\nSafek procede de una dimensión de caos mágico en bruto, y no puede traer su auténtica forma a este mundo. En lugar de ello crea personificaciones y secuaces demoníacos invocados para hacer su voluntad aquí.\n\nEste ojo gigante es el punto focal del poder de Safek en este mundo. A pesar de que el propio ojo es inmóvil, es capaz de disparar poderosos rayos de magia demoníaca e invocar distintos secuaces para ayudarlo.
++actors.mobs.yogdzewa.desc_spawners=Puedes sentir olas de energía demónica irradiando hacia el ojo desde los pisos superiores. Algo que quedó vivo arriba debe estar canalizando poder hacia Safek. _¡Yog utilizará esta energía para invocar secuaces más poderosos!_
+ actors.mobs.yogdzewa$larva.name=larva de dios
+-actors.mobs.yogdzewa$larva.rankings_desc=Devorado por Yog-Dzewa
+-actors.mobs.yogdzewa$larva.desc=Estos pequeños engendros de Yog-Dzewa son secuaces simples que son fáciles de producir. Aunque individualmente sean débiles, se invocan rápidamente y pueden volverse arrolladores en grandes cantidades.
+-actors.mobs.yogdzewa$yogripper.rankings_desc=Devorado por Yog-Dzewa
+-actors.mobs.yogdzewa$yogeye.rankings_desc=Devorado por Yog-Dzewa
+-actors.mobs.yogdzewa$yogscorpio.rankings_desc=Devorado por Yog-Dzewa
++actors.mobs.yogdzewa$larva.rankings_desc=Devorado por Safek
++actors.mobs.yogdzewa$larva.desc=Estos pequeños engendros de Safek son secuaces simples que son fáciles de producir. Aunque individualmente sean débiles, se invocan rápidamente y pueden volverse arrolladores en grandes cantidades.
++actors.mobs.yogdzewa$yogripper.rankings_desc=Devorado por Safek
++actors.mobs.yogdzewa$yogeye.rankings_desc=Devorado por Safek
++actors.mobs.yogdzewa$yogscorpio.rankings_desc=Devorado por Safek
+ 
+ actors.mobs.yogfist.invuln_warn=¡El puño es invulnerable mientras esté cerca del ojo!
+ actors.mobs.yogfist.rankings_desc=Devorado por Yog-Dzewa
+diff --git a/core/src/main/assets/messages/items/items_es.properties b/core/src/main/assets/messages/items/items_es.properties
+index e606b44..87ebddd 100644
+--- a/core/src/main/assets/messages/items/items_es.properties
++++ b/core/src/main/assets/messages/items/items_es.properties
+@@ -173,7 +173,7 @@ items.artifacts.artifact.not_cursed=Este artefacto está libre de energía malig
+ items.artifacts.artifact.need_to_equip=Necesitas equipar tu artefacto para hacer eso.
+ 
+ items.artifacts.capeofthorns.name=capa de espinas
+-items.artifacts.capeofthorns.desc=Estas láminas colapsadas de metal del DM-300 han formado una capa rígida. Parece que almacena una energía profunda, ¿quizás tiene algo del poder del DM-300?
++items.artifacts.capeofthorns.desc=Estas láminas colapsadas de metal del el Camión han formado una capa rígida. Parece que almacena una energía profunda, ¿quizás tiene algo del poder del el Camión?
+ items.artifacts.capeofthorns.desc_inactive=La capa se siente tranquilizadoramente pesada en tus hombros, parece estar ganando energía del daño que recibes.
+ items.artifacts.capeofthorns.desc_active=La capa parece estar liberando energía almacenada, está irradiando un poder protector.
+ items.artifacts.capeofthorns$thorns.inert=Tu Capa se vuelve inerte de nuevo.
+@@ -283,7 +283,7 @@ items.artifacts.driedrose$ghosthero.dialogue_ascension_4=Supongo que aún no hem
+ items.artifacts.driedrose$ghosthero.dialogue_ascension_5=¡Hemos llegado tan lejos, podemos acabar con esto!
+ items.artifacts.driedrose$ghosthero.dialogue_ascension_6=¡Solo un poca mas, podemos salir de aquí!
+ 
+-items.artifacts.driedrose$ghosthero.seen_goo_1=¡Cuidado, Gú!
++items.artifacts.driedrose$ghosthero.seen_goo_1=¡Cuidado, el Shiamún!
+ items.artifacts.driedrose$ghosthero.seen_goo_2=Muchos de mis amigos murieron por esta cosa, ¡hora de venganza!
+ items.artifacts.driedrose$ghosthero.seen_goo_3=¡No se puede permitir que tal abominación viva!
+ items.artifacts.driedrose$ghosthero.seen_tengu_1=El prisionero que queda es un asesino mortal. Por supuesto...
+@@ -518,7 +518,7 @@ items.bags.magicalholster.desc=Esta funda delgada esta hecha de piel de un anima
+ 
+ ###bombs
+ items.bombs.arcanebomb.name=bomba arcana
+-items.bombs.arcanebomb.desc=Esta bomba ha sido impregnada con propiedades arcanas. Estallará en una explosión poderosa similar al ataque bombeado de Gú, causando _%1$d-%2$d de daño mágico_ a todo aquello dentro de un radio de 2 casillas.
++items.bombs.arcanebomb.desc=Esta bomba ha sido impregnada con propiedades arcanas. Estallará en una explosión poderosa similar al ataque bombeado de el Shiamún, causando _%1$d-%2$d de daño mágico_ a todo aquello dentro de un radio de 2 casillas.
+ items.bombs.arcanebomb.discover_hint=Puedes crear este ítem por medio de alquimia.
+ 
+ items.bombs.bomb.name=bomba
+@@ -562,7 +562,7 @@ items.bombs.regrowthbomb.desc=Esta bomba personalizada salpicará un líquido vi
+ items.bombs.regrowthbomb.discover_hint=Puedes crear este ítem por medio de alquimia.
+ 
+ items.bombs.shrapnelbomb.name=bomba de metralla
+-items.bombs.shrapnelbomb.desc=Esta bomba ha sido modificada con restos de metal del DM-300, que se fragmentará y volará a todas partes cuando explote, causando _%1$d-%2$d de daño_ en un gran rango alrededor de la bomba. Será mejor que te escondas detrás de algo cuando la uses...
++items.bombs.shrapnelbomb.desc=Esta bomba ha sido modificada con restos de metal del el Camión, que se fragmentará y volará a todas partes cuando explote, causando _%1$d-%2$d de daño_ en un gran rango alrededor de la bomba. Será mejor que te escondas detrás de algo cuando la uses...
+ items.bombs.shrapnelbomb.discover_hint=Puedes crear este ítem por medio de alquimia.
+ 
+ items.bombs.woollybomb.name=bomba de lana
+@@ -821,7 +821,7 @@ items.potions.elixirs.elixirofarcanearmor.name=elixir de armadura arcana
+ items.potions.elixirs.elixirofarcanearmor.desc=Este elixir otorgará al que lo beba una resistencia duradera al daño mágico.
+ 
+ items.potions.elixirs.elixirofaquaticrejuvenation.name=elixir de rejuvenecimiento acuático
+-items.potions.elixirs.elixirofaquaticrejuvenation.desc=Este elixir contiene los restos de Gú, fortalecidos con una poción de curación. A pesar de que no proveerá curación inmediata, restaurará constantemente una mayor cantidad de salud mientras estés parado en el agua.
++items.potions.elixirs.elixirofaquaticrejuvenation.desc=Este elixir contiene los restos de el Shiamún, fortalecidos con una poción de curación. A pesar de que no proveerá curación inmediata, restaurará constantemente una mayor cantidad de salud mientras estés parado en el agua.
+ items.potions.elixirs.elixirofaquaticrejuvenation$aquahealing.name=curación acuática
+ items.potions.elixirs.elixirofaquaticrejuvenation$aquahealing.desc=Has ganado temporalmente propiedades restauradoras similares a las de Goo. \n\nMientras estás parado en el agua, recuperarás una pequeña cantidad de salud por turno. El efecto se detiene cuando estés lleno de salud o  fuera del agua.\n\nCuración restante: %d.
+ 
+@@ -966,8 +966,8 @@ items.quest.escapecrystal.error_start=¡Parece que no estas en la Bóveda! Esto
+ items.quest.escapecrystal.error_no_items=Ninguno de tus ítems siguen almacenados almacenados, así que el cristal fue removido de tu inventario.
+ items.quest.escapecrystal.error_with_items=Tus ítems están almacenados actualmente, deberías intentar bajar a la bóveda para empezar la misión. Tus ítems almacenados se te devolverán cuando termines la misión.
+ 
+-items.quest.gooblob.name=gota de Gú
+-items.quest.gooblob.desc=Una masa pegajosa y gomosa, se separó del Gú cuando murió. Es casi como una gran bola de gelatina, aunque no te atreverías a comerla.\n\nNo hace nada por sí sola, pero podría ser útil cuando se combina con ciertas pociones o una bomba. Por lo menos debería convertirse en una cantidad decente de energía.
++items.quest.gooblob.name=gota de el Shiamún
++items.quest.gooblob.desc=Una masa pegajosa y gomosa, se separó del el Shiamún cuando murió. Es casi como una gran bola de gelatina, aunque no te atreverías a comerla.\n\nNo hace nada por sí sola, pero podría ser útil cuando se combina con ciertas pociones o una bomba. Por lo menos debería convertirse en una cantidad decente de energía.
+ items.quest.gooblob.discover_hint=Puedes obtener este ítem como botín de ciertos enemigos.
+ 
+ items.quest.impstatue.name=Estatuilla obsidiana
+@@ -979,7 +979,7 @@ items.quest.vaultbeacon.desc=Esta baliza de retorno parece tener una localizaci
+ items.quest.vaultbeacon.discover_hint=Puedes encontrar a este ítem durante una misión especifica.
+ 
+ items.quest.metalshard.name=fragmento de metal maldito
+-items.quest.metalshard.desc=Un fragmento de metal maldito oxidado, que se desprendió del DM-300 cuando fue destruido. Puedes sentir una inactiva magia malévola dentro de este.\n\nNo hace nada por sí solo, pero puede ser útil cuando se combina con ciertos pergaminos o una bomba. Por lo menos debería convertirse en una cantidad decente de energía.
++items.quest.metalshard.desc=Un fragmento de metal maldito oxidado, que se desprendió del el Camión cuando fue destruido. Puedes sentir una inactiva magia malévola dentro de este.\n\nNo hace nada por sí solo, pero puede ser útil cuando se combina con ciertos pergaminos o una bomba. Por lo menos debería convertirse en una cantidad decente de energía.
+ items.quest.metalshard.discover_hint=Puedes obtener este ítem como botín de ciertos enemigos.
+ 
+ items.quest.pickaxe.name=pico
+@@ -1317,7 +1317,7 @@ items.spells.beaconofreturning.desc=Este hechizo intrincado otorga al usuario la
+ 
+ items.spells.curseinfusion.name=infusión de maldición
+ items.spells.curseinfusion.inv_title=Maldecir un ítem
+-items.spells.curseinfusion.desc=Este hechizo infunde una pieza de equipamiento con la misma poderosa magia maligna que se encuentra dentro de DM-300. El ítem en el que es usado será maldecido inmediatamente, y cualquier encantamiento o glifo que pueda tener será anulado.\n\nEn el caso de armas, armaduras, y varitas, el ítem ganará mejoras además de ser maldecido. Las mejoras de Infusión malignas no se acumulan, y la mejora se perderá si la maldición es removida del ítem.\n\nVarias infusiones de maldición pueden ser usadas para cambiar la maldición en un arma o armadura.
++items.spells.curseinfusion.desc=Este hechizo infunde una pieza de equipamiento con la misma poderosa magia maligna que se encuentra dentro de el Camión. El ítem en el que es usado será maldecido inmediatamente, y cualquier encantamiento o glifo que pueda tener será anulado.\n\nEn el caso de armas, armaduras, y varitas, el ítem ganará mejoras además de ser maldecido. Las mejoras de Infusión malignas no se acumulan, y la mejora se perderá si la maldición es removida del ítem.\n\nVarias infusiones de maldición pueden ser usadas para cambiar la maldición en un arma o armadura.
+ 
+ items.spells.spell.ac_cast=ARROJAR
+ items.spells.spell.no_magic=No puedes lanzar hechizos mientras dure la magia de inmunidad.
+@@ -1340,7 +1340,7 @@ items.spells.phaseshift.desc=Este hechizo caótico teletransportará a cualquier
+ items.spells.reclaimtrap.name=reclamar trampa
+ items.spells.reclaimtrap.no_trap=No hay una trampa allí.
+ items.spells.reclaimtrap.desc_trap=El hechizo está listo para activar una _%s._
+-items.spells.reclaimtrap.desc=Este hechizo contiene los restos de la energía mecánica de DM-300. Cuando se usa sobre una trampa activa, el poder de la trampa se vincula a ti, lo que te permite volver a utilizar el hechizo para expulsar este poder y activar el efecto de la trampa en el lugar que desees.\n\nSin embargo, algunas trampas pueden no funcionar en cualquier lugar, y solo puede almacenar una trampa a la vez.
++items.spells.reclaimtrap.desc=Este hechizo contiene los restos de la energía mecánica de el Camión. Cuando se usa sobre una trampa activa, el poder de la trampa se vincula a ti, lo que te permite volver a utilizar el hechizo para expulsar este poder y activar el efecto de la trampa en el lugar que desees.\n\nSin embargo, algunas trampas pueden no funcionar en cualquier lugar, y solo puede almacenar una trampa a la vez.
+ 
+ items.spells.recycle.name=reciclar
+ items.spells.recycle.inv_title=Reciclar un ítem
+@@ -1369,7 +1369,7 @@ items.spells.unstablespell.name=hechizo inestable
+ items.spells.unstablespell.desc=Este pequeño cristal cúbico negro tiene símbolos rúnicos movedizos en cada una de sus superficies.\n\nCuando se activa, provoca el efecto de un pergamino aleatorio. El efecto del pergamino siempre estará enfocado al combate si hay enemigos en tu campo de visión, y no estará enfocado al combate en caso contrario.
+ 
+ items.spells.wildenergy.name=energía salvaje
+-items.spells.wildenergy.desc=Este hechizo contiene algo de la energía maldita que impulsó a DM-300. Cuando se lance, recargará tus varitas y artefactos desgastados, a la vez que activará un efecto de varita maldita al azar. Sin embargo, puedes elegir una dirección para disparar esta magia maldita.
++items.spells.wildenergy.desc=Este hechizo contiene algo de la energía maldita que impulsó a el Camión. Cuando se lance, recargará tus varitas y artefactos desgastados, a la vez que activará un efecto de varita maldita al azar. Sin embargo, puedes elegir una dirección para disparar esta magia maldita.
+ 
+ 
+ ###runestones
+@@ -2364,10 +2364,10 @@ items.weapon.weapon$enchantment.discover_hint=Puedes encontrar este ítem con es
+ items.amulet.name=amuleto de yendor
+ items.amulet.ac_end=TERMINAR LA PARTIDA
+ items.amulet.desc=El Amuleto de Yendor es el artefacto más poderoso conocido por humanos o enanos. Sus cristales brillantes contienen un poder increíble y maravilloso.
+-items.amulet.desc_origins=Los orígenes del amuleto son desconocidos. La historia dice que el Rey de los Enanos se jactó de haber descubierto el artefacto poco antes de que la civilización Enana cortara todo contacto. ¿Cómo lo encontró? ¿Cómo se lo quitó Yog-Dzewa? Preguntas para otro momento quizás, ¡lo único que importa ahora es que el amuleto es tuyo!
+-items.amulet.desc_ascent=Se desconocen los orígenes del amuleto, pero está claro que ha sido fuertemente influenciado por el poder de Yog-Dzewa. La mazmorra parece someterse a la voluntad de Yog mientras te mueves por ella, ¡haciendo que los enemigos sean mucho más abundantes y poderosos! Además, ya no puedes activar o desechar el amuleto, casi como si estuviera maldito.
++items.amulet.desc_origins=Los orígenes del amuleto son desconocidos. La historia dice que el Gaavá se jactó de haber descubierto el artefacto poco antes de que la civilización Enana cortara todo contacto. ¿Cómo lo encontró? ¿Cómo se lo quitó Safek? Preguntas para otro momento quizás, ¡lo único que importa ahora es que el amuleto es tuyo!
++items.amulet.desc_ascent=Se desconocen los orígenes del amuleto, pero está claro que ha sido fuertemente influenciado por el poder de Safek. La mazmorra parece someterse a la voluntad de Yog mientras te mueves por ella, ¡haciendo que los enemigos sean mucho más abundantes y poderosos! Además, ya no puedes activar o desechar el amuleto, casi como si estuviera maldito.
+ items.amulet.ascent_title=Ascenso
+-items.amulet.ascent_desc=Sientes el gran y tenebroso poder de Yog-Dzewa emanando del amuleto. ¡Ascender a través de la mazmorra siendo un simple mortal puede ser más difícil de lo que piensas!\n\nSi continuas ascendiendo con el amuleto la mazmorra se volverá más peligrosa, ¡teletransportarse entre pisos será deshabilitado y solo podrás ganar la partida derrotando enemigos mientras asciendes por la mazmorra!\n\nPuedes dejar el amuleto aquí si deseas ascender sin iniciar el desafío o activar el amuleto antes de ascender para finalizar la partida normalmente.
++items.amulet.ascent_desc=Sientes el gran y tenebroso poder de Safek emanando del amuleto. ¡Ascender a través de la mazmorra siendo un simple mortal puede ser más difícil de lo que piensas!\n\nSi continuas ascendiendo con el amuleto la mazmorra se volverá más peligrosa, ¡teletransportarse entre pisos será deshabilitado y solo podrás ganar la partida derrotando enemigos mientras asciendes por la mazmorra!\n\nPuedes dejar el amuleto aquí si deseas ascender sin iniciar el desafío o activar el amuleto antes de ascender para finalizar la partida normalmente.
+ items.amulet.ascent_yes=¡Continuar!
+ items.amulet.ascent_no=Parar por ahora
+ items.amulet.discover_hint=Puedes encontrar este ítem en lo más profundo de la mazmorra...
+@@ -2492,10 +2492,10 @@ items.stylus.cursed=La magia del stilus no funcionará en una armadura maldita.
+ items.stylus.inscribed=Inscribiste tu armadura con el stilus.
+ items.stylus.desc=Este stilus arcano está hecho de alguna piedra oscura muy dura. Usándolo puedes inscribir un glifo mágico en tu armadura, pero no tienes el poder de elegir qué glifo será, el stilus lo decidirá por ti.
+ 
+-items.tengusmask.name=Máscara de Tengu
++items.tengusmask.name=Máscara de el Bilbul
+ items.tengusmask.ac_wear=USAR
+ items.tengusmask.used=¡La máscara se desintegra a medida que su poder fluye hacia ti!
+-items.tengusmask.desc=Esta máscara se cayó del rostro de Tengu cuando murió, puedes sentir un gran poder mágico emanando de ella. ¿Era la máscara la fuente de poder de Tengu?\n\nCuando la uses, el tremendo poder de la máscara se transferirá a ti, permitiéndote _elegir una subclase para tu héroe._\n\n¿Qué subclase elegirás?
++items.tengusmask.desc=Esta máscara se cayó del rostro de el Bilbul cuando murió, puedes sentir un gran poder mágico emanando de ella. ¿Era la máscara la fuente de poder de el Bilbul?\n\nCuando la uses, el tremendo poder de la máscara se transferirá a ti, permitiéndote _elegir una subclase para tu héroe._\n\n¿Qué subclase elegirás?
+ items.tengusmask.discover_hint=Puedes obtener este ítem como botín de ciertos enemigos.
+ 
+ items.torch.name=antorcha
+diff --git a/core/src/main/assets/messages/journal/journal_es.properties b/core/src/main/assets/messages/journal/journal_es.properties
+index 0edd188..f97c793 100644
+--- a/core/src/main/assets/messages/journal/journal_es.properties
++++ b/core/src/main/assets/messages/journal/journal_es.properties
+@@ -85,18 +85,18 @@ journal.document.alchemy_guide.spells.body=Los hechizos están contenidos en cri
+ 
+ journal.document.intros.title=Introducción a las Regiones
+ journal.document.intros.discover_hint=Puedes encontrar este texto cuando entras a una región especifica por primera vez.
+-journal.document.intros.dungeon.title=Mazmorra
+-journal.document.intros.dungeon.body=Muchos héroes, desde la ciudad de arriba, se han aventurado en la mazmorra antes que tú y de la mayoría no se ha vuelto a saber nada más.\n\nSe dice que un antiguo mal acecha en las profundidades, custodiando el todopoderoso Amuleto de Yendor. Incluso ahora, energía oscura irradia desde abajo, abriéndose camino hacia la ciudad.\n\n¿Conquistarás la mazmorra y reclamarás el amuleto? ¡Es hora de comenzar tu propia aventura!
+-journal.document.intros.sewers.title=Alcantarillas
+-journal.document.intros.sewers.body=Los pisos superiores de la mazmorra constituyen el sistema de alcantarillado de la ciudad.\n\nA medida que la energía oscura asciende, las criaturas normalmente inofensivas de las alcantarillas se vuelven más y más feroces. La ciudad ha tenido que enviar patrullas de guardia aquí abajo para intentar mantener la seguridad de aquellos que están en la superficie.\n\nEste lugar es peligroso, pero al menos la magia maligna tiene una presencia débil.
+-journal.document.intros.prison.title=Prisión
+-journal.document.intros.prison.body=Hace muchos años se construyó aquí una prisión para encerrar a criminales peligrosos. Dada su estricta seguridad y regulación, se trajo a prisioneros de todos los lugares para cumplir condena.\n\nPero pronto un miasma tenebroso comenzó a expandirse desde las profundidades de la mazmorra, retorciendo las mentes tanto de guardias como de prisioneros.\n\nComo respuesta al creciente caos, la ciudad selló por completo la prisión. Nadie sabe qué pasó con aquellos a los que dieron por muertos dentro de estas paredes...
+-journal.document.intros.caves.title=Cuevas
+-journal.document.intros.caves.body=Estas cuevas escasamente pobladas se extienden bajo la prisión abandonada. Ricas en minerales, fueron una vez un centro de comercio e industria para la sociedad enana debajo, pero fueron abandonadas cuando los enanos se obsesionaron con la magia oscura.\n\nLas cuevas ahora están habitadas principalmente por vida salvaje subterránea, gnolls y maquinaria abandonada; probablemente corrompidos por el mismo poder que ha afectado a las regiones anteriores.
+-journal.document.intros.city.title=Metrópolis Enana
+-journal.document.intros.city.body=La Metrópolis Enana fue una vez la más grande de todas las ciudades-estado enanas. En su apogeo, los enanos construyeron maravillosas máquinas de metal y magia que permitieron que su ciudad se expandiera rápidamente.\n\nEntonces, un día, las puertas de la ciudad se cerraron y nadie volvió a saber de los enanos. Los pocos que escaparon de la ciudad al cerrarse contaron historias de un brujo demente que robó el trono, y de la terrible magia que había aprendido a utilizar.
+-journal.document.intros.halls.title=Salones Demoníacos
+-journal.document.intros.halls.body=Estas salas profundas de la Metrópolis Enana han sido retorcidas por la magia oscura. En el pasado, estas regiones eran sede de la corte de brujos de élite del Rey Enano, pero ahora parecen haber sido poseídas por algo aún más siniestro...\n\nTodo tipo de horrorosas criaturas demoníacas habitan estas salas, dirigidas por un terrible poder oscuro. Si el Rey de los Enanos no era la fuente de propagación de la corrupción, lo que sea que haya aquí abajo debe serlo.\n\nVe con cuidado, muy pocos aventureros han llegado tan lejos...
++journal.document.intros.dungeon.title=La bajada
++journal.document.intros.dungeon.body=Debajo del Bet Hamidrash hay pisos que nadie ha terminado de recorrer. Alumnos de antes bajaron y de la mayoría no se volvió a saber gran cosa, más que los apuntes que dejaron tirados.\n\nSe dice que hasta abajo, en el Pardés, está el jidush: eso que entiendes una vez y ya nunca se te va. Entre tú y él hay doce portones, y cada uno pregunta.\n\n¿Bajas?
++journal.document.intros.sewers.title=Bet Hamidrash
++journal.document.intros.sewers.body=Los primeros pisos son el Bet Hamidrash de siempre, nada más que a oscuras y con los shtenders donde los dejaron.\n\nAquí abajo lo que se mueve todavía no muerde fuerte: aburrimiento que se te pega a los pies, bostezos que se contagian, polillas en los libreros. Casi nada que no se quite poniéndote a aprender.\n\nEs un buen lugar para agarrar el modo antes de que la cosa se ponga seria.
++journal.document.intros.prison.title=Los Salones
++journal.document.intros.prison.body=Pasada la hora, los salones se quedan con las butacas volteadas y algo escrito en el pizarrón que nadie borró.\n\nLo que vive aquí no te lastima de frente: te revuelve. Te hace caminar para el otro lado, perder el hilo, olvidar a qué habías entrado. El Bilbul no te mata, te distrae hasta que te matas solo.\n\nCuida el hilo. Aquí se pierde más gente por confundida que por débil.
++journal.document.intros.caves.title=El Cerro
++journal.document.intros.caves.body=A partir de aquí ya no estás en la escuela. Esto es el cerro de la excursión, de noche, con la fogata todavía prendida y nadie que se acuerde de quién la prendió.\n\nHay bichos de verdad, barrancas y fierros viejos de los que nunca se llevaron. Entre ellos, el camión que se quedó aquí hace años y que al parecer todavía arranca.\n\nTrae agua. Abajo no hay.
++journal.document.intros.city.title=La Biblioteca
++journal.document.intros.city.body=Debajo del cerro hay una biblioteca que no termina. Pasillos de libreros hasta donde alcanza la luz, en orden perfecto, sin una sola persona.\n\nAlguien catalogó todo esto y luego se fue. O no se fue.\n\nLo que cuida estos pasillos ya no es un bicho: es alguien que sabe mucho y que no piensa dejarte pasar si no sabes tú también.
++journal.document.intros.halls.title=El Pardés
++journal.document.intros.halls.body=Aquí abajo ya no hay paredes de verdad. Lo que hay son preguntas, y lo que parece piso es nada más una respuesta en la que todavía confías.\n\nCuatro entraron al Pardés. Uno vio y murió, uno vio y se perdió, uno cortó los brotes, y uno entró en paz y salió en paz.\n\nTú vas a ser uno de esos cuatro. Todavía no sabes cuál.
+ journal.document.intros.halls.discover_hint=Puedes encontrar este texto en una región especifica, pero solo después de encontrar todos los textos previos de este conjunto.
+ 
+ journal.document.sewers_guard.title=Cartas de la Guarda
+@@ -127,7 +127,7 @@ journal.document.prison_warden.rotberry.body=23 de Otoño del 363\n\nHoy recibí
+ journal.document.prison_warden.no_support.title=Sin Ayuda
+ journal.document.prison_warden.no_support.body=11 de Primavera del 364\n\n¿En qué demonios está pensando la ciudad? Tras solicitar ayuda urgentemente, no ha habido respuesta, ni siquiera una disculpa vacía como las que me suelen enviar al denegar mis peticiones.\n\nMientras tanto, los reclusos van a peor, e incluso algunos carceleros han empezado a provocar problemas. ¡¿Planean en dejar que esto empeore hasta que se forme un motín?!\n\nPor lo menos Thomas se ha mantenido tan fiable como siempre. Su ayuda para organizar ha sido inestimable, y su idea de activar esas viejas unidades DM-100 fue desafortunadamente necesaria. Tengo confianza en poder volver a tener todo bajo control, ¡solo necesito algo de maldito apoyo!\n- Smith
+ journal.document.prison_warden.letter.title=Carta para Thomas
+-journal.document.prison_warden.letter.body=Thomas,\n\nHas sido un gran amigo, así que te voy a hacer un favor.\n\nCuando empieces tu turno esta noche, bloquea y refuerza la celda de Tengu, arroja la llave en alguna alcoba, y vete de aquí. No importa que no se atienda al resto de prisioneros, muy pronto nadie será capaz de salir de este lugar. Eso sí, ese maniático debe quedarse entre rejas, si escapa quién sabe lo que podría hacer.\n\nNo le cuentes esto a nadie, y no te molestes en buscarme. Un capitán debe hundirse con su barco.\n- Kiana
++journal.document.prison_warden.letter.body=Thomas,\n\nHas sido un gran amigo, así que te voy a hacer un favor.\n\nCuando empieces tu turno esta noche, bloquea y refuerza la celda de el Bilbul, arroja la llave en alguna alcoba, y vete de aquí. No importa que no se atienda al resto de prisioneros, muy pronto nadie será capaz de salir de este lugar. Eso sí, ese maniático debe quedarse entre rejas, si escapa quién sabe lo que podría hacer.\n\nNo le cuentes esto a nadie, y no te molestes en buscarme. Un capitán debe hundirse con su barco.\n- Kiana
+ 
+ journal.document.caves_explorer.title=Bitácora del Explorador
+ journal.document.caves_explorer.discover_hint=Puedes encontrar este texto en una región especifica, pero solo después de encontrar todos los textos previos de este conjunto.
+@@ -157,7 +157,7 @@ journal.document.city_warlock.more_powerful.body=Llevar la cuenta del tiempo se
+ journal.document.city_warlock.new_power.title=Un Nuevo Poder
+ journal.document.city_warlock.new_power.body=¿Qué está sucediendo aquí? El poder que emana del Nuevo Rey es ciertamente diferente al del principio, pero también hay algo más. Este nuevo poder parece irradiar desde los pasillos más recónditos de nuestra ciudad.\n\nAún más desconcertante es que la actividad en la metrópolis superior también ha disminuido. No sé qué está pasando ahí abajo, pero está atrayendo casi toda la atención del Nuevo Rey.\n\nRegresar a los pasillos profundos será peligroso, pero debo descubrir qué está causando este cambio. ¿Quizás el Nuevo Rey tiene una debilidad después de todo?
+ journal.document.city_warlock.seen_it.title=Lo he Visto
+-journal.document.city_warlock.seen_it.body=He visto lo que hay debajo, pero no puedo describirlo. Mis manos tiemblan incontrolablemente mientras trato de poner mis pensamientos por escrito.\n\n¿Por qué está pasando esto? ¿Lo hizo el Nuevo Rey? No tiene sentido. ¿Quizás lo atrajo su uso desenfrenado del poder? Tenía la esperanza de salvar nuestra civilización, pero ahora veo que el mundo entero está en juego.\n\nDe alguna manera, el rey es el menor de los males. No tengo otra opción, por el bien mayor me entregaré. ¡Mi rey, por favor guíame, úsame como un instrumento para mantener a raya a Yog-Dzewa!
++journal.document.city_warlock.seen_it.body=He visto lo que hay debajo, pero no puedo describirlo. Mis manos tiemblan incontrolablemente mientras trato de poner mis pensamientos por escrito.\n\n¿Por qué está pasando esto? ¿Lo hizo el Nuevo Rey? No tiene sentido. ¿Quizás lo atrajo su uso desenfrenado del poder? Tenía la esperanza de salvar nuestra civilización, pero ahora veo que el mundo entero está en juego.\n\nDe alguna manera, el rey es el menor de los males. No tengo otra opción, por el bien mayor me entregaré. ¡Mi rey, por favor guíame, úsame como un instrumento para mantener a raya a Safek!
+ 
+ journal.document.halls_king.title=Diario de ???
+ journal.document.halls_king.discover_hint=Puedes encontrar este texto en una región especifica, pero solo después de encontrar todos los textos previos de este conjunto.
+@@ -166,9 +166,9 @@ journal.document.halls_king.rejection.body=¡IMBÉCILES!\n\nDurante los últimos
+ journal.document.halls_king.amulet.title=El Amuleto
+ journal.document.halls_king.amulet.body=¡LO HE LOGRADO!\n\nNo sabía lo que podría encontrar exactamente, pero lo que descubrí ahí fuera fue más allá de mis más disparatadas especulaciones. Tanto poder, justo ahí, listo para ser tomado, ¡y es todo mío!\n\nCon esto ninguno de los tontos de la corte se atreverá a oponerse a mí. Me marea pensar en todas las formas diferentes en que podría humillarlos. Demonios, por qué detenerme ahí, ¡tengo suficiente poder para destruir a cada uno de ellos si quisiera! Quizá sea excesivo, pero no debo tardar mucho en decidirme o sospecharán.\n\n¡Creo que llamaré a este gran poder el Amuleto de Yendor!\n- R.
+ journal.document.halls_king.ritual.title=El Ritual
+-journal.document.halls_king.ritual.body=Thymor se ha enfrentado públicamente a mí hoy y ha insistido en que explique mi nueva fuente de poder. Lo desestimé lo mejor que pude, pero puedo sentir las miradas juiciosas del resto de la corte sobre mí una vez más.\n\nEsperaba pasar un poco más de tiempo disfrutando de la calma antes de la tormenta, pero realmente no importa. He decidido lo que quiero hacer. Afirmaré que obtuve mi poder a través de un nuevo ritual y me ofreceré a realizarlo con los otros brujos y el Rey. Una vez terminado el ritual, ¡yo seré el rey!\n\nThymor protestará, por supuesto, pero con tanto poder en oferta, ¡dudo que lo escuchen!\n\n¡TODOS SE INCLINARAN ANTE MÍ!\n- Futuro Rey de los Enanos
++journal.document.halls_king.ritual.body=Thymor se ha enfrentado públicamente a mí hoy y ha insistido en que explique mi nueva fuente de poder. Lo desestimé lo mejor que pude, pero puedo sentir las miradas juiciosas del resto de la corte sobre mí una vez más.\n\nEsperaba pasar un poco más de tiempo disfrutando de la calma antes de la tormenta, pero realmente no importa. He decidido lo que quiero hacer. Afirmaré que obtuve mi poder a través de un nuevo ritual y me ofreceré a realizarlo con los otros brujos y el Rey. Una vez terminado el ritual, ¡yo seré el rey!\n\nThymor protestará, por supuesto, pero con tanto poder en oferta, ¡dudo que lo escuchen!\n\n¡TODOS SE INCLINARAN ANTE MÍ!\n- Futuro Gaavá
+ journal.document.halls_king.new_king.title=Un Nuevo Rey
+-journal.document.halls_king.new_king.body=¡YO SOY EL REY, AHAHAHAHAAA!\n\n¡Simplemente me dejaron hacerlo! Sin apenas convencerles, aceptaron que "compartiera" este poder con ellos en un gran ritual. ¡En un instante pasaron de ser un coro de voces burlonas a mi nueva corte de súbditos silenciosos!\n\nComo era de esperar, Thymor huyó como un cobarde a la primera señal de problemas. También puedo sentir la fuerza de resistencia que está formando. Creo que le permitiré continuar, ¡para que pueda entregar a todos sus conspiradores directamente a mi puerta!\n\nEstá claro que el reino tampoco me respeta, supongo que también me encargaré de eso.\n- Rey de los Enanos
++journal.document.halls_king.new_king.body=¡YO SOY EL REY, AHAHAHAHAAA!\n\n¡Simplemente me dejaron hacerlo! Sin apenas convencerles, aceptaron que "compartiera" este poder con ellos en un gran ritual. ¡En un instante pasaron de ser un coro de voces burlonas a mi nueva corte de súbditos silenciosos!\n\nComo era de esperar, Thymor huyó como un cobarde a la primera señal de problemas. También puedo sentir la fuerza de resistencia que está formando. Creo que le permitiré continuar, ¡para que pueda entregar a todos sus conspiradores directamente a mi puerta!\n\nEstá claro que el reino tampoco me respeta, supongo que también me encargaré de eso.\n- Gaavá
+ journal.document.halls_king.thing.title=La Cosa
+ journal.document.halls_king.thing.body=Hay un problema. Thymor fue despachado sin esfuerzo, pero parece que mi búsqueda en los planos exteriores no paso desapercibida.\n\n"Algo"... ha sido atraído a mi mundo y está comenzando a abrirse paso por el fondo de los salones inferiores. Para complicar aún más las cosas ¡En ese preciso lugar es donde guardé el amuleto! Qué criatura tan malévola ¿por qué intenta quitarme mi poder cuando hay tal abundancia de poder ahí afuera aún por tomar?\n\nA pesar de mi poder, no creo que pueda simplemente lanzarme y luchar. Su verdadero poder es incalculable, pero debe haber una manera de limitarlo. ¡DEFENDERÉ MI PREMIO!
+ journal.document.halls_king.attrition.title=Desgaste
+diff --git a/core/src/main/assets/messages/levels/levels_es.properties b/core/src/main/assets/messages/levels/levels_es.properties
+index 220813e..71a31a3 100644
+--- a/core/src/main/assets/messages/levels/levels_es.properties
++++ b/core/src/main/assets/messages/levels/levels_es.properties
+@@ -155,7 +155,7 @@ levels.traps.summoningtrap.desc=La activación de esta trampa invocará a varios
+ levels.traps.teleportationtrap.name=trampa de teletransportación
+ levels.traps.teleportationtrap.desc=Cuando se active esta trampa, todo a su alrededor se teletransportará a ubicaciones aleatorias en este piso.
+ 
+-levels.traps.tengudarttrap.desc=Tengu claramente se ha estado preparando para una pelea. Esta trampa activará un soplador de dardos oculto que disparará un dardo venenoso a la cosa más cercana que no sea Tengu.\n\nLa trampa está tan bien hecha que el mecanismo de disparo es imposible de detectar sin ayuda mágica. Sin embargo, la trampa es visible por un momento cuando se está estableciendo.
++levels.traps.tengudarttrap.desc=el Bilbul claramente se ha estado preparando para una pelea. Esta trampa activará un soplador de dardos oculto que disparará un dardo venenoso a la cosa más cercana que no sea el Bilbul.\n\nLa trampa está tan bien hecha que el mecanismo de disparo es imposible de detectar sin ayuda mágica. Sin embargo, la trampa es visible por un momento cuando se está estableciendo.
+ 
+ levels.traps.toxictrap.name=trampa de gas tóxico
+ levels.traps.toxictrap.desc=La activación de esta trampa creará una nube de gas tóxico flotante dentro del área circundante.
+@@ -180,11 +180,11 @@ levels.traps.worndarttrap.desc=Un pequeño soplador de dardos debe estar escondi
+ 
+ ###levels
+ levels.cavesbosslevel.wires_name=Cableado expuesto
+-levels.cavesbosslevel.wires_desc=El suelo está a medio excavar aquí, dejando ver algunos cables expuestos. Estos deben estar conectando las diversas máquinas eléctricas entre sí.\n\nLos cables han de tener algo de corriente recorriendo por ellos. Si el DM-300 pasa por aquí, puede que absorba energía de ellos.
++levels.cavesbosslevel.wires_desc=El suelo está a medio excavar aquí, dejando ver algunos cables expuestos. Estos deben estar conectando las diversas máquinas eléctricas entre sí.\n\nLos cables han de tener algo de corriente recorriendo por ellos. Si el el Camión pasa por aquí, puede que absorba energía de ellos.
+ levels.cavesbosslevel.energy_desc=El suelo aquí está chispeando con electricidad, y es perjudicial pisarlo. _Las chispas parecen estar gravitando en una cierta dirección..._ ¿tal vez conduzcan a la fuente de energía?
+ levels.cavesbosslevel.gate_name=Puerta de metal
+-levels.cavesbosslevel.gate_desc=Una gran puerta de metal que bloquea el camino hacia la Metrópolis Enana. La caja de metal en el centro está produciendo un fuerte zumbido, debe estar conectada a los circuitos y a las máquinas cercanas. ¿Quizás destruir al DM-300 abrirá la puerta?
+-levels.cavesbosslevel.gate_desc_broken=La puerta debió haber estado conectada al DM-300 de alguna manera, ya que ha explotado en cuanto el DM-300 ha sido derrotado. Ahora solo quedan piezas rotas.
++levels.cavesbosslevel.gate_desc=Una gran puerta de metal que bloquea el camino hacia la Metrópolis Enana. La caja de metal en el centro está produciendo un fuerte zumbido, debe estar conectada a los circuitos y a las máquinas cercanas. ¿Quizás destruir al el Camión abrirá la puerta?
++levels.cavesbosslevel.gate_desc_broken=La puerta debió haber estado conectada al el Camión de alguna manera, ya que ha explotado en cuanto el el Camión ha sido derrotado. Ahora solo quedan piezas rotas.
+ levels.cavesbosslevel.water_desc=Con toda la electricidad que hay aquí, el agua podría no ser siempre segura...
+ 
+ levels.citybosslevel.throne_name=Trono
+diff --git a/core/src/main/assets/messages/misc/misc_es.properties b/core/src/main/assets/messages/misc/misc_es.properties
+index 5f744f1..2f98ff3 100644
+--- a/core/src/main/assets/messages/misc/misc_es.properties
++++ b/core/src/main/assets/messages/misc/misc_es.properties
+@@ -181,7 +181,7 @@ badges$badge.catalog_potions_scrolls.desc=Identifica cada poción y pergamino co
+ badges$badge.all_rare_enemies.title=Cazador de Mitos
+ badges$badge.all_rare_enemies.desc=Desbloquea diez entradas de catálogo de enemigos raros en tu diario
+ badges$badge.rodney.title=No Tan Intimidante
+-badges$badge.rodney.desc=Descubre el verdadero nombre del Rey de los Enanos
++badges$badge.rodney.desc=Descubre el verdadero nombre del Gaavá
+ badges$badge.happy_end.title=Final Feliz
+ badges$badge.happy_end.desc=Lleva el Amuleto de Yendor a la superficie
+ badges$badge.happy_end_remains.title=Tú Tambien Lo Has Logrado
+@@ -230,7 +230,7 @@ challenges.no_scrolls_desc=Una cierta runa es más difícil de encontrar. Desafo
+ challenges.champion_enemies=Campeones hostiles
+ challenges.champion_enemies_desc=¡No eres el único que puede subir de nivel!\n\nLos enemigos regulares tienen 1/8 posibilidades de aparecer con un efecto especial de campeón en el piso 1, escalando hasta 1/6 en el piso 21.\n-Los campeones se despertarán si aparecen dormidos.\n-El héroe sabe cuando un campeón aparece.\n-Los campeones no pueden ser convertidos en aliados.\n\nHay seis tipos de campeones enemigos:\n_Flameante (Naranja):_ +25% de daño cuerpo a cuerpo, enciende fuego al golpear, esparce flamas al morir, no puede incendiar casillas con agua.\n_Proyectivo (Purpura):_ +25% de daño cuerpo a cuerpo, +3 rango cuerpo a cuerpo.\n_Anti Mágico (Verde):_ -50% daño recibido, inmune a los efectos mágicos.\n_Gigante (Azul):_ -80% daño recibido, +1 rango cuerpo a cuerpo, no puede moverse por túneles.\n_Bendecido (Amarillo):_ x4 de precisión y evasión.\n_Creciente (Rojo):_ +20% de precisión, evasión, daño y PS efectivos. Aumenta en 1% cada 4 turnos.
+ challenges.stronger_bosses=Jefes más malotes
+-challenges.stronger_bosses_desc=Los jefes son mucho más difíciles con este desafío!\n\n_Goo:_ +20% de salud.\n_-_ Su curación sobre el agua incrementa hasta 3/turno.\n_-_ Se bombea en 1 turno en lugar de 2.\n_Tengu:_ +25% de salud.\n_-_ Fase 1: las trampas son más letales.\n_-_ Fase 2: sus habilidades son más frecuentes.\n_DM-300:_ +33% de salud.\n_-_ Las torres de energía son más resistentes y se activan 3.\n_-_ Sus habilidades son más poderosas y frecuentes.\n_-_ El DM-300 es más rápido cuando esta supercargado.\n_-_ Los cables expuestos son dos veces más comunes.\n_Rey Enano:_ +50% de salud.\n_-_ Los súbditos son más fuertes en todas las fases.\n_-_ Fase 1: habilidades e invocaciones más rápidas.\n_-_ Fase 2: 2 súbditos más por ronda.\n_-_ Fase 3: 2x de salud, invocaciones más rápidas.\n_Yog-Dzewa:_\n_-_ ¡Dos puños invocados al mismo tiempo!\n_-_ Su laser inflige +60% de daño.\n_-_ Súbditos más fuertes.
++challenges.stronger_bosses_desc=Los jefes son mucho más difíciles con este desafío!\n\n_Goo:_ +20% de salud.\n_-_ Su curación sobre el agua incrementa hasta 3/turno.\n_-_ Se bombea en 1 turno en lugar de 2.\n_el Bilbul:_ +25% de salud.\n_-_ Fase 1: las trampas son más letales.\n_-_ Fase 2: sus habilidades son más frecuentes.\n_el Camión:_ +33% de salud.\n_-_ Las torres de energía son más resistentes y se activan 3.\n_-_ Sus habilidades son más poderosas y frecuentes.\n_-_ El el Camión es más rápido cuando esta supercargado.\n_-_ Los cables expuestos son dos veces más comunes.\n_Rey Enano:_ +50% de salud.\n_-_ Los súbditos son más fuertes en todas las fases.\n_-_ Fase 1: habilidades e invocaciones más rápidas.\n_-_ Fase 2: 2 súbditos más por ronda.\n_-_ Fase 3: 2x de salud, invocaciones más rápidas.\n_Safek:_\n_-_ ¡Dos puños invocados al mismo tiempo!\n_-_ Su laser inflige +60% de daño.\n_-_ Súbditos más fuertes.
+ 
+ rankings$record.something=Asesinado por Algo
+ rankings$record.won=Obtenido el Amuleto de Yendor
+diff --git a/core/src/main/assets/orbarak/kashiot.txt b/core/src/main/assets/orbarak/kashiot.txt
+new file mode 100644
+index 0000000..e9e7ee6
+--- /dev/null
++++ b/core/src/main/assets/orbarak/kashiot.txt
+@@ -0,0 +1,103 @@
++# Banco de kashiot de Pardes - Or Barak
++# Una linea por reto. Las columnas van separadas por |
++#
++#   P|hondura|pregunta|opcion A|opcion B|opcion C|opcion D|cual es la buena (1-4)|que decir al contestar
++#   T|hondura|palabra en hebreo o arameo|lo que quiere decir
++#
++# La hondura va de 1 a 5 y dice en que region aparece:
++#   1 Bet Hamidrash  2 Los Salones  3 El Cerro  4 La Biblioteca  5 El Pardes
++# Las lineas que empiezan con # no cuentan. Para quitar un reto, ponle # adelante.
++
++### preguntas
++P|1|¿En qué idioma está escrita casi toda la Guemará?|Arameo|Hebreo|Griego|Ladino|1|Arameo babilonio. Por eso cuesta la primera vez.
++P|1|¿Cuántos sedarim (órdenes) tiene la Mishná?|Cuatro|Seis|Diez|Doce|2|Seis: Zeraim, Moed, Nashim, Nezikin, Kodashim y Taharot.
++P|1|¿Quién ordenó la Mishná?|Rabí Akivá|Rav Ashí|Rabí Yehudá HaNasí|Rambam|3|Rabí Yehudá HaNasí, al que la Guemará llama simplemente Rabí.
++P|1|Cada daf tiene dos caras. ¿Cómo se llaman?|Alef y bet|Rishón y shení|Peshat y derash|Yamín y smol|1|Amud alef y amud bet. Por eso 2a y 2b.
++P|1|El comentario que va pegado al lomo de la página es de…|Tosafot|Rashi|Maharshá|Rosh|2|Rashi va del lado de adentro; Tosafot del lado de afuera.
++P|1|Mishná y Guemará juntas forman…|El Midrash|El Talmud|La Halajá|El Sidur|2|Eso es el Talmud.
++P|1|¿Cuál Talmud se estudia más en las yeshivot?|El Yerushalmí|El Bavlí|Los dos igual|Ninguno|2|El Bavlí, el de Babilonia.
++P|1|¿Cómo se le dice al pasaje que estás estudiando en la Guemará?|Sugiá|Perek|Siman|Daf|1|Sugiá. El perek es el capítulo y el daf es la hoja.
++P|1|¿En qué seder está masejet Sukká?|Zeraim|Moed|Nashim|Nezikin|2|En Moed, el orden de las fiestas.
++P|1|Los sabios de la Mishná se llaman…|Amoraim|Tanaim|Gueonim|Rishonim|2|Tanaim. Los de la Guemará son amoraim.
++P|2|"Kal vajomer" es aprender…|De una palabra repetida|De lo leve a lo grave|De la mayoría|De una lista|2|Si en lo chico aplica, con más razón en lo grande.
++P|2|"Guezerá shavá" aprende una ley de…|Dos versículos con la misma palabra|Un sueño|La costumbre|Un cálculo de números|1|La misma palabra en dos lugares enlaza las dos leyes.
++P|2|Una "baraita" es una enseñanza de los tanaim que…|Está en la Mishná|Quedó fuera de la Mishná|Escribió Rashi|Está en el Zohar|2|Baraita quiere decir "de afuera".
++P|2|Cuando la Guemará dice "teikú", quiere decir que la pregunta…|Se resolvió|Era tonta|Queda sin resolver|Es de otro tratado|3|Queda parada. Nadie la cerró.
++P|2|"Majloket" es…|Una disputa entre sabios|Un tipo de korbán|Una fiesta|Un error del copista|1|Dos opiniones que no coinciden.
++P|2|"Nafká miná" pregunta…|De dónde salió el versículo|Qué diferencia práctica hay|Quién lo dijo|Cuándo pasó|2|Si las dos opiniones dan lo mismo en la práctica, ¿para qué discutir?
++P|2|"Matnitín" se refiere a…|Nuestra Mishná|Una baraita|El Yerushalmí|Un comentario tardío|1|La Mishná que estamos estudiando.
++P|2|Abayé y Ravá son famosos por…|Sus discusiones|Haber escrito la Mishná|Ser hermanos|Vivir en Jerusalén|1|Sus majlokot son el pan de cada día en el Bavlí.
++P|2|"Peshitá" quiere decir que lo que se dijo…|Es obvio|Es falso|Es una pregunta|Es del Rambam|1|La Guemará reclama: eso ya se sabía, ¿para qué decirlo?
++P|2|"Tá shemá" introduce…|Una prueba de una fuente|Una bendición|Un cuento|Un regaño|1|"Ven y escucha": aquí va una fuente para resolver.
++P|3|¿Cuántas paredes necesita como mínimo una sucá?|Una|Dos y un poco|Tres completas|Cuatro|2|Dos como deben ser y una tercera aunque sea de un tefaj.
++P|3|¿Cuál es la altura máxima de una sucá?|10 tefajim|20 amot|7 amot|No hay máximo|2|Más alta de veinte amot, no sirve. Con eso abre la masejet.
++P|3|¿Y la altura mínima?|10 tefajim|1 amá|20 tefajim|3 amot|1|Diez tefajim. Menos de eso ya no es un espacio.
++P|3|La sejaj tiene que ser de algo que…|Sea nuevo|Creció de la tierra y está cortado|Sea de metal|Lo haya hecho un jajam|2|Que haya crecido del suelo, que esté desconectado y que no reciba tumá.
++P|3|¿Cuál korbán se quema completo sobre el mizbéaj?|Shelamim|Jatat|Olá|Minjá|3|La olá sube entera. De ahí su nombre.
++P|3|El korbán minjá está hecho principalmente de…|Carne|Harina y aceite|Vino|Fruta|2|Harina fina con aceite y levoná.
++P|3|¿Qué libro de la Torá abre con las leyes de los korbanot?|Shemot|Vayikrá|Bamidbar|Devarim|2|Vayikrá, desde el primer perek.
++P|3|"Lejatjilá" significa…|Después de hecho|De entrada, como se debe|Nunca|Solo en shabat|2|Lejatjilá es como sí se hace; bedivad es qué pasa si ya se hizo de otro modo.
++P|3|"Bedivad" significa…|De entrada|Ya hecho, a posteriori|Por costumbre|Por error grave|2|Lo que ya pasó: ¿vale o no vale?
++P|3|"Safek" significa…|Certeza|Duda|Castigo|Permiso|2|Duda. Media Guemará es qué hacer con un safek.
++P|4|"Migó" es un argumento que dice…|Que la mayoría manda|Que si quisiera mentir habría dicho algo mejor|Que el texto se repite|Que el testigo es pariente|2|Si tenía a la mano una mentira más conveniente y no la usó, le creemos.
++P|4|"Jazaká" es la presunción de que…|Las cosas siguen como estaban|Todos son culpables|El texto está mal|Hay que preguntar al rav|1|Lo que estaba, sigue estando, hasta que se demuestre lo contrario.
++P|4|"Sevará" es…|Un versículo|Razonamiento lógico, sin versículo|Una costumbre|Un decreto del rey|2|A veces la Guemará pregunta "¿para qué versículo? ¡es sevará!".
++P|4|"Midiorayta" quiere decir que la ley es…|De la Torá|De los sabios|De la costumbre|Del gobierno|1|De la Torá misma. Miderabanán es de los sabios.
++P|4|"Teyuvtá" es…|Una pregunta sin respuesta|Una refutación que gana|Un elogio|Un tipo de korbán|2|El argumento quedó tumbado.
++P|4|Pardés son cuatro niveles: Peshat, Remez, Derash y…|Sod|Siman|Seder|Safek|1|Sod, lo escondido. Las cuatro letras forman PaRDeS.
++P|4|"Peshat" es…|El sentido simple del texto|Una alusión|Una parábola|Un secreto|1|Lo que dice el texto, tal como se lee.
++P|4|Una "baayá" que la Guemará no logra resolver termina en…|Teikú|Teyuvtá|Mashmá|Guezerá|1|Teikú: queda abierta.
++P|4|"Rov" como principio es decidir según…|La mayoría|El más viejo|El más rico|El que preguntó|1|Seguimos a la mayoría cuando hay duda.
++P|4|Cuando la Guemará dice "gufá", está…|Cerrando el tema|Volviendo al texto que citó de pasada|Citando la Torá|Pidiendo silencio|2|Trajo una fuente para otra cosa y ahora la estudia por sí misma.
++P|1|En el Bet Hamidrash, ¿qué se usa para apoyar el libro cuando estudias de pie?|El shtender|El arón|La bimá|La mejitzá|1|El shtender.
++P|1|¿Cómo se llama la app de los alumnos de Or Barak?|Or+|Barak|Metivta|Luz|1|Or+. En la que estás jugando ahorita.
++
++### palabras para traducir
++T|1|אָמַר|dijo
++T|1|תָּנָא|enseñó
++T|1|מַאי|¿qué?
++T|1|לֹא|no
++T|1|אִין|sí
++T|1|הָכָא|aquí
++T|1|הָתָם|allá
++T|1|מִלְּתָא|una cosa, un asunto
++T|1|רַבָּנַן|los sabios
++T|1|שְׁמַע|escucha
++T|2|תָּא שְׁמַע|ven y escucha
++T|2|קָא מַשְׁמַע לָן|nos enseña
++T|2|אִיכָּא דְּאָמְרִי|hay quienes dicen
++T|2|מְנָא הָנֵי מִילֵּי|¿de dónde se sabe esto?
++T|2|פְּשִׁיטָא|es obvio
++T|2|אֶלָּא|sino
++T|2|וְהָא|¡pero si…!
++T|2|דִּלְמָא|quizá
++T|2|רֵישָׁא|la primera parte
++T|2|סֵיפָא|la última parte
++T|2|מַתְנִיתִין|nuestra Mishná
++T|2|בָּרַיְיתָא|enseñanza de afuera de la Mishná
++T|3|קוּשְׁיָא|pregunta difícil
++T|3|תֵּירוּץ|respuesta
++T|3|מַחֲלוֹקֶת|disputa
++T|3|לִכְאוֹרָה|a primera vista
++T|3|אַדְּרַבָּה|al contrario
++T|3|גּוּפָא|volvamos al texto mismo
++T|3|סוּגְיָא|el tema que se estudia
++T|3|מַסֶּכֶת|tratado
++T|3|דַּף|hoja
++T|3|עַמּוּד|cara de la hoja
++T|3|שֶׁנֶּאֱמַר|pues está dicho
++T|3|דִּכְתִיב|pues está escrito
++T|3|כִּדְתַנְיָא|como se enseñó
++T|3|הַשְׁתָּא|ahora
++T|4|תֵּיקוּ|queda sin resolver
++T|4|תְּיוּבְתָּא|refutación
++T|4|סְבָרָא|razonamiento lógico
++T|4|חֲזָקָה|presunción
++T|4|מִיגּוֹ|ya que pudo decir otra cosa
++T|4|נָפְקָא מִינַּהּ|diferencia práctica
++T|4|בִּשְׁלָמָא|se entiende que…
++T|4|מֵעִיקָּרָא|desde el principio
++T|4|הָכִי נַמֵי|así también
++T|4|בָּעְיָא|pregunta abierta
++T|4|מִדְּאוֹרַיְיתָא|de la Torá
++T|4|מִדְּרַבָּנָן|de los sabios
+diff --git a/core/src/main/assets/orbarak/palabras.png b/core/src/main/assets/orbarak/palabras.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..82a595c330bd7d58bcaacc63adc1bb65336e3dc1
+GIT binary patch
+literal 64115
+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
+z2zPqtHyAs%0A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%0A!
+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
+XAK_R%qp7nH@P)jfcfLr??)Luy&tf8I
+
+literal 0
+HcmV?d00001
+
+diff --git a/core/src/main/assets/orbarak/palabras.txt b/core/src/main/assets/orbarak/palabras.txt
+new file mode 100644
+index 0000000..0e1362c
+--- /dev/null
++++ b/core/src/main/assets/orbarak/palabras.txt
+@@ -0,0 +1,49 @@
++# palabra|x|y|ancho|alto  ·  lo genera tools/palabras.py, no lo edites a mano
++אָמַר|97|0|61|44
++תָּנָא|101|44|54|44
++מַאי|101|88|53|44
++לֹא|106|132|43|44
++אִין|105|176|46|44
++הָכָא|97|220|61|44
++הָתָם|97|264|61|44
++מִלְּתָא|88|308|79|44
++רַבָּנַן|95|352|65|44
++שְׁמַע|97|396|62|44
++תָּא שְׁמַע|75|440|106|44
++קָא מַשְׁמַע לָן|47|484|161|44
++אִיכָּא דְּאָמְרִי|46|528|164|44
++מְנָא הָנֵי מִילֵּי|42|572|171|44
++פְּשִׁיטָא|83|616|90|44
++אֶלָּא|97|660|61|44
++וְהָא|101|704|54|44
++דִּלְמָא|88|748|79|44
++רֵישָׁא|92|792|72|44
++סֵיפָא|92|836|72|44
++מַתְנִיתִין|75|880|105|44
++בָּרַיְיתָא|77|924|101|44
++קוּשְׁיָא|86|968|84|44
++תֵּירוּץ|86|1012|84|44
++מַחֲלוֹקֶת|73|1056|109|44
++לִכְאוֹרָה|73|1100|109|44
++אַדְּרַבָּה|79|1144|97|44
++גּוּפָא|95|1188|66|44
++סוּגְיָא|89|1232|77|44
++מַסֶּכֶת|88|1276|79|44
++דַּף|106|1320|43|44
++עַמּוּד|91|1364|73|44
++שֶׁנֶּאֱמַר|82|1408|92|44
++דִּכְתִיב|83|1452|90|44
++כִּדְתַנְיָא|77|1496|102|44
++הַשְׁתָּא|88|1540|79|44
++תֵּיקוּ|95|1584|65|44
++תְּיוּבְתָּא|77|1628|102|44
++סְבָרָא|88|1672|79|44
++חֲזָקָה|91|1716|73|44
++מִיגּוֹ|98|1760|59|44
++נָפְקָא מִינַּהּ|57|1804|141|44
++בִּשְׁלָמָא|79|1848|97|44
++מֵעִיקָּרָא|74|1892|108|44
++הָכִי נַמֵי|76|1936|103|44
++בָּעְיָא|92|1980|72|44
++מִדְּאוֹרַיְיתָא|53|2024|149|44
++מִדְּרַבָּנָן|77|2068|102|44
+diff --git a/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels/Level.java b/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels/Level.java
+index 16d9839..76b09bf 100644
+--- a/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels/Level.java
++++ b/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels/Level.java
+@@ -95,6 +95,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
+ import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
+ import com.shatteredpixel.shatteredpixeldungeon.mechanics.ShadowCaster;
+ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
++import com.shatteredpixel.shatteredpixeldungeon.orbarak.Porton;
+ import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
+ import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
+ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+@@ -596,6 +597,12 @@ public abstract class Level implements Bundlable {
+ 			return false;
+ 		}
+ 
++		//Or Barak: el portón pregunta antes de dejar bajar. Si abre su ventana,
++		//la bajada la dispara ella misma al cerrarse.
++		if (Porton.intercepta(hero, transition)){
++			return false;
++		}
++
+ 		beforeTransition();
+ 		InterlevelScene.curTransition = transition;
+ 		if (transition.type == LevelTransition.Type.REGULAR_EXIT
+diff --git a/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/Jazara.java b/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/Jazara.java
+new file mode 100644
+index 0000000..209f785
+--- /dev/null
++++ b/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/Jazara.java
+@@ -0,0 +1,134 @@
++/*
++ * Pixel Dungeon
++ * Copyright (C) 2012-2015 Oleg Dolya
++ *
++ * Shattered Pixel Dungeon
++ * Copyright (C) 2014-2026 Evan Debenham
++ *
++ * Pardés · Metivtá Or Barak
++ * Copyright (C) 2026 Jonathan Ben-Hamu
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>
++ */
++
++package com.shatteredpixel.shatteredpixeldungeon.orbarak;
++
++import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
++import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
++import com.watabou.utils.Bundle;
++
++import java.util.ArrayList;
++import java.util.Arrays;
++import java.util.LinkedHashSet;
++
++/**
++ * La memoria de la partida: qué portones ya pasaste, qué retos ya te salieron,
++ * cuáles fallaste y cómo vas de rachas.
++ *
++ * Va colgado del alumno como un efecto invisible, y por eso se guarda y se
++ * recupera solo junto con la partida, sin tocar el sistema de guardado.
++ */
++public class Jazara extends Buff {
++
++	public  ArrayList<Integer> portonesPasados = new ArrayList<>();
++	public  ArrayList<String>  yaSalieron      = new ArrayList<>();
++	public  ArrayList<String>  falladas        = new ArrayList<>();
++
++	public int aciertos  = 0;
++	public int errores   = 0;
++	public int racha     = 0;
++	public int mejorRacha = 0;
++
++	{
++		revivePersists = true;
++	}
++
++	public static Jazara da() {
++		return Buff.affect(Dungeon.hero, Jazara.class);
++	}
++
++	public boolean yaPaso(int piso) {
++		return portonesPasados.contains(piso);
++	}
++
++	public void anotaPaso(int piso) {
++		if (!portonesPasados.contains(piso)) portonesPasados.add(piso);
++	}
++
++	public void anotaSalida(String id) {
++		if (id == null) return;
++		yaSalieron.add(id);
++		// si ya salieron casi todas, se olvida de las más viejas para poder repetir
++		while (yaSalieron.size() > 60) yaSalieron.remove(0);
++	}
++
++	public void anotaAcierto(String id) {
++		aciertos++;
++		racha++;
++		if (racha > mejorRacha) mejorRacha = racha;
++		falladas.remove(id);
++	}
++
++	public void anotaError(String id) {
++		errores++;
++		racha = 0;
++		if (id != null && !falladas.contains(id) && falladas.size() < 20) falladas.add(id);
++	}
++
++	/** Un reto que hayas fallado antes, para repasarlo. Null si no debes nada. */
++	public Kashia paraRepasar() {
++		while (!falladas.isEmpty()) {
++			String id = falladas.get(0);
++			Kashia k = Kashia.porId(id);
++			if (k != null) return k;
++			falladas.remove(0);     // ese reto ya no existe en el banco
++		}
++		return null;
++	}
++
++	private static final String PORTONES = "portones";
++	private static final String SALIERON = "salieron";
++	private static final String FALLADAS = "falladas";
++	private static final String ACIERTOS = "aciertos";
++	private static final String ERRORES  = "errores";
++	private static final String RACHA    = "racha";
++	private static final String MEJOR    = "mejor_racha";
++
++	@Override
++	public void storeInBundle(Bundle bundle) {
++		super.storeInBundle(bundle);
++		int[] pisos = new int[portonesPasados.size()];
++		for (int i = 0; i < pisos.length; i++) pisos[i] = portonesPasados.get(i);
++		bundle.put(PORTONES, pisos);
++		bundle.put(SALIERON, yaSalieron.toArray(new String[0]));
++		bundle.put(FALLADAS, falladas.toArray(new String[0]));
++		bundle.put(ACIERTOS, aciertos);
++		bundle.put(ERRORES,  errores);
++		bundle.put(RACHA,    racha);
++		bundle.put(MEJOR,    mejorRacha);
++	}
++
++	@Override
++	public void restoreFromBundle(Bundle bundle) {
++		super.restoreFromBundle(bundle);
++		portonesPasados.clear();
++		for (int p : bundle.getIntArray(PORTONES)) portonesPasados.add(p);
++		yaSalieron = new ArrayList<>(Arrays.asList(bundle.getStringArray(SALIERON)));
++		falladas   = new ArrayList<>(new LinkedHashSet<>(Arrays.asList(bundle.getStringArray(FALLADAS))));
++		aciertos   = bundle.getInt(ACIERTOS);
++		errores    = bundle.getInt(ERRORES);
++		racha      = bundle.getInt(RACHA);
++		mejorRacha = bundle.getInt(MEJOR);
++	}
++}
+diff --git a/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/Kashia.java b/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/Kashia.java
+new file mode 100644
+index 0000000..8400e8a
+--- /dev/null
++++ b/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/Kashia.java
+@@ -0,0 +1,272 @@
++/*
++ * Pixel Dungeon
++ * Copyright (C) 2012-2015 Oleg Dolya
++ *
++ * Shattered Pixel Dungeon
++ * Copyright (C) 2014-2026 Evan Debenham
++ *
++ * Pardés · Metivtá Or Barak
++ * Copyright (C) 2026 Jonathan Ben-Hamu
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>
++ */
++
++package com.shatteredpixel.shatteredpixeldungeon.orbarak;
++
++import com.badlogic.gdx.Gdx;
++import com.watabou.utils.Random;
++
++import java.util.ArrayList;
++import java.util.Collections;
++
++/**
++ * Un reto del portón.
++ *
++ * Los retos viven en assets/orbarak/kashiot.txt, un archivo de texto plano que
++ * cualquiera puede editar sin programar. Hay de dos tipos:
++ *
++ *   P  pregunta de opción múltiple, con sus cuatro opciones y cuál es la buena.
++ *   T  una palabra en hebreo o arameo y lo que quiere decir. Las tres opciones
++ *      malas las arma el juego solo, tomando las traducciones de otras palabras,
++ *      así que para agregar una palabra basta con escribirla y su significado.
++ *
++ * Si el archivo no se puede leer, el juego sigue con el puñado de retos de
++ * emergencia que están aquí abajo: nunca se queda sin qué preguntar.
++ */
++public class Kashia {
++
++	public String  id;            // para acordarnos de cuál falló
++	public String  palabra;       // solo en las de traducir; si no, null
++	public String  pregunta;
++	public String  explicacion;
++	public String[] opciones;
++	public int     correcta;      // índice dentro de opciones
++	public int     hondura;       // 1 a 5
++
++	private static ArrayList<Kashia>   preguntas = null;
++	private static ArrayList<String[]> palabras  = null;   // {hondura, palabra, significado}
++
++	private static final String ARCHIVO = "orbarak/kashiot.txt";
++
++	private static final String[] DE_EMERGENCIA = {
++		"P|1|¿En qué idioma está escrita casi toda la Guemará?|Arameo|Hebreo|Griego|Ladino|1|Arameo babilonio.",
++		"P|1|¿Cuántos sedarim tiene la Mishná?|Cuatro|Seis|Diez|Doce|2|Seis.",
++		"P|2|Cuando la Guemará dice «teikú», la pregunta…|Se resolvió|Queda sin resolver|Era tonta|Cambia de tema|2|Queda parada.",
++		"T|1|אָמַר|dijo",
++		"T|1|תָּנָא|enseñó",
++		"T|2|תֵּירוּץ|respuesta",
++		"T|2|קוּשְׁיָא|pregunta difícil"
++	};
++
++	// ───────────────────────── carga ─────────────────────────
++
++	private static void cargar() {
++		if (preguntas != null) return;
++		preguntas = new ArrayList<>();
++		palabras  = new ArrayList<>();
++
++		String crudo = null;
++		try {
++			crudo = Gdx.files.internal(ARCHIVO).readString("UTF-8");
++		} catch (Exception e) {
++			crudo = null;
++		}
++		String[] lineas = (crudo != null && crudo.trim().length() > 0)
++				? crudo.split("\\r?\\n")
++				: DE_EMERGENCIA;
++
++		for (String linea : lineas) {
++			if (linea == null) continue;
++			linea = linea.trim();
++			if (linea.length() == 0 || linea.charAt(0) == '#') continue;
++
++			String[] c = linea.split("\\|", -1);
++			try {
++				if (c[0].equalsIgnoreCase("P") && c.length >= 8) {
++					Kashia k = new Kashia();
++					k.hondura  = acota(Integer.parseInt(c[1].trim()));
++					k.pregunta = c[2].trim();
++
++					ArrayList<String> ops = new ArrayList<>();
++					int buena = Integer.parseInt(c[7].trim()) - 1;
++					int corregida = 0;
++					for (int i = 0; i < 4; i++) {
++						String o = c[3 + i].trim();
++						if (o.length() == 0) continue;
++						if (i == buena) corregida = ops.size();
++						ops.add(o);
++					}
++					if (ops.size() < 2) continue;
++
++					k.opciones    = ops.toArray(new String[0]);
++					k.correcta    = corregida;
++					k.explicacion = c.length > 8 ? c[8].trim() : "";
++					k.id          = "p:" + k.pregunta;
++					preguntas.add(k);
++
++				} else if (c[0].equalsIgnoreCase("T") && c.length >= 4) {
++					String h = String.valueOf(acota(Integer.parseInt(c[1].trim())));
++					String palabra = c[2].trim(), significado = c[3].trim();
++					if (palabra.length() > 0 && significado.length() > 0) {
++						palabras.add(new String[]{ h, palabra, significado });
++					}
++				}
++			} catch (Exception e) {
++				// un renglón mal escrito no tumba el juego: se salta y ya
++			}
++		}
++	}
++
++	private static int acota(int h) {
++		return h < 1 ? 1 : (h > 5 ? 5 : h);
++	}
++
++	/** Para que al editar el archivo no haya que reiniciar en modo prueba. */
++	public static void recargar() {
++		preguntas = null;
++		palabras = null;
++		cargar();
++	}
++
++	public static int cuantasPreguntas() { cargar(); return preguntas.size(); }
++	public static int cuantasPalabras()  { cargar(); return palabras.size(); }
++
++	// ───────────────────────── sacar una ─────────────────────────
++
++	/** Un reto de la hondura pedida, sin repetir los que ya salieron esta partida. */
++	public static Kashia saca(int hondura, ArrayList<String> yaSalieron) {
++		cargar();
++		boolean hayPalabras = palabras.size() >= 4;
++		boolean traducir = hayPalabras && (preguntas.isEmpty() || Random.Float() < 0.45f);
++
++		Kashia k = traducir ? deTraduccion(hondura, yaSalieron) : deOpcion(hondura, yaSalieron);
++		if (k == null) k = traducir ? deOpcion(hondura, yaSalieron) : deTraduccion(hondura, yaSalieron);
++		if (k == null) {            // ya salieron todos: se permite repetir
++			k = traducir ? deTraduccion(hondura, null) : deOpcion(hondura, null);
++		}
++		return k;
++	}
++
++	private static Kashia deOpcion(int hondura, ArrayList<String> yaSalieron) {
++		ArrayList<Kashia> cerca = new ArrayList<>();
++		for (int margen = 0; margen <= 4 && cerca.isEmpty(); margen++) {
++			for (Kashia k : preguntas) {
++				if (Math.abs(k.hondura - hondura) > margen) continue;
++				if (yaSalieron != null && yaSalieron.contains(k.id)) continue;
++				cerca.add(k);
++			}
++		}
++		if (cerca.isEmpty()) return null;
++
++		Kashia base = Random.element(cerca);
++		Kashia k = new Kashia();        // copia, para poder revolver sin tocar el banco
++		k.id = base.id; k.hondura = base.hondura;
++		k.pregunta = base.pregunta; k.explicacion = base.explicacion;
++
++		ArrayList<String> ops = new ArrayList<>();
++		Collections.addAll(ops, base.opciones);
++		String buena = base.opciones[base.correcta];
++		Collections.shuffle(ops);
++		k.opciones = ops.toArray(new String[0]);
++		k.correcta = ops.indexOf(buena);
++		return k;
++	}
++
++	private static Kashia deTraduccion(int hondura, ArrayList<String> yaSalieron) {
++		if (palabras.size() < 4) return null;
++
++		ArrayList<String[]> cerca = new ArrayList<>();
++		for (int margen = 0; margen <= 4 && cerca.isEmpty(); margen++) {
++			for (String[] w : palabras) {
++				if (Math.abs(Integer.parseInt(w[0]) - hondura) > margen) continue;
++				if (yaSalieron != null && yaSalieron.contains("t:" + w[1])) continue;
++				cerca.add(w);
++			}
++		}
++		if (cerca.isEmpty()) return null;
++
++		String[] w = Random.element(cerca);
++
++		ArrayList<String> malas = new ArrayList<>();
++		for (String[] otra : palabras) {
++			if (!otra[2].equals(w[2])) malas.add(otra[2]);
++		}
++		if (malas.size() < 3) return null;
++		Collections.shuffle(malas);
++
++		ArrayList<String> ops = new ArrayList<>(malas.subList(0, 3));
++		ops.add(w[2]);
++		Collections.shuffle(ops);
++
++		Kashia k = new Kashia();
++		k.id          = "t:" + w[1];
++		k.hondura     = Integer.parseInt(w[0]);
++		k.palabra     = w[1];
++		k.pregunta    = "¿Qué quiere decir?";
++		k.opciones    = ops.toArray(new String[0]);
++		k.correcta    = ops.indexOf(w[2]);
++		k.explicacion = w[1] + " = " + w[2] + ".";
++		return k;
++	}
++
++	/** Vuelve a armar un reto a partir de su id, para repasar lo fallado. */
++	public static Kashia porId(String id) {
++		cargar();
++		if (id == null) return null;
++		if (id.startsWith("p:")) {
++			for (Kashia k : preguntas) {
++				if (id.equals(k.id)) return deOpcionFija(k);
++			}
++		} else if (id.startsWith("t:")) {
++			String palabra = id.substring(2);
++			for (String[] w : palabras) {
++				if (w[1].equals(palabra)) return deTraduccionFija(w);
++			}
++		}
++		return null;
++	}
++
++	private static Kashia deOpcionFija(Kashia base) {
++		ArrayList<String> ops = new ArrayList<>();
++		Collections.addAll(ops, base.opciones);
++		String buena = base.opciones[base.correcta];
++		Collections.shuffle(ops);
++		Kashia k = new Kashia();
++		k.id = base.id; k.hondura = base.hondura;
++		k.pregunta = base.pregunta; k.explicacion = base.explicacion;
++		k.opciones = ops.toArray(new String[0]);
++		k.correcta = ops.indexOf(buena);
++		return k;
++	}
++
++	private static Kashia deTraduccionFija(String[] w) {
++		ArrayList<String> malas = new ArrayList<>();
++		for (String[] otra : palabras) if (!otra[2].equals(w[2])) malas.add(otra[2]);
++		if (malas.size() < 3) return null;
++		Collections.shuffle(malas);
++		ArrayList<String> ops = new ArrayList<>(malas.subList(0, 3));
++		ops.add(w[2]);
++		Collections.shuffle(ops);
++
++		Kashia k = new Kashia();
++		k.id = "t:" + w[1];
++		k.hondura = Integer.parseInt(w[0]);
++		k.palabra = w[1];
++		k.pregunta = "¿Qué quiere decir?";
++		k.opciones = ops.toArray(new String[0]);
++		k.correcta = ops.indexOf(w[2]);
++		k.explicacion = w[1] + " = " + w[2] + ".";
++		return k;
++	}
++}
+diff --git a/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/Palabras.java b/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/Palabras.java
+new file mode 100644
+index 0000000..9b8ce06
+--- /dev/null
++++ b/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/Palabras.java
+@@ -0,0 +1,84 @@
++/*
++ * Pixel Dungeon
++ * Copyright (C) 2012-2015 Oleg Dolya
++ *
++ * Shattered Pixel Dungeon
++ * Copyright (C) 2014-2026 Evan Debenham
++ *
++ * Pardés · Metivtá Or Barak
++ * Copyright (C) 2026 Jonathan Ben-Hamu
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>
++ */
++
++package com.shatteredpixel.shatteredpixeldungeon.orbarak;
++
++import com.badlogic.gdx.Gdx;
++import com.watabou.noosa.Image;
++
++import java.util.HashMap;
++
++/**
++ * Las palabras en hebreo, dibujadas de antemano.
++ *
++ * El font del juego no trae letras hebreas y un font de pixeles tampoco sabría
++ * acomodar el nikud, así que cada palabra viene ya dibujada en una sola imagen
++ * (orbarak/palabras.png) y aquí nada más se recorta la que toca.
++ *
++ * Para agregar palabras: las escribes en kashiot.txt y corres tools/palabras.py.
++ */
++public class Palabras {
++
++	public static final String ATLAS  = "orbarak/palabras.png";
++	private static final String INDICE = "orbarak/palabras.txt";
++
++	private static HashMap<String, int[]> donde = null;   // palabra -> {x, y, ancho, alto}
++
++	private static void cargar() {
++		if (donde != null) return;
++		donde = new HashMap<>();
++		try {
++			String crudo = Gdx.files.internal(INDICE).readString("UTF-8");
++			for (String linea : crudo.split("\\r?\\n")) {
++				linea = linea.trim();
++				if (linea.length() == 0 || linea.charAt(0) == '#') continue;
++				String[] c = linea.split("\\|");
++				if (c.length < 5) continue;
++				donde.put(c[0], new int[]{
++						Integer.parseInt(c[1].trim()), Integer.parseInt(c[2].trim()),
++						Integer.parseInt(c[3].trim()), Integer.parseInt(c[4].trim())
++				});
++			}
++		} catch (Exception e) {
++			// sin índice no hay estampas; el reto se ve sin la palabra y ni modo
++		}
++	}
++
++	public static boolean hay(String palabra) {
++		cargar();
++		return donde.containsKey(palabra);
++	}
++
++	/** La estampa de una palabra, o null si esa palabra no está dibujada. */
++	public static Image estampa(String palabra) {
++		cargar();
++		int[] r = donde.get(palabra);
++		if (r == null) return null;
++		try {
++			return new Image(ATLAS, r[0], r[1], r[2], r[3]);
++		} catch (Exception e) {
++			return null;
++		}
++	}
++}
+diff --git a/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/Porton.java b/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/Porton.java
+new file mode 100644
+index 0000000..fdb4bc3
+--- /dev/null
++++ b/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/Porton.java
+@@ -0,0 +1,101 @@
++/*
++ * Pixel Dungeon
++ * Copyright (C) 2012-2015 Oleg Dolya
++ *
++ * Shattered Pixel Dungeon
++ * Copyright (C) 2014-2026 Evan Debenham
++ *
++ * Pardés · Metivtá Or Barak
++ * Copyright (C) 2026 Jonathan Ben-Hamu
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>
++ */
++
++package com.shatteredpixel.shatteredpixeldungeon.orbarak;
++
++import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
++import com.shatteredpixel.shatteredpixeldungeon.Statistics;
++import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
++import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
++import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
++import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
++import com.watabou.utils.Callback;
++
++/**
++ * El portón de cada piso.
++ *
++ * Antes de bajar, una kashiá. Si le atinas te llevas jidushim, experiencia y
++ * algo de aire; si no, bajas igual con las manos vacías. Nunca se bloquea el
++ * paso: el que no sabe hoy baja y aprende, no se queda arriba castigado.
++ *
++ * Se engancha en Level.activateTransition con un solo renglón, para que las
++ * actualizaciones que saque Evan sigan entrando sin pelearse con esto.
++ */
++public class Porton {
++
++	/**
++	 * ¿Hay que preguntar antes de dejar pasar?
++	 * Devuelve true si se abrió la ventana; en ese caso el que llama no baja
++	 * todavía: la bajada la dispara la ventana al cerrarse.
++	 */
++	public static boolean intercepta(final Hero hero, final LevelTransition transicion) {
++		if (hero == null || transicion == null) return false;
++		if (transicion.type != LevelTransition.Type.REGULAR_EXIT
++				&& transicion.type != LevelTransition.Type.BRANCH_EXIT) {
++			return false;
++		}
++
++		final int piso = Dungeon.depth;
++		final Jazara jazara = Jazara.da();
++		if (jazara.yaPaso(piso)) return false;
++
++		final Kashia kashia = Kashia.saca(hondura(piso), jazara.yaSalieron);
++		if (kashia == null) return false;
++
++		jazara.anotaPaso(piso);
++
++		final WndKashia[] ventana = new WndKashia[1];
++		ventana[0] = new WndKashia("Portón del piso " + piso, kashia, new Callback() {
++			@Override
++			public void call() {
++				if (ventana[0].acerto()) premio(hero, piso, jazara);
++				Dungeon.level.activateTransition(hero, transicion);
++			}
++		});
++		GameScene.show(ventana[0]);
++		return true;
++	}
++
++	/** 1 Bet Hamidrash · 2 Los Salones · 3 El Cerro · 4 La Biblioteca · 5 El Pardés */
++	public static int hondura(int piso) {
++		int h = (piso + 4) / 5;
++		return h < 1 ? 1 : (h > 5 ? 5 : h);
++	}
++
++	private static void premio(Hero hero, int piso, Jazara jazara) {
++		int oro  = 20 + piso * 4 + Math.min(jazara.racha, 6) * 5;
++		int exp  = 4 + piso;
++		int aire = 3 + piso / 3;
++
++		Dungeon.gold += oro;
++		Statistics.goldCollected += oro;
++		hero.earnExp(exp, Porton.class);
++		if (hero.HP < hero.HT) {
++			hero.HP = Math.min(hero.HT, hero.HP + aire);
++			hero.sprite.showStatus(0x74C47C, "+%d", aire);
++		}
++
++		GLog.p("Pasas el portón. +%d de oro.", oro);
++	}
++}
+diff --git a/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/WndKashia.java b/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/WndKashia.java
+new file mode 100644
+index 0000000..b489707
+--- /dev/null
++++ b/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/orbarak/WndKashia.java
+@@ -0,0 +1,173 @@
++/*
++ * Pixel Dungeon
++ * Copyright (C) 2012-2015 Oleg Dolya
++ *
++ * Shattered Pixel Dungeon
++ * Copyright (C) 2014-2026 Evan Debenham
++ *
++ * Pardés · Metivtá Or Barak
++ * Copyright (C) 2026 Jonathan Ben-Hamu
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>
++ */
++
++package com.shatteredpixel.shatteredpixeldungeon.orbarak;
++
++import com.shatteredpixel.shatteredpixeldungeon.Chrome;
++import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
++import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
++import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
++import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
++import com.watabou.noosa.Image;
++import com.watabou.utils.Callback;
++
++/**
++ * El portón: una kashiá antes de bajar de piso.
++ *
++ * No se puede cerrar con el botón de atrás. Le atines o no, al final bajas:
++ * nadie se queda encerrado por no saber. Lo que cambia es qué te llevas.
++ */
++public class WndKashia extends Window {
++
++	private static final int ANCHO_P = 125;
++	private static final int ANCHO_L = 150;
++	private static final int MARGEN  = 2;
++	private static final int ALTO_BOTON = 18;
++
++	private static final int VERDE = 0x74C47C;
++	private static final int ROJO  = 0xDD5A4A;
++	private static final int ORO   = 0xFFD700;
++
++	private final Kashia kashia;
++	private final Callback alTerminar;
++	private boolean contestada = false;
++	private boolean acerto = false;
++
++	private RedButton[] botones;
++	private RenderedTextBlock cierre;
++
++	public WndKashia(String titulo, Kashia kashia, Callback alTerminar) {
++		super(0, 0, Chrome.get(Chrome.Type.WINDOW));
++		this.kashia = kashia;
++		this.alTerminar = alTerminar;
++
++		int ancho = PixelScene.landscape() ? ANCHO_L : ANCHO_P;
++		float pos = MARGEN;
++
++		RenderedTextBlock tTitulo = PixelScene.renderTextBlock(titulo, 9);
++		tTitulo.hardlight(TITLE_COLOR);
++		tTitulo.setPos(MARGEN, pos);
++		tTitulo.maxWidth(ancho - MARGEN * 2);
++		add(tTitulo);
++		pos = tTitulo.bottom() + 2 * MARGEN;
++
++		// la palabra en hebreo va como estampa, porque el font del juego no la tiene
++		if (kashia.palabra != null) {
++			Image palabra = Palabras.estampa(kashia.palabra);
++			if (palabra != null) {
++				float escala = Math.min(1f, (ancho - 2f * MARGEN) / palabra.width());
++				palabra.scale.set(escala);
++				palabra.x = (ancho - palabra.width() * escala) / 2f;
++				palabra.y = pos;
++				PixelScene.align(palabra);
++				add(palabra);
++				pos += palabra.height() * escala + 2 * MARGEN;
++			}
++		}
++
++		RenderedTextBlock tPregunta = PixelScene.renderTextBlock(kashia.pregunta, 6);
++		tPregunta.maxWidth(ancho);
++		tPregunta.setPos(0, pos);
++		add(tPregunta);
++		pos = tPregunta.bottom() + 2 * MARGEN;
++
++		botones = new RedButton[kashia.opciones.length];
++		for (int i = 0; i < kashia.opciones.length; i++) {
++			final int cual = i;
++			RedButton b = new RedButton(kashia.opciones[i]) {
++				@Override
++				protected void onClick() {
++					contesta(cual);
++				}
++			};
++			b.multiline = true;
++			add(b);
++			b.setRect(0, pos, ancho, ALTO_BOTON);
++			pos = b.bottom() + MARGEN;
++			botones[i] = b;
++		}
++
++		cierre = PixelScene.renderTextBlock(6);
++		cierre.maxWidth(ancho);
++		cierre.setPos(0, pos);
++		add(cierre);
++
++		resize(ancho, (int) (pos - MARGEN));
++	}
++
++	private void contesta(int cual) {
++		if (contestada) return;
++		contestada = true;
++		acerto = (cual == kashia.correcta);
++
++		Jazara j = Jazara.da();
++		j.anotaSalida(kashia.id);
++		if (acerto) j.anotaAcierto(kashia.id);
++		else        j.anotaError(kashia.id);
++
++		for (int i = 0; i < botones.length; i++) {
++			botones[i].enable(false);
++			if (i == kashia.correcta)      botones[i].textColor(VERDE);
++			else if (i == cual && !acerto) botones[i].textColor(ROJO);
++		}
++
++		StringBuilder txt = new StringBuilder();
++		txt.append(acerto ? "Eso es. " : "No era. ");
++		if (kashia.explicacion != null && kashia.explicacion.length() > 0) {
++			txt.append(kashia.explicacion);
++		}
++		if (acerto && j.racha > 1) txt.append("\nLlevas ").append(j.racha).append(" seguidas.");
++
++		cierre.text(txt.toString());
++		cierre.hardlight(acerto ? VERDE : ORO);
++
++		float pos = botones[botones.length - 1].bottom() + MARGEN;
++		cierre.setPos(0, pos);
++		pos = cierre.bottom() + 2 * MARGEN;
++
++		RedButton seguir = new RedButton(acerto ? "Pasar el portón" : "Bajar de todos modos") {
++			@Override
++			protected void onClick() {
++				hide();
++				if (alTerminar != null) alTerminar.call();
++			}
++		};
++		add(seguir);
++		seguir.setRect(0, pos, PixelScene.landscape() ? ANCHO_L : ANCHO_P, ALTO_BOTON);
++
++		resize(PixelScene.landscape() ? ANCHO_L : ANCHO_P, (int) seguir.bottom());
++	}
++
++	public boolean acerto() {
++		return acerto;
++	}
++
++	/** Mientras no conteste, el botón de atrás no la cierra. */
++	@Override
++	public void onBackPressed() {
++		if (contestada) {
++			super.onBackPressed();
++		}
++	}
++}
+diff --git a/tools/palabras.py b/tools/palabras.py
+new file mode 100644
+index 0000000..8104208
+--- /dev/null
++++ b/tools/palabras.py
+@@ -0,0 +1,86 @@
++#!/usr/bin/env python3
++"""
++Dibuja las palabras en hebreo del banco de kashiot.
++
++El font del juego no tiene letras hebreas, así que cada palabra se dibuja
++aquí como imagen y el juego la enseña como estampa. De paso el nikud queda
++bien puesto, cosa que un font de pixeles no sabría hacer.
++
++Se corre cuando agregas o cambias palabras en assets/orbarak/kashiot.txt:
++
++    python3 tools/palabras.py
++
++y deja dos archivos en assets/orbarak/: palabras.png y palabras.txt
++"""
++
++import os
++import sys
++from PIL import Image, ImageDraw, ImageFont, features
++
++RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
++ASSETS = os.path.join(RAIZ, 'core', 'src', 'main', 'assets', 'orbarak')
++BANCO = os.path.join(ASSETS, 'kashiot.txt')
++
++FUENTE = '/usr/share/fonts/truetype/freefont/FreeSerif.ttf'
++TAMANO = 34            # alto de letra en pixeles
++ALTO_FILA = 44         # alto de cada renglón del atlas
++ANCHO = 256            # ancho del atlas
++TINTA = (255, 255, 255, 255)
++
++
++def palabras_del_banco():
++    salida = []
++    with open(BANCO, encoding='utf-8') as f:
++        for linea in f:
++            linea = linea.strip()
++            if not linea or linea.startswith('#'):
++                continue
++            c = linea.split('|')
++            if c[0].strip().upper() == 'T' and len(c) >= 4:
++                palabra = c[2].strip()
++                if palabra and palabra not in [p for p, _ in salida]:
++                    salida.append((palabra, c[3].strip()))
++    return salida
++
++
++def main():
++    if not features.check('raqm'):
++        print('AVISO: sin raqm el nikud y el orden de derecha a izquierda '
++              'pueden salir mal. Instala libraqm.', file=sys.stderr)
++
++    if not os.path.exists(FUENTE):
++        print('No encontré el font en ' + FUENTE, file=sys.stderr)
++        return 1
++
++    palabras = palabras_del_banco()
++    if not palabras:
++        print('No hay palabras tipo T en ' + BANCO)
++        return 1
++
++    fuente = ImageFont.truetype(FUENTE, TAMANO)
++    alto = ALTO_FILA * len(palabras)
++    atlas = Image.new('RGBA', (ANCHO, alto), (0, 0, 0, 0))
++    dibujo = ImageDraw.Draw(atlas)
++
++    indice = []
++    for i, (palabra, _) in enumerate(palabras):
++        y = i * ALTO_FILA
++        caja = dibujo.textbbox((0, 0), palabra, font=fuente)
++        ancho_palabra = min(ANCHO, caja[2] - caja[0] + 6)
++        x = (ANCHO - ancho_palabra) // 2
++        dibujo.text((ANCHO // 2, y + ALTO_FILA // 2), palabra,
++                    font=fuente, fill=TINTA, anchor='mm')
++        indice.append((palabra, x, y, ancho_palabra, ALTO_FILA))
++
++    atlas.save(os.path.join(ASSETS, 'palabras.png'))
++    with open(os.path.join(ASSETS, 'palabras.txt'), 'w', encoding='utf-8') as f:
++        f.write('# palabra|x|y|ancho|alto  ·  lo genera tools/palabras.py, no lo edites a mano\n')
++        for palabra, x, y, an, al in indice:
++            f.write('%s|%d|%d|%d|%d\n' % (palabra, x, y, an, al))
++
++    print('%d palabras dibujadas en %dx%d' % (len(palabras), ANCHO, alto))
++    return 0
++
++
++if __name__ == '__main__':
++    sys.exit(main())
+-- 
+2.43.0
+

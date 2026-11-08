@@ -1,0 +1,29 @@
+Pardés · Or Barak — trabajo en curso
+====================================
+
+Dos parches de git. Cada uno se aplica sobre su repositorio base, que es
+público, así que no hace falta guardar nada más.
+
+01-pardes-porton-typescript.patch
+---------------------------------
+El portón con kashiá para el port a TypeScript (el camino web: iPhone,
+Android y dentro de Or+). Incluye el banco de 42 preguntas y 48 palabras.
+
+    git clone https://github.com/oddjack0/pixel-dungeon-ts
+    cd pixel-dungeon-ts
+    git checkout 40e90df          # el último commit que compila
+    git am ../01-pardes-porton-typescript.patch
+    bun install && bun run build  # queda en dist/
+
+02-pardes-shattered-kashia.patch
+--------------------------------
+Lo mismo pero para Shattered Pixel Dungeon (el camino de APK para Android).
+Incluye las cinco regiones y los cinco jefes renombrados, las estampas de
+hebreo y el script que las dibuja.
+
+    git clone https://github.com/00-Evan/shattered-pixel-dungeon
+    cd shattered-pixel-dungeon
+    git am ../02-pardes-shattered-kashia.patch
+    ./gradlew android:assembleDebug
+
+Los dos son GPL-3.0, como sus bases.
