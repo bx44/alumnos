@@ -10,8 +10,15 @@
  * No toca la lógica: sólo el dibujo.
  */
 
-/** Cuánto dura un paso, en milisegundos. El original usa 0.1 s. */
-const PASO_MS = 110;
+/**
+ * Cuánto dura un paso. Shattered usa CharSprite.DEFAULT_MOVE_INTERVAL = 0.1 s
+ * (CharSprite.java:72) con un PosTweener, que interpola en línea recta.
+ */
+const PASO_MS = 100;
+
+/** Cuadros por segundo de la caminata: HeroSprite.RUN_FRAMERATE = 20. */
+export const CUADROS_POR_SEG = 20;
+export const CUADROS_CAMINATA = 6;
 
 interface Rastro {
   deX: number;
@@ -66,10 +73,9 @@ export function posSuave(id: string, x: number, y: number): { x: number; y: numb
   };
 }
 
-/** De 0 a 1, con las orillas suavizadas para que no arranque ni frene de golpe. */
+/** De 0 a 1, en línea recta: PosTweener no suaviza las orillas. */
 function avance(r: Rastro, t: number): number {
-  const bruto = Math.min(1, Math.max(0, (t - r.inicio) / PASO_MS));
-  return bruto * bruto * (3 - 2 * bruto);
+  return Math.min(1, Math.max(0, (t - r.inicio) / PASO_MS));
 }
 
 /** Al cambiar de piso nadie se desliza: todos aparecen donde les toca. */
@@ -93,12 +99,16 @@ export function limpiaSalvo(vivos: Set<string>): void {
  * y para qué lado mira.
  */
 export function pasoDe(id: string, x: number, y: number): {
-  x: number; y: number; caminando: boolean; mira: number; avance: number;
+  x: number; y: number; caminando: boolean; mira: number; avance: number; cuadro: number;
 } {
   const v = posSuave(id, x, y);
   const r = rastros.get(id);
-  if (r === undefined) return { ...v, caminando: false, mira: 1, avance: 1 };
-  const p = avance(r, ahora());
+  if (r === undefined) return { ...v, caminando: false, mira: 1, avance: 1, cuadro: 0 };
+  const t = ahora();
+  const p = avance(r, t);
   const quieto = r.deX === r.aX && r.deY === r.aY;
-  return { x: v.x, y: v.y, caminando: !quieto && p < 1, mira: r.mira, avance: p };
+  // La caminata corre con su propio reloj a 20 cuadros por segundo y no se
+  // reinicia en cada paso, igual que la Animation de Shattered.
+  const cuadro = Math.floor((t / 1000) * CUADROS_POR_SEG) % CUADROS_CAMINATA;
+  return { x: v.x, y: v.y, caminando: !quieto && p < 1, mira: r.mira, avance: p, cuadro };
 }

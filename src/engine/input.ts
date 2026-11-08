@@ -134,13 +134,18 @@ export class InputHandler {
     const here = level.idx(hero.x, hero.y);
     const tapped = level.idx(tx, ty);
 
-    // Tocar algo tirado: si ya estas encima, lo levantas; si no, el camino
-    // te lleva y lo levantas al llegar (Hero.java:981-986).
-    const hayAlgo = level.items.some((it) => it.pos === tapped);
-    if (hayAlgo && tapped === here) {
+    // Tocar algo tirado lo recoge. Regla de Shattered (Hero.java:1967-1971):
+    // si ya estas encima, siempre; si no, solo cuando no hay enemigos a la
+    // vista, para no perder un turno agachandote en plena pelea.
+    const algoAhi = level.items.some((it) => it.pos === tapped);
+    const enemigosALaVista = game.mobs.some(
+      (m) => m.hostile && level.visible[level.idx(m.x, m.y)] === 1,
+    );
+    if (algoAhi && tapped === here) {
       game.queueIntent({ kind: 'pickup' });
       return;
     }
+    const hayAlgo = algoAhi && !enemigosALaVista;
     if (tapped === level.stairsDown && here === level.stairsDown) {
       game.queueIntent({ kind: 'descend' });
       return;

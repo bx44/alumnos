@@ -252,7 +252,7 @@ export class Renderer {
     const hx = (heroeVis.x - this.camX) * TILE_PX;
     const hy = (heroeVis.y - this.camY) * TILE_PX;
     const cuadro = heroePaso.caminando
-      ? 'hero_run' + (Math.floor(heroePaso.avance * 6) % 6)
+      ? 'hero_run' + heroePaso.cuadro
       : game.hero.sprite;
     const dibujo = this.entitySprite(cuadro);
     if (heroePaso.mira < 0) {
