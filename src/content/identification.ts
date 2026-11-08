@@ -36,18 +36,18 @@ export const WAND_USAGES_TO_KNOW = 40;
  * Frost).
  */
 export const POTION_COLORS: readonly string[] = [
-  'turquoise',
-  'crimson',
-  'azure',
+  'turquesa',
+  'carmesí',
+  'azul cielo',
   'jade',
-  'golden',
+  'dorada',
   'magenta',
-  'charcoal',
-  'ivory',
-  'amber',
-  'bistre',
-  'indigo',
-  'silver',
+  'negra',
+  'marfil',
+  'ámbar',
+  'parda',
+  'índigo',
+  'plateada',
 ];
 
 /**

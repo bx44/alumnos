@@ -256,13 +256,7 @@ export function potionFamilyDef(): FamilyDef {
   return {
     classes: [...POTION_CLASS_ORDER],
     labels: [...POTION_COLORS],
-    images: POTION_IMAGES.map((img, i) =>
-      img === 'item_potion_turquoise'
-        ? 'potion_red' // TODO(worker6): extract ItemSpriteSheet.POTION_TURQUOISE
-        : img === 'item_potion_jade'
-          ? 'potion_strength' // TODO(worker6): extract ItemSpriteSheet.POTION_JADE
-          : img,
-    ),
+    images: [...POTION_IMAGES],   // los 12 ya estan extraidos
   };
 }
 
@@ -270,7 +264,7 @@ export function potionFamilyDef(): FamilyDef {
 export function potionDisplayName(id: string, knownName: string): string {
   if (identificationReady() && isPotionKnown(id)) return knownName;
   if (!identificationReady()) return knownName;
-  return `${potionLabel(id)} potion`; // Potion.java:82-84
+  return `poción ${potionLabel(id)}`; // Potion.java:82-84
 }
 
 /** Run-assigned sprite once identified-system is up; catalog fallback before. */
@@ -299,7 +293,7 @@ export function potionUiInfo(
   if (!isPotionId(id)) return null;
   const known = identificationReady() && isPotionKnown(id);
   return {
-    name: known ? knownName : `${potionLabel(id)} potion`,
+    name: known ? knownName : `poción ${potionLabel(id)}`,
     sprite: identificationReady() ? potionImage(id) : catalogSprite,
     identified: known,
   };

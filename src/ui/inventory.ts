@@ -343,7 +343,8 @@ export class InventoryPanel {
       }
       ctx.fillStyle = UI.text;
       ctx.font = 'bold 14px system-ui, sans-serif';
-      const name = item.identified ? item.name : nombreClase(item.kind) + ' sin identificar';
+      // sin identificar, el nombre ya viene por su color o su runa
+      const name = item.name;
       ctx.fillText(item.qty > 1 ? `${name} ×${item.qty}` : name, r.x + iconSize + 12, r.y + r.h / 2 - 8);
       ctx.font = '12px system-ui, sans-serif';
       ctx.fillStyle = UI.textDim;

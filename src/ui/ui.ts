@@ -29,8 +29,25 @@ import {
   dialogOpen,
   uiBridge,
 } from './dialog.js';
+import { RNG } from '../core/rng.js';
+import { initIdentification } from '../content/identification.js';
+import { potionFamilyDef } from '../content/potions.js';
+import { scrollFamilyDef } from '../content/scrolls.js';
 
 const HERO_MS = 110; // at most one hero-visible action per 110ms
+
+/**
+ * Reparte, para esta partida, de qué color es cada poción y cómo se llama
+ * cada pergamino. Shattered lo hace al iniciar (Dungeon.init -> initColors,
+ * initLabels, initGems, initWoods), sembrado con la semilla de la corrida.
+ *
+ * El port nunca lo llamaba fuera de las pruebas, y por eso levantar una
+ * poción tronaba la mochila con "identification not initialized".
+ */
+function repartirIdentificaciones(semilla: number): void {
+  const rng = new RNG(semilla >>> 0);
+  initIdentification(rng, potionFamilyDef(), scrollFamilyDef());
+}
 
 export class UiManager {
   private readonly canvas: HTMLCanvasElement;
@@ -136,6 +153,7 @@ export class UiManager {
   private startRun(seed: number): void {
     clearSave();
     this.kills = 0;
+    repartirIdentificaciones(seed);
     this.game = new Game(seed >>> 0, { gen: contentLevelGen, mechanics: contentMechanics });
     this.input.attach(this.canvas, (sx, sy) => this.renderer.screenToTile(sx, sy), this.game);
     this.hud.logBuffer.reset();
@@ -150,6 +168,7 @@ export class UiManager {
   private continueRun(): void {
     const g = loadGame(contentMechanics);
     if (!g) return; // no valid save; title stays (Continue is disabled anyway)
+    repartirIdentificaciones(g.seed);   // la misma semilla reparte igual que al empezar
     this.kills = 0;
     this.game = g;
     this.input.attach(this.canvas, (sx, sy) => this.renderer.screenToTile(sx, sy), g);
