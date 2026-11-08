@@ -3627,6 +3627,18 @@ var ORIGINAL_SPRITES = {
   hero_run3: { w: 16, h: 16, rgba: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wCAgIAAgICAAICAgAAAAAAAvjkM/745DP++OQz/lzEN/wAAAACAgIAAAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AJcxDf+XMQ3/vjkM/9x5N//ceTf/3Hk3/9x5N/+XMQ3/AAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AHUrDv+taTz/xHA6/9x5N//ceTf/3Hk3/9x5N//ceTf/xHA6/5cxDf8AAAAAAAAAAAAAAAAAAAAA////AP///wAAAAAAdSsO/8RwOv/ctJf//9q////av///2r///9q//75/Wf+XMQ3/AAAAAAAAAAAAAAAAAAAAAP///wD///8AdSsO/61pPP+4l3j/uJd4/wAAAP+4l3j/uJd4/wAAAP+FWTj/AAAAAAAAAAAAAAAAAAAAAAAAAACAgIAAgICAAIVZOP+taTz/uJd4/9y0l/+4l3j/3LSX/9y0l/+4l3j/vn9Z/4CAgAAAAAAAAAAAAAAAAAAAAAAAgICAAICAgACAgIAAdSsO/61pPP/ctJf/3Hk3/9x5N//ceTf/3Hk3/75/Wf+AgIAAAAAAAAAAAAAAAAAAAAAAAICAgACAgIAAgICAAHUrDv+taTz/rWk8/5cxDf+XMQ3/lzEN/5cxDf91Kw7/gICAAAAAAAAAAAAAAAAAAAAAAAD///8A////AJ6Shv/Jwbn/ycG5//vy5/99o8b/AFSm/9y0l/8ARoz/a2Nb/////wAAAAAAAAAAAAAAAAAAAAAA////AD1omv8AVKb/AEaM/6WfmP/78uf/+/Ln/6/C0/8AVKb/r8LT/2tjW/////8AAAAAAAAAAAAAAAAAAAAAAP///wAAHGz/3LSX/4VZOP/Jwbn/+/Ln//vy5//78uf/faPG/6WfmP8AE03/////AAAAAAAAAAAAAAAAAAAAAAD///8A////AL5/Wf+FWTj/ycG5//vy5//Jwbn/ycG5/8nBuf/Jwbn/hVk4/////wAAAAAAAAAAAAAAAAAAAAAA////AP///wD///8Aa2Nb/6WfmP+ln5j/a2Nb/2tjW/+ln5j/npKG/////wD///8AAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AP///wCFWTj/hVk4/////wBrY1v/ycG5/56Shv////8A////AAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8AhVk4/4VZOP+FWTj/////AP///wAAAAAAAAAAAA==" },
   hero_run4: { w: 16, h: 16, rgba: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wCAgIAAgICAAICAgAAAAAAAvjkM/745DP++OQz/lzEN/wAAAACAgIAAAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AJcxDf+XMQ3/vjkM/9x5N//ceTf/3Hk3/9x5N/+XMQ3/AAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AHUrDv+taTz/xHA6/9x5N//ceTf/3Hk3/9x5N//ceTf/xHA6/5cxDf8AAAAAAAAAAAAAAAAAAAAA////AP///wAAAAAAdSsO/8RwOv/ctJf//9q////av///2r///9q//75/Wf+XMQ3/AAAAAAAAAAAAAAAAAAAAAP///wD///8AdSsO/61pPP+4l3j/uJd4/wAAAP+4l3j/uJd4/wAAAP+FWTj/AAAAAAAAAAAAAAAAAAAAAAAAAACAgIAAgICAAIVZOP+taTz/uJd4/9y0l/+4l3j/3LSX/9y0l/+4l3j/vn9Z/4CAgAAAAAAAAAAAAAAAAAAAAAAAgICAAICAgACAgIAAdSsO/61pPP/ctJf/3Hk3/9x5N//ceTf/3Hk3/75/Wf+AgIAAAAAAAAAAAAAAAAAAAAAAAICAgACAgIAAgICAAHUrDv+taTz/rWk8/5cxDf+XMQ3/lzEN/5cxDf91Kw7/gICAAAAAAAAAAAAAAAAAAAAAAAD///8A////APfm0f/78uf/ycG5//vy5/99o8b/AFSm/9y0l/8ARoz/ABNN/////wAAAAAAAAAAAAAAAAAAAAAA////AD1omv8AVKb/pZ+Y/6WfmP/78uf/+/Ln/6/C0/8AVKb/r8LT/7iXeP+FWTj/AAAAAAAAAAAAAAAAAAAAAL5/Wf/ctJf/AEaM/2tjW//Jwbn/+/Ln//vy5//78uf/ZIqv/6WfmP+FWTj/hVk4/wAAAAAAAAAAAAAAAAAAAAD///8AhVk4/wATTf9rY1v/ycG5//vy5//78uf/+/Ln/6WfmP9rY1v/////AP///wAAAAAAAAAAAAAAAAAAAAAA////AP///wD///8A////AJ6Shv/Jwbn/npKG/6WfmP9rY1v/////AP///wD///8AAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AP///wCFWTj/hVk4/4VZOP/Jwbn/npKG/////wD///8A////AAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wCFWTj/hVk4/4VZOP////8A////AP///wAAAAAAAAAAAA==" },
   hero_run5: { w: 16, h: 16, rgba: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8AAAAAAAAAAAAAAAAAAAAAAP///wD///8AgICAAICAgACAgIAAAAAAAL45DP++OQz/vjkM/5cxDf8AAAAAgICAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wCXMQ3/lzEN/745DP/ceTf/3Hk3/9x5N//ceTf/lzEN/wAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wB1Kw7/rWk8/8RwOv/ceTf/3Hk3/9x5N//ceTf/3Hk3/8RwOv+XMQ3/AAAAAAAAAAAAAAAAAAAAAP///wD///8AAAAAAHUrDv/EcDr/3LSX///av///2r///9q////av/++f1n/lzEN/wAAAAAAAAAAAAAAAAAAAACAgIAAgICAAHUrDv+taTz/uJd4/7iXeP8AAAD/uJd4/7iXeP8AAAD/hVk4/4CAgAAAAAAAAAAAAAAAAAAAAAAAgICAAICAgACFWTj/rWk8/7iXeP/ctJf/uJd4/9y0l//ctJf/uJd4/75/Wf+AgIAAAAAAAAAAAAAAAAAAAAAAAICAgACAgIAAgICAAHUrDv+taTz/3LSX/9x5N//ceTf/3Hk3/9x5N/++f1n/gICAAAAAAAAAAAAAAAAAAAAAAAD///8A9+bR//fm0f/Jwbn/rWk8/61pPP+XMQ3/lzEN/5cxDf+XMQ3/dSsO/////wAAAAAAAAAAAAAAAAAAAAAAPWia/32jxv/78uf/ycG5/8nBuf/78uf/faPG/wBUpv/ctJf/AEaM/4VZOP+FWTj/AAAAAAAAAAAAAAAAAAAAAL5/Wf/ctJf/ABxs/2tjW//Jwbn/ycG5//vy5/+vwtP/AFSm/6/C0/+4l3j/hVk4/wAAAAAAAAAAAAAAAAAAAACFWTj/hVk4/////wCekob/+/Ln/8nBuf/Jwbn/+/Ln/32jxv+ekob/ABNN/////wAAAAAAAAAAAAAAAAAAAAAA////AP///wD///8AnpKG/8nBuf/78uf/npKG/6WfmP9rY1v/////AP///wD///8AAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AP///wCekob/ycG5//vy5/+FWTj/////AP///wD///8A////AAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AIVZOP+FWTj/////AP///wD///8A////AP///wAAAAAAAAAAAA==" },
+  item_potion_turquoise: { w: 16, h: 16, rgba: "AAAAAP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wAAAAAA////AP///wD///8AAAAAZgAAAGYAAABmmmIz/7V9T/8AAABmAAAAZgAAAGb///8A////AP///wD///8AAAAAAP///wD///8A////AAAAAGawsLDRsLCw0dC/s//Yx7r/29vb0dvb29EAAABm////AP///wD///8A////AAAAAAD///8A////AP///wAAAABmAAAAZrCwsNGaYjP/tX1P/9vb29EAAABmAAAAZv///wD///8A////AP///wAAAAAA////AP///wD///8A////AAAAAGawsLDRAAAAZgAAAGbb29vRAAAAZv///wD///8A////AP///wD///8AAAAAAP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABm29vb0QAAAGYAAABm////AP///wD///8A////AAAAAAD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABmAAAAZgAAAGbb29vRAAAAZgAAAGb///8A////AP///wAAAAAA////AP///wAAAABmsLCw0QAAAGYAAABmAAAAZgAAAGYAAABmAAAAZtvb29EAAABm////AP///wD///8AAAAAAP///wD///8AAAAAZrCwsNEAg5v/AIOb/wDE6P8AxOj//////wDE6P/b29vRAAAAZv///wD///8A////AAAAAAD///8A////AAAAAGawsLDRAIOb/wCDm/8AxOj/AMTo//////8AxOj/29vb0QAAAGb///8A////AP///wAAAAAA////AP///wAAAABmsLCw0QCDm/8Ag5v/AMTo/wDE6P8AxOj/AMTo/9vb29EAAABm////AP///wD///8AAAAAAP///wD///8AAAAAZgAAAGawsLDRAIOb/wCDm/8AxOj/AMTo/9vb29EAAABmAAAAZv///wD///8A////AAAAAAD///8A////AP///wAAAABmAAAAZrCwsNHFxcXRxcXF0dvb29EAAABmAAAAZv///wD///8A////AP///wAAAAAA////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGYAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AA==" },
+  item_potion_crimson: { w: 16, h: 16, rgba: "////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AP///wD///8AAAAAZgAAAGYAAABmmmIz/7V9T/8AAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRsLCw0dC/s//Yx7r/29vb0dvb29EAAABm////AP///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNGaYjP/tX1P/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRAAAAZgAAAGbb29vRAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABm29vb0QAAAGYAAABm////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABmAAAAZgAAAGbb29vRAAAAZgAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0QAAAGYAAABmAAAAZgAAAGYAAABmAAAAZtvb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZrCwsNHSABn/0gAZ//8AJv//ACb///////8AJv/b29vRAAAAZv///wD///8A////AP///wD///8A////AAAAAGawsLDR0gAZ/9IAGf//ACb//wAm////////ACb/29vb0QAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0dIAGf/SABn//wAm//8AJv//ACb//wAm/9vb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZgAAAGawsLDR0gAZ/9IAGf//ACb//wAm/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNHFxcXRxcXF0dvb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGYAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AA==" },
+  item_potion_azure: { w: 16, h: 16, rgba: "////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AP///wD///8AAAAAZgAAAGYAAABmmmIz/7V9T/8AAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRsLCw0dC/s//Yx7r/29vb0dvb29EAAABm////AP///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNGaYjP/tX1P/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRAAAAZgAAAGbb29vRAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABm29vb0QAAAGYAAABm////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABmAAAAZgAAAGbb29vRAAAAZgAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0QAAAGYAAABmAAAAZgAAAGYAAABmAAAAZtvb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZrCwsNEAKbj/ACm4/wA+//8APv///////wA+///b29vRAAAAZv///wD///8A////AP///wD///8A////AAAAAGawsLDRACm4/wApuP8APv//AD7///////8APv//29vb0QAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0QApuP8AKbj/AD7//wA+//8APv//AD7//9vb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZgAAAGawsLDRACm4/wApuP8APv//AD7//9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNHFxcXRxcXF0dvb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGYAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AA==" },
+  item_potion_jade: { w: 16, h: 16, rgba: "////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AP///wD///8AAAAAZgAAAGYAAABmmmIz/7V9T/8AAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRsLCw0dC/s//Yx7r/29vb0dvb29EAAABm////AP///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNGaYjP/tX1P/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRAAAAZgAAAGbb29vRAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABm29vb0QAAAGYAAABm////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABmAAAAZgAAAGbb29vRAAAAZgAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0QAAAGYAAABmAAAAZgAAAGYAAABmAAAAZtvb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZrCwsNEAdCb/AHQm/wC0Pv8AtD7//////wC0Pv/b29vRAAAAZv///wD///8A////AP///wD///8A////AAAAAGawsLDRAHQm/wB0Jv8AtD7/ALQ+//////8AtD7/29vb0QAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0QB0Jv8AdCb/ALQ+/wC0Pv8AtD7/ALQ+/9vb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZgAAAGawsLDRAHQm/wB0Jv8AtD7/ALQ+/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNHFxcXRxcXF0dvb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGYAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AA==" },
+  item_potion_golden: { w: 16, h: 16, rgba: "////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AP///wD///8AAAAAZgAAAGYAAABmmmIz/7V9T/8AAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRsLCw0dC/s//Yx7r/29vb0dvb29EAAABm////AP///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNGaYjP/tX1P/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRAAAAZgAAAGbb29vRAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABm29vb0QAAAGYAAABm////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABmAAAAZgAAAGbb29vRAAAAZgAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0QAAAGYAAABmAAAAZgAAAGYAAABmAAAAZtvb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZrCwsNGVdgD/lXYA/9msAP/ZrAD//////9msAP/b29vRAAAAZv///wD///8A////AP///wD///8A////AAAAAGawsLDRlXYA/5V2AP/ZrAD/2awA///////ZrAD/29vb0QAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0ZV2AP+VdgD/2awA/9msAP/ZrAD/2awA/9vb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZgAAAGawsLDRlXYA/5V2AP/ZrAD/2awA/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNHFxcXRxcXF0dvb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGYAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AA==" },
+  item_potion_magenta: { w: 16, h: 16, rgba: "////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AP///wD///8AAAAAZgAAAGYAAABmmmIz/7V9T/8AAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRsLCw0dC/s//Yx7r/29vb0dvb29EAAABm////AP///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNGaYjP/tX1P/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRAAAAZgAAAGbb29vRAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABm29vb0QAAAGYAAABm////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABmAAAAZgAAAGbb29vRAAAAZgAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0QAAAGYAAABmAAAAZgAAAGYAAABmAAAAZtvb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZrCwsNGlAGv/pQBr/+4AnP/uAJz//////+4AnP/b29vRAAAAZv///wD///8A////AP///wD///8A////AAAAAGawsLDRpQBr/6UAa//uAJz/7gCc///////uAJz/29vb0QAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0aUAa/+lAGv/7gCc/+4AnP/uAJz/7gCc/9vb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZgAAAGawsLDRpQBr/6UAa//uAJz/7gCc/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNHFxcXRxcXF0dvb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGYAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AA==" },
+  item_potion_charcoal: { w: 16, h: 16, rgba: "////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AP///wD///8AAAAAZgAAAGYAAABmmmIz/7V9T/8AAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRsLCw0dC/s//Yx7r/29vb0dvb29EAAABm////AP///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNGaYjP/tX1P/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRAAAAZgAAAGbb29vRAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABm29vb0QAAAGYAAABm////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABmAAAAZgAAAGbb29vRAAAAZgAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0QAAAGYAAABmAAAAZgAAAGYAAABmAAAAZtvb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZrCwsNETExP/ExMT/z4+Pv8+Pj7//////z4+Pv/b29vRAAAAZv///wD///8A////AP///wD///8A////AAAAAGawsLDRExMT/xMTE/8+Pj7/Pj4+//////8+Pj7/29vb0QAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0RMTE/8TExP/Pj4+/z4+Pv8+Pj7/Pj4+/9vb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZgAAAGawsLDRExMT/xMTE/8+Pj7/Pj4+/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNHFxcXRxcXF0dvb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGYAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AA==" },
+  item_potion_ivory: { w: 16, h: 16, rgba: "////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AP///wD///8AAAAAZgAAAGYAAABmmmIz/7V9T/8AAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRsLCw0dC/s//Yx7r/29vb0dvb29EAAABm////AP///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNGaYjP/tX1P/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRAAAAZgAAAGbb29vRAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABm29vb0QAAAGYAAABm////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABmAAAAZgAAAGbb29vRAAAAZgAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0QAAAGYAAABmAAAAZgAAAGYAAABmAAAAZtvb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZrCwsNG3r6L/t6+i//bs2v/27Nr///////bs2v/b29vRAAAAZv///wD///8A////AP///wD///8A////AAAAAGawsLDRt6+i/7evov/27Nr/9uza///////27Nr/29vb0QAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0bevov+3r6L/9uza//bs2v/27Nr/9uza/9vb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZgAAAGawsLDRt6+i/7evov/27Nr/9uza/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNHFxcXRxcXF0dvb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGYAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AA==" },
+  item_potion_amber: { w: 16, h: 16, rgba: "////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AP///wD///8AAAAAZgAAAGYAAABmmmIz/7V9T/8AAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRsLCw0dC/s//Yx7r/29vb0dvb29EAAABm////AP///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNGaYjP/tX1P/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRAAAAZgAAAGbb29vRAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABm29vb0QAAAGYAAABm////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABmAAAAZgAAAGbb29vRAAAAZgAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0QAAAGYAAABmAAAAZgAAAGYAAABmAAAAZtvb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZrCwsNHKZwX/ymcF//+MCf//jAn///////+MCf/b29vRAAAAZv///wD///8A////AP///wD///8A////AAAAAGawsLDRymcF/8pnBf//jAn//4wJ////////jAn/29vb0QAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0cpnBf/KZwX//4wJ//+MCf//jAn//4wJ/9vb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZgAAAGawsLDRymcF/8pnBf//jAn//4wJ/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNHFxcXRxcXF0dvb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGYAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AA==" },
+  item_potion_bistre: { w: 16, h: 16, rgba: "////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AP///wD///8AAAAAZgAAAGYAAABmmmIz/7V9T/8AAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRsLCw0dC/s//Yx7r/29vb0dvb29EAAABm////AP///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNGaYjP/tX1P/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRAAAAZgAAAGbb29vRAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABm29vb0QAAAGYAAABm////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABmAAAAZgAAAGbb29vRAAAAZgAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0QAAAGYAAABmAAAAZgAAAGYAAABmAAAAZtvb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZrCwsNE2GAP/NhgD/2s2Bv9rNgb//////2s2Bv/b29vRAAAAZv///wD///8A////AP///wD///8A////AAAAAGawsLDRNhgD/zYYA/9rNgb/azYG//////9rNgb/29vb0QAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0TYYA/82GAP/azYG/2s2Bv9rNgb/azYG/9vb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZgAAAGawsLDRNhgD/zYYA/9rNgb/azYG/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNHFxcXRxcXF0dvb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGYAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AA==" },
+  item_potion_indigo: { w: 16, h: 16, rgba: "////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AP///wD///8AAAAAZgAAAGYAAABmojZG/71RYP8AAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRsLCw0dSzuP/cur//29vb0dvb29EAAABm////AP///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNGiNkb/vVFg/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRAAAAZgAAAGbb29vRAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABm29vb0QAAAGYAAABm////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABmAAAAZgAAAGbb29vRAAAAZgAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0QAAAGYAAABmAAAAZgAAAGYAAABmAAAAZtvb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZrCwsNFNAHb/TQB2/3oAuP96ALj//////3oAuP/b29vRAAAAZv///wD///8A////AP///wD///8A////AAAAAGawsLDRTQB2/00Adv96ALj/egC4//////96ALj/29vb0QAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0U0Adv9NAHb/egC4/3oAuP96ALj/egC4/9vb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZgAAAGawsLDRTQB2/00Adv96ALj/egC4/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNHFxcXRxcXF0dvb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGYAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AA==" },
+  item_potion_silver: { w: 16, h: 16, rgba: "////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AP///wD///8AAAAAZgAAAGYAAABmmmIz/7V9T/8AAABmAAAAZgAAAGb///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRsLCw0dC/s//Yx7r/29vb0dvb29EAAABm////AP///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNGaYjP/tX1P/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGawsLDRAAAAZgAAAGbb29vRAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABm29vb0QAAAGYAAABm////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmsLCw0QAAAGYAAABmAAAAZgAAAGbb29vRAAAAZgAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0QAAAGYAAABmAAAAZgAAAGYAAABmAAAAZtvb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZrCwsNFGTEz/RkxM/4+amv+Pmpr//////4+amv/b29vRAAAAZv///wD///8A////AP///wD///8A////AAAAAGawsLDRRkxM/0ZMTP+Pmpr/j5qa//////+Pmpr/29vb0QAAAGb///8A////AP///wD///8A////AP///wAAAABmsLCw0UZMTP9GTEz/j5qa/4+amv+Pmpr/j5qa/9vb29EAAABm////AP///wD///8A////AP///wD///8AAAAAZgAAAGawsLDRRkxM/0ZMTP+Pmpr/j5qa/9vb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wAAAABmAAAAZrCwsNHFxcXRxcXF0dvb29EAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAGYAAABmAAAAZgAAAGYAAABmAAAAZv///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AA==" },
   hero_warrior: { w: 16, h: 16, rgba: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP///wD///8AgICAAICAgACAgIAAAAAAAL45DP++OQz/vjkM/5cxDf8AAAAAgICAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wCXMQ3/lzEN/745DP/ceTf/3Hk3/9x5N//ceTf/lzEN/wAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wB1Kw7/rWk8/8RwOv/ceTf/3Hk3/9x5N//ceTf/3Hk3/8RwOv+XMQ3/AAAAAAAAAAAAAAAAAAAAAP///wD///8AAAAAAHUrDv/EcDr/3LSX///av///2r///9q////av/++f1n/lzEN/wAAAAAAAAAAAAAAAAAAAAD///8A////AHUrDv+taTz/uJd4/7iXeP8AAAD/uJd4/7iXeP8AAAD/hVk4/wAAAAAAAAAAAAAAAAAAAAAAAAAA////AICAgACFWTj/rWk8/7iXeP/ctJf/uJd4/9y0l//ctJf/uJd4/75/Wf+AgIAAAAAAAAAAAAAAAAAAAAAAAP///wCAgIAAgICAAHUrDv+taTz/3LSX/9x5N//ceTf/3Hk3/9x5N/++f1n/gICAAAAAAAAAAAAAAAAAAAAAAAD///8AgICAAICAgAB1Kw7/rWk8/61pPP+XMQ3/lzEN/5cxDf+XMQ3/dSsO/4CAgAAAAAAAAAAAAAAAAAAAAAAA////AP///wCekob/ycG5//vy5//78uf/faPG/wBUpv/ctJf/AEaM/2tjW/////8AAAAAAAAAAAAAAAAAAAAAAP///wA9aJr/AFSm/wBUpv+ln5j/ycG5//vy5/+vwtP/AFSm/6/C0/9rY1v/////AAAAAAAAAAAAAAAAAAAAAAD///8AABNN/9y0l/++f1n/pZ+Y/8nBuf/78uf/+/Ln/32jxv/Jwbn/ABNN/////wAAAAAAAAAAAAAAAAAAAAAA////AP///wCFWTj/a2Nb/8nBuf/Jwbn/ycG5/8nBuf/Jwbn/ycG5/4VZOP////8AAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AJ6Shv/Jwbn/a2Nb/2tjW//35tH/ycG5/2tjW/////8A////AAAAAAAAAAAAAAAAAAAAAAD///8A////AJ6Shv+ln5j/a2Nb/////wD///8AnpKG/8nBuf+ekob/////AP///wAAAAAAAAAAAAAAAAAAAAAA////AP///wCFWTj/hVk4/4VZOP////8A////AIVZOP+FWTj/hVk4/////wD///8AAAAAAAAAAAAAAAAAAAAAAA==" },
   mob_rat: { w: 16, h: 16, rgba: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8AUjwm/1I8Jv8AAAAAUjwm/1I8Jv9SPCb/Ujwm/wAAAAD///8AgICAAICAgAD///8A////AP///wD///8A////AFI8Jv/MfoL/Ujwm/5F8Yv+RfGL/kXxi/5F8Yv9SPCb/AAAAAICAgACAgIAA////AP///wD///8A////AP///wAAAAAAUjwm/3NjT/9zY0///2dM/5F8Yv//Z0z/Ujwm/wAAAACAgIAAgICAAP///wD///8A////AP///wD///8AAAAAAFI8Jv9zY0//c2NP/3NjT/9zY0//kXxi/5F8Yv9SPCb/gICAAICAgAD///8A////AP///wD///8A////AFI8Jv+RfGL/c2NP/3NjT/9zY0//c2NP/3NjT/9zY0//Ujwm/4CAgACAgIAA////AP///wD///8A////AP///wBSPCb/kXxi/5F8Yv9zY0//VUg5/xwUDf8cFA3/HBQN/85PVf+AgIAAgICAAP///wD///8A////AP///wBSPCb/kXxi/3NjT/9zY0//c2NP/3NjT/9VSDn/HBQN/wAAAAAAAAAAgICAAICAgAD///8A////AP///wD///8AUjwm/3NjT/9zY0//c2NP/3NjT/+IQTb/c2NP/4hBNv8AAAAAAAAAAICAgACAgIAA////AP///wD///8A////ADQmGP9zY0//c2NP/1I8Jv9SPCb/kXxi/3NjT/+RfGL/Ujwm/wAAAACAgIAAgICAAP///wD///8A////AP///wAcFA3/VUg5/3NjT/9zY0//c2NP/1I8Jv9zY0//c2NP/1I8Jv8AAAAAgICAAICAgAD///8A////AP///wD///8AHBQN/1VIOf9VSDn/c2NP/3NjT/80Jhj/c2NP/1VIOf80Jhj/AAAAAICAgACAgIAA////APWYnf/1mJ3/5Y6T/8x+gv8cFA3/HBQN/xwUDf+jPkL/zk9V/xwUDf8cFA3/zk9V/wAAAACAgIAAgICAAA==" },
   mob_gnoll: { w: 16, h: 16, rgba: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AP///wAkDQH/AAAAAP///wD///8AJA0B/wAAAAD///8A////AAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8AJA0B/0AWA/+bWBz/m1gc/5tYHP+bWBz/AAAAAP///wAAAAAAAAAAAAAAAAAAAAAA////AP///wD///8AXCAE/4BLGv/HllT/x5ZU/8eWVP/HllT/x5ZU/5tYHP8AAAAAAAAAAAAAAAAAAAAAAAAAAP///wD///8A////AJtYHP/HllT/x5ZU/8eWVP/HllT/x5ZU/8eWVP+bWBz/AAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wBhLgf/x5ZU/51sKv8AAAD/nWwq/51sKv8AAAD/YS4H/wAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wD///8AYS4H/51sKv+unYb/gnRc/66dhv+unYb/QjUh/yQNAf8kDQH/AAAAAAAAAAAAAAAAAAAAAP///wD///8A////AGEuB/+dbCr/rp2G/66dhv+unYb/rp2G/66dhv+unYb/d2FG/wAAAAAAAAAAAAAAAAAAAAD///8A////AP///wBhLgf/nWwq/4J0XP+unYb/d2FG/3dhRv93YUb/d2FG/wAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wCbWBz/x5ZU//fGhP/3xoT/3c64/93OuP+unYb/rp2G/2EuB/8AAAAAAAAAAAAAAAAAAAAAAAAAAP///wCbWBz/x5ZU/66dhv+CdFz/rp2G/93OuP/dzrj/3c64/93OuP9hLgf/AAAAAAAAAAAAAAAAAAAAAAAAAAD///8Am1gc/4BLGv9AFgP/gnRc/66dhv/dzrj/3c64/93OuP+unYb/JA0B/wAAAAAAAAAAAAAAAAAAAAAAAAAA////AAAAAAAkDQH/JA0B/66dhv/dzrj/3c64/66dhv+unYb/rp2G/yQNAf8AAAAAAAAAAAAAAAAAAAAAAAAAAP///wAAAAAA////AGEuB//HllT/YS4H/2EuB/9hLgf/x5ZU/2EuB/8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AAAAAABhLgf/JA0B/wAAAAAAAAAAAAAAAGEuB/9AFgP/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////AP///wAAAAAAAAAAACQNAf8kDQH/AAAAAAAAAAAAAAAAJA0B/yQNAf8AAAAAAAAAAAAAAAAAAAAAAAAAAA==" },
@@ -4451,9 +4463,166 @@ function expForKill(mobId, heroLvl) {
 }
 
 // src/content/identification.ts
+var POTION_COLORS = [
+  "turquesa",
+  "carmesí",
+  "azul cielo",
+  "jade",
+  "dorada",
+  "magenta",
+  "negra",
+  "marfil",
+  "ámbar",
+  "parda",
+  "índigo",
+  "plateada"
+];
+var SCROLL_RUNES = [
+  "KAUNAN",
+  "SOWILO",
+  "LAGUZ",
+  "YNGVI",
+  "GYFU",
+  "RAIDO",
+  "ISAZ",
+  "MANNAZ",
+  "NAUDIZ",
+  "BERKANAN",
+  "ODAL",
+  "TIWAZ"
+];
+var POTION_IMAGES = [
+  "item_potion_turquoise",
+  "item_potion_crimson",
+  "item_potion_azure",
+  "item_potion_jade",
+  "item_potion_golden",
+  "item_potion_magenta",
+  "item_potion_charcoal",
+  "item_potion_ivory",
+  "item_potion_amber",
+  "item_potion_bistre",
+  "item_potion_indigo",
+  "item_potion_silver"
+];
+var SCROLL_IMAGES = [
+  "item_scroll_kaunan",
+  "item_scroll_sowilo",
+  "item_scroll_laguz",
+  "item_scroll_yngvi",
+  "item_scroll_gyfu",
+  "item_scroll_raido",
+  "item_scroll_isaz",
+  "item_scroll_mannaz",
+  "item_scroll_naudiz",
+  "item_scroll_berkanan",
+  "item_scroll_odal",
+  "item_scroll_tiwaz"
+];
+
+class ItemStatusHandler {
+  classes;
+  images = new Map;
+  labels = new Map;
+  knownSet = new Set;
+  constructor(classes, labels, images, rng) {
+    this.classes = [...classes];
+    const labelPool = [...labels];
+    const imagePool = [...images];
+    for (const cls of classes) {
+      const index = rng.int(0, labelPool.length);
+      this.labels.set(cls, labelPool[index]);
+      this.images.set(cls, imagePool[index]);
+      labelPool.splice(index, 1);
+      imagePool.splice(index, 1);
+    }
+  }
+  image(cls) {
+    const img = this.images.get(cls);
+    if (img === undefined)
+      throw new Error(`unknown class ${cls}`);
+    return img;
+  }
+  label(cls) {
+    const lbl = this.labels.get(cls);
+    if (lbl === undefined)
+      throw new Error(`unknown class ${cls}`);
+    return lbl;
+  }
+  isKnown(cls) {
+    return this.knownSet.has(cls);
+  }
+  know(cls) {
+    if (!this.classes.includes(cls))
+      return;
+    this.knownSet.add(cls);
+    if (this.knownSet.size === this.classes.length - 1) {
+      for (const c of this.classes) {
+        if (!this.knownSet.has(c)) {
+          this.knownSet.add(c);
+          break;
+        }
+      }
+    }
+  }
+  known() {
+    return this.classes.filter((c) => this.knownSet.has(c));
+  }
+  unknown() {
+    return this.classes.filter((c) => !this.knownSet.has(c));
+  }
+  all() {
+    return [...this.classes];
+  }
+  save() {
+    const out = {};
+    for (const cls of this.classes) {
+      out[cls] = {
+        image: this.images.get(cls),
+        label: this.labels.get(cls),
+        known: this.knownSet.has(cls)
+      };
+    }
+    return out;
+  }
+  restore(data, labels, images, rng) {
+    this.images.clear();
+    this.labels.clear();
+    this.knownSet.clear();
+    const labelPool = [...labels];
+    const imagePool = [...images];
+    for (const cls of this.classes) {
+      const stored = data[cls];
+      if (stored) {
+        this.images.set(cls, stored.image);
+        this.labels.set(cls, stored.label);
+        const li = labelPool.indexOf(stored.label);
+        if (li >= 0)
+          labelPool.splice(li, 1);
+        const ii = imagePool.indexOf(stored.image);
+        if (ii >= 0)
+          imagePool.splice(ii, 1);
+        if (stored.known)
+          this.knownSet.add(cls);
+      }
+    }
+    for (const cls of this.classes) {
+      if (!this.images.has(cls) && labelPool.length > 0) {
+        const index = rng.int(0, labelPool.length);
+        this.labels.set(cls, labelPool[index]);
+        this.images.set(cls, imagePool[index]);
+        labelPool.splice(index, 1);
+        imagePool.splice(index, 1);
+      }
+    }
+  }
+}
 var potionHandler = null;
 var scrollHandler = null;
 var wandHandler = null;
+var ringHandler = null;
+var potionDef = null;
+var scrollDef = null;
 var wandDef = null;
 var ringDef = null;
 function registerWandClasses(def) {
@@ -4461,6 +4630,14 @@ function registerWandClasses(def) {
 }
 function registerRingClasses(def) {
   ringDef = def;
+}
+function initIdentification(rng, potions, scrolls) {
+  potionDef = potions;
+  scrollDef = scrolls;
+  potionHandler = new ItemStatusHandler(potions.classes, potions.labels, potions.images, rng);
+  scrollHandler = new ItemStatusHandler(scrolls.classes, scrolls.labels, scrolls.images, rng);
+  wandHandler = wandDef ? new ItemStatusHandler(wandDef.classes, wandDef.labels, wandDef.images, rng) : null;
+  ringHandler = ringDef ? new ItemStatusHandler(ringDef.classes, ringDef.labels, ringDef.images, rng) : null;
 }
 function identificationReady() {
   return potionHandler !== null && scrollHandler !== null;
@@ -8006,6 +8183,13 @@ var POTION_DEFS = {
   potion_might: def("potion_might", "Potion of Might", "item_potion_might", "This powerful liquid will course through your muscles, permanently " + "increasing your strength by one point and health by five points."),
   potion_frost: def("potion_frost", "Potion of Frost", "item_potion_frost", "Upon exposure to open air, the fluid will evaporate, releasing an icy " + "blast.")
 };
+function potionFamilyDef() {
+  return {
+    classes: [...POTION_CLASS_ORDER],
+    labels: [...POTION_COLORS],
+    images: [...POTION_IMAGES]
+  };
+}
 function potionSprite(id, fallback) {
   return identificationReady() ? potionImage(id) : fallback;
 }
@@ -8014,7 +8198,7 @@ function potionUiInfo(id, knownName, catalogSprite) {
     return null;
   const known = identificationReady() && isPotionKnown(id);
   return {
-    name: known ? knownName : `${potionLabel(id)} potion`,
+    name: known ? knownName : `poción ${potionLabel(id)}`,
     sprite: identificationReady() ? potionImage(id) : catalogSprite,
     identified: known
   };
@@ -8371,6 +8555,13 @@ var SCROLL_DEFS = {
   scroll_mirrorimage: def2("scroll_mirrorimage", "Scroll of Mirror Image", "item_scroll_mirrorimage", "The incantation on this scroll will create illusory duplicates of " + "the reader, which will needle and distract the enemies."),
   scroll_enchantment: def2("scroll_enchantment", "Scroll of Enchantment", "item_scroll_enchantment", "This scroll is able to imbue a weapon or a suit of armor with a " + "magical enchantment, or to strengthen an enchantment which " + "already exists on the item.")
 };
+function scrollFamilyDef() {
+  return {
+    classes: [...SCROLL_CLASS_ORDER],
+    labels: [...SCROLL_RUNES],
+    images: SCROLL_IMAGES.map((img) => img === "item_scroll_odal" ? "scroll_upgrade" : img)
+  };
+}
 function scrollUiInfo(id, knownName, catalogSprite) {
   if (!isScrollId(id))
     return null;
@@ -11874,7 +12065,7 @@ class InventoryPanel {
       } catch {}
       ctx.fillStyle = UI.text;
       ctx.font = "bold 14px system-ui, sans-serif";
-      const name = item.identified ? item.name : nombreClase(item.kind) + " sin identificar";
+      const name = item.name;
       ctx.fillText(item.qty > 1 ? `${name} ×${item.qty}` : name, r.x + iconSize + 12, r.y + r.h / 2 - 8);
       ctx.font = "12px system-ui, sans-serif";
       ctx.fillStyle = UI.textDim;
@@ -15221,6 +15412,10 @@ class Effects {
 
 // src/ui/ui.ts
 var HERO_MS = 110;
+function repartirIdentificaciones(semilla) {
+  const rng = new RNG(semilla >>> 0);
+  initIdentification(rng, potionFamilyDef(), scrollFamilyDef());
+}
 
 class UiManager {
   canvas;
@@ -15306,6 +15501,7 @@ class UiManager {
   startRun(seed) {
     clearSave();
     this.kills = 0;
+    repartirIdentificaciones(seed);
     this.game = new Game(seed >>> 0, { gen: contentLevelGen, mechanics: contentMechanics });
     this.input.attach(this.canvas, (sx, sy) => this.renderer.screenToTile(sx, sy), this.game);
     this.hud.logBuffer.reset();
@@ -15320,6 +15516,7 @@ class UiManager {
     const g = loadGame(contentMechanics);
     if (!g)
       return;
+    repartirIdentificaciones(g.seed);
     this.kills = 0;
     this.game = g;
     this.input.attach(this.canvas, (sx, sy) => this.renderer.screenToTile(sx, sy), g);
