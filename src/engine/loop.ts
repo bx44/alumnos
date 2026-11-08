@@ -12,6 +12,7 @@ import {
   type MobActor,
   mobsToPlaced,
 } from './seams.js';
+import { memoriaDe, sacaKashia, honduraDe, marcaPasado, preguntaPorton } from '../orbarak/porton.js';
 
 export interface GameDeps {
   gen: LevelGen;
@@ -208,11 +209,47 @@ export class Game {
   private tryDescend(): boolean {
     const i = this.level.idx(this.hero.x, this.hero.y);
     if (i === this.level.stairsDown) {
+      // Or Barak: el portón pregunta antes de dejar bajar. Si abre su
+      // ventana, la bajada la dispara ella misma al cerrarse.
+      if (this.porton()) return true;
       this.descend();
       return true;
     }
     this.logMsg('There are no stairs down here.');
     return false;
+  }
+
+  /**
+   * El portón de Or Barak. Devuelve true si se abrió la kashiá; en ese caso
+   * la bajada ocurre cuando el alumno conteste, no ahora.
+   */
+  private porton(): boolean {
+    if (typeof document === 'undefined') return false;   // en las pruebas no hay ventana
+    const piso = this.level.depth;
+    const m = memoriaDe(this.seed);
+    if (m.pasados.includes(piso)) return false;
+
+    const k = sacaKashia(honduraDe(piso), m);
+    if (k === null) return false;
+    marcaPasado(m, piso);
+
+    preguntaPorton('Portón del piso ' + piso, k, m, (acerto: boolean) => {
+      if (acerto) {
+        const oro = 20 + piso * 4 + Math.min(m.racha, 6) * 5;
+        const aire = 3 + Math.floor(piso / 3);
+        // el héroe del motor no declara la bolsa; el de contenido sí la tiene
+        const bolsa = this.hero as unknown as { gold?: number };
+        if (typeof bolsa.gold === 'number') bolsa.gold += oro;
+        if (this.hero.hp < this.hero.ht) {
+          this.hero.hp = Math.min(this.hero.ht, this.hero.hp + aire);
+        }
+        this.logMsg('Pasas el portón. +' + oro + ' de oro.');
+      } else {
+        this.logMsg('El portón se abre de todos modos.');
+      }
+      this.descend();
+    });
+    return true;
   }
 
   /** Intent 'ascend': only works standing on the up stairs. */
