@@ -13783,8 +13783,10 @@ function pasoDe(id, x, y) {
   const t = ahora();
   const p = avance(r, t);
   const quieto = r.deX === r.aX && r.deY === r.aY;
+  const GRACIA = PASO_MS * 1.6;
+  const andando = !quieto && t - r.inicio < GRACIA;
   const cuadro = Math.floor(t / 1000 * CUADROS_POR_SEG) % CUADROS_CAMINATA;
-  return { x: v.x, y: v.y, caminando: !quieto && p < 1, mira: r.mira, avance: p, cuadro };
+  return { x: v.x, y: v.y, caminando: andando, mira: r.mira, avance: p, cuadro };
 }
 
 // src/orbarak/banco.ts
@@ -14121,7 +14123,7 @@ class Game {
   run;
   path = [];
   pendingIntent = null;
-  recogerAlLlegar = false;
+  alLlegar = null;
   deps;
   logCap;
   constructor(seed, deps) {
@@ -14148,16 +14150,16 @@ class Game {
     this.path = [];
     this.pendingIntent = intent;
   }
-  setPath(path, recogerAlLlegar = false) {
+  setPath(path, alLlegar = null) {
     if (this.gameOver)
       return;
     this.pendingIntent = null;
     this.path = path;
-    this.recogerAlLlegar = recogerAlLlegar;
+    this.alLlegar = alLlegar;
   }
   cancelPath() {
     this.path = [];
-    this.recogerAlLlegar = false;
+    this.alLlegar = null;
   }
   get pathLength() {
     return this.path.length;
@@ -14303,9 +14305,9 @@ class Game {
     }
     if (this.path.length > 0) {
       const step = this.path.shift();
-      if (this.path.length === 0 && this.recogerAlLlegar) {
-        this.recogerAlLlegar = false;
-        this.pendingIntent = { kind: "pickup" };
+      if (this.path.length === 0 && this.alLlegar !== null) {
+        this.pendingIntent = this.alLlegar;
+        this.alLlegar = null;
       }
       const dx = step.x - this.hero.x;
       const dy = step.y - this.hero.y;
@@ -14515,6 +14517,8 @@ class Renderer {
   cache = new Map;
   camX = 0;
   camY = 0;
+  desvioX = 0;
+  desvioY = 0;
   dpr = 1;
   acercamiento = 3;
   acercamientoMin = 1;
@@ -14535,6 +14539,15 @@ class Renderer {
     this.acercamiento = v;
     this.cache.clear();
     return true;
+  }
+  corre(dxPx, dyPx, level) {
+    const tope = 1.5;
+    this.desvioX = Math.max(-level.w * tope, Math.min(level.w * tope, this.desvioX - dxPx / this.tile));
+    this.desvioY = Math.max(-level.h * tope, Math.min(level.h * tope, this.desvioY - dyPx / this.tile));
+  }
+  centra() {
+    this.desvioX = 0;
+    this.desvioY = 0;
   }
   baseCalculada = false;
   recalculaAcercamiento() {
@@ -14608,7 +14621,15 @@ class Renderer {
     const level = game.level;
     const heroePaso = pasoDe("heroe", game.hero.x, game.hero.y);
     const heroeVis = { x: heroePaso.x, y: heroePaso.y };
-    const cam = cameraTileRect(heroeVis.x, heroeVis.y, vw, vh, level.w, level.h, this.tile);
+    if (heroePaso.caminando) {
+      this.desvioX *= 0.8;
+      this.desvioY *= 0.8;
+      if (Math.abs(this.desvioX) < 0.02)
+        this.desvioX = 0;
+      if (Math.abs(this.desvioY) < 0.02)
+        this.desvioY = 0;
+    }
+    const cam = cameraTileRect(heroeVis.x + this.desvioX, heroeVis.y + this.desvioY, vw, vh, level.w, level.h, this.tile);
     this.camX = cam.camX;
     this.camY = cam.camY;
     ctx.fillStyle = "#000";
@@ -14870,6 +14891,188 @@ class Renderer {
   }
 }
 
+// src/orbarak/pantalla.ts
+var arrastro = false;
+function fueArrastre() {
+  return arrastro;
+}
+var LLAVE_ZOOM = "pardes-acercamiento";
+function acercamientoGuardado() {
+  try {
+    const v = localStorage.getItem(LLAVE_ZOOM);
+    if (v === null)
+      return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  } catch {
+    return null;
+  }
+}
+function guardaAcercamiento(v) {
+  try {
+    localStorage.setItem(LLAVE_ZOOM, String(v));
+  } catch {}
+}
+function conectaAcercamiento(lienzo, r, alCambiar, nivel) {
+  let distanciaInicial = 0;
+  let acercamientoInicial = 0;
+  let dedoX = 0;
+  let dedoY = 0;
+  let partidaX = 0;
+  let partidaY = 0;
+  let corriendo = false;
+  const distancia = (t) => {
+    const a = t[0], b = t[1];
+    if (!a || !b)
+      return 0;
+    return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  };
+  const inicio = (e) => {
+    if (e.touches.length === 1) {
+      const t = e.touches[0];
+      dedoX = partidaX = t.clientX;
+      dedoY = partidaY = t.clientY;
+      corriendo = false;
+      arrastro = false;
+      return;
+    }
+    if (e.touches.length !== 2)
+      return;
+    distanciaInicial = distancia(e.touches);
+    acercamientoInicial = r.acercamientoActual;
+    e.preventDefault();
+  };
+  const mueve = (e) => {
+    if (e.touches.length === 1 && distanciaInicial === 0) {
+      const t = e.touches[0];
+      if (!corriendo) {
+        const d = Math.hypot(t.clientX - partidaX, t.clientY - partidaY);
+        if (d <= r.tile / 2)
+          return;
+        corriendo = true;
+        arrastro = true;
+        dedoX = t.clientX;
+        dedoY = t.clientY;
+      }
+      e.preventDefault();
+      r.corre(t.clientX - dedoX, t.clientY - dedoY, nivel());
+      dedoX = t.clientX;
+      dedoY = t.clientY;
+      alCambiar();
+      return;
+    }
+    if (e.touches.length !== 2 || distanciaInicial === 0)
+      return;
+    e.preventDefault();
+    const razon = distancia(e.touches) / distanciaInicial;
+    if (r.acerca(acercamientoInicial * razon)) {
+      guardaAcercamiento(r.acercamientoActual);
+      alCambiar();
+    }
+  };
+  const fin = (e) => {
+    if (e.touches.length < 2)
+      distanciaInicial = 0;
+    if (e.touches.length === 0)
+      corriendo = false;
+  };
+  const rueda = (e) => {
+    e.preventDefault();
+    if (r.acerca(r.acercamientoActual + (e.deltaY < 0 ? 1 : -1))) {
+      guardaAcercamiento(r.acercamientoActual);
+      alCambiar();
+    }
+  };
+  lienzo.addEventListener("touchstart", inicio, { passive: false });
+  lienzo.addEventListener("touchmove", mueve, { passive: false });
+  lienzo.addEventListener("touchend", fin);
+  lienzo.addEventListener("touchcancel", fin);
+  lienzo.addEventListener("wheel", rueda, { passive: false });
+  return () => {
+    lienzo.removeEventListener("touchstart", inicio);
+    lienzo.removeEventListener("touchmove", mueve);
+    lienzo.removeEventListener("touchend", fin);
+    lienzo.removeEventListener("touchcancel", fin);
+    lienzo.removeEventListener("wheel", rueda);
+  };
+}
+function avisa(texto) {
+  const viejo = document.getElementById("pd-aviso");
+  if (viejo !== null)
+    viejo.remove();
+  const d = document.createElement("div");
+  d.id = "pd-aviso";
+  d.textContent = texto;
+  document.body.appendChild(d);
+  setTimeout(() => d.remove(), 6000);
+  d.addEventListener("click", () => d.remove());
+}
+var ESTILO = `
+#pd-aviso{position:fixed;left:12px;right:12px;top:calc(42px + env(safe-area-inset-top));
+  z-index:60;padding:11px 13px;border-radius:10px;background:rgba(12,10,20,.95);
+  border:1px solid #3A3558;color:#E8D7A8;font-size:14px;line-height:1.4;
+  font-family:system-ui,sans-serif}
+#pd-completa{position:fixed;top:calc(4px + env(safe-area-inset-top));
+  right:calc(4px + env(safe-area-inset-right));z-index:50;width:30px;height:30px;
+  display:grid;place-items:center;border:0;border-radius:8px;cursor:pointer;
+  background:rgba(12,10,20,.45);color:#E8D7A8;font-size:15px;line-height:1;
+  font-family:system-ui,sans-serif;opacity:.55;padding:0}
+#pd-completa:hover,#pd-completa:active{opacity:1}
+`;
+function enPantallaCompleta() {
+  const d = document;
+  return d.fullscreenElement !== null || (d.webkitFullscreenElement ?? null) !== null;
+}
+function yaSinBarras() {
+  const nav = navigator;
+  return nav.standalone === true || typeof matchMedia === "function" && matchMedia("(display-mode: standalone)").matches;
+}
+function esIPhone() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) || navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+}
+function ponBotonPantallaCompleta() {
+  const raiz = document.documentElement;
+  const puede = typeof raiz.requestFullscreen === "function" && (document.fullscreenEnabled ?? false) || typeof raiz.webkitRequestFullscreen === "function";
+  if (yaSinBarras())
+    return;
+  if (!puede && !esIPhone())
+    return;
+  if (document.getElementById("pd-completa") !== null)
+    return;
+  const hoja = document.createElement("style");
+  hoja.textContent = ESTILO;
+  document.head.appendChild(hoja);
+  const b = document.createElement("button");
+  b.id = "pd-completa";
+  b.type = "button";
+  b.title = "Pantalla completa";
+  b.textContent = "⛶";
+  b.addEventListener("click", () => {
+    if (!puede) {
+      avisa("En iPhone, Safari no deja pantalla completa. Toca Compartir y " + "«Agregar a inicio»: así se abre sin barras.");
+      return;
+    }
+    const d = document;
+    if (enPantallaCompleta()) {
+      if (typeof d.exitFullscreen === "function")
+        Promise.resolve(d.exitFullscreen()).catch(() => {});
+      else
+        d.webkitExitFullscreen?.();
+    } else if (typeof raiz.requestFullscreen === "function") {
+      raiz.requestFullscreen().catch(() => {
+        raiz.webkitRequestFullscreen?.();
+      });
+    } else {
+      raiz.webkitRequestFullscreen?.();
+    }
+  });
+  document.addEventListener("fullscreenchange", () => {
+    b.textContent = enPantallaCompleta() ? "⤡" : "⛶";
+    b.title = enPantallaCompleta() ? "Salir de pantalla completa" : "Pantalla completa";
+  });
+  document.body.appendChild(b);
+}
+
 // src/engine/input.ts
 class InputHandler {
   onToggleMinimap = () => {};
@@ -14889,14 +15092,16 @@ class InputHandler {
       const g = this.game;
       if (!t || !g)
         return;
+      if (fueArrastre())
+        return;
       const tile = t(e.clientX, e.clientY);
       this.handleTileTap(tile.x, tile.y);
     };
     window.addEventListener("keydown", onKey);
-    canvas.addEventListener("pointerdown", onPointer);
+    canvas.addEventListener("pointerup", onPointer);
     this.detachFns = [
       () => window.removeEventListener("keydown", onKey),
-      () => canvas.removeEventListener("pointerdown", onPointer)
+      () => canvas.removeEventListener("pointerup", onPointer)
     ];
   }
   detach() {
@@ -14981,15 +15186,19 @@ class InputHandler {
       game.queueIntent({ kind: "pickup" });
       return;
     }
-    const hayAlgo = algoAhi && !enemigosALaVista;
-    if (tapped === level.stairsDown && here === level.stairsDown) {
-      game.queueIntent({ kind: "descend" });
-      return;
+    const escalera = tapped === level.stairsDown ? { kind: "descend" } : tapped === level.stairsUp ? { kind: "ascend" } : null;
+    if (escalera !== null && (!enemigosALaVista || tapped === here)) {
+      if (tapped === here) {
+        game.queueIntent(escalera);
+        return;
+      }
+      const camino = findPath(level, (x, y) => level.isPassable(x, y) && !level.mobAt(x, y), hero.x, hero.y, tx, ty);
+      if (camino && camino.length > 0) {
+        game.setPath(camino, escalera);
+        return;
+      }
     }
-    if (tapped === level.stairsUp && here === level.stairsUp) {
-      game.queueIntent({ kind: "ascend" });
-      return;
-    }
+    const hayAlgo = algoAhi && !enemigosALaVista ? { kind: "pickup" } : null;
     const path = findPath(level, (x, y) => level.isPassable(x, y) && !level.mobAt(x, y), hero.x, hero.y, tx, ty);
     if (!path || path.length === 0) {
       if (tx !== hero.x || ty !== hero.y)
@@ -16425,114 +16634,6 @@ class Effects {
   }
 }
 
-// src/orbarak/pantalla.ts
-var LLAVE_ZOOM = "pardes-acercamiento";
-function acercamientoGuardado() {
-  try {
-    const v = localStorage.getItem(LLAVE_ZOOM);
-    if (v === null)
-      return null;
-    const n = Number(v);
-    return Number.isFinite(n) ? n : null;
-  } catch {
-    return null;
-  }
-}
-function guardaAcercamiento(v) {
-  try {
-    localStorage.setItem(LLAVE_ZOOM, String(v));
-  } catch {}
-}
-function conectaAcercamiento(lienzo, r, alCambiar) {
-  let distanciaInicial = 0;
-  let acercamientoInicial = 0;
-  const distancia = (t) => {
-    const a = t[0], b = t[1];
-    if (!a || !b)
-      return 0;
-    return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-  };
-  const inicio = (e) => {
-    if (e.touches.length !== 2)
-      return;
-    distanciaInicial = distancia(e.touches);
-    acercamientoInicial = r.acercamientoActual;
-    e.preventDefault();
-  };
-  const mueve = (e) => {
-    if (e.touches.length !== 2 || distanciaInicial === 0)
-      return;
-    e.preventDefault();
-    const razon = distancia(e.touches) / distanciaInicial;
-    if (r.acerca(acercamientoInicial * razon)) {
-      guardaAcercamiento(r.acercamientoActual);
-      alCambiar();
-    }
-  };
-  const fin = (e) => {
-    if (e.touches.length < 2)
-      distanciaInicial = 0;
-  };
-  const rueda = (e) => {
-    e.preventDefault();
-    if (r.acerca(r.acercamientoActual + (e.deltaY < 0 ? 1 : -1))) {
-      guardaAcercamiento(r.acercamientoActual);
-      alCambiar();
-    }
-  };
-  lienzo.addEventListener("touchstart", inicio, { passive: false });
-  lienzo.addEventListener("touchmove", mueve, { passive: false });
-  lienzo.addEventListener("touchend", fin);
-  lienzo.addEventListener("touchcancel", fin);
-  lienzo.addEventListener("wheel", rueda, { passive: false });
-  return () => {
-    lienzo.removeEventListener("touchstart", inicio);
-    lienzo.removeEventListener("touchmove", mueve);
-    lienzo.removeEventListener("touchend", fin);
-    lienzo.removeEventListener("touchcancel", fin);
-    lienzo.removeEventListener("wheel", rueda);
-  };
-}
-var ESTILO = `
-#pd-completa{position:fixed;top:calc(4px + env(safe-area-inset-top));
-  right:calc(4px + env(safe-area-inset-right));z-index:50;width:30px;height:30px;
-  display:grid;place-items:center;border:0;border-radius:8px;cursor:pointer;
-  background:rgba(12,10,20,.45);color:#E8D7A8;font-size:15px;line-height:1;
-  font-family:system-ui,sans-serif;opacity:.55;padding:0}
-#pd-completa:hover,#pd-completa:active{opacity:1}
-`;
-function enPantallaCompleta() {
-  return document.fullscreenElement !== null;
-}
-function ponBotonPantallaCompleta() {
-  const raiz = document.documentElement;
-  const puede = typeof raiz.requestFullscreen === "function" && (document.fullscreenEnabled ?? false);
-  if (!puede)
-    return;
-  if (document.getElementById("pd-completa") !== null)
-    return;
-  const hoja = document.createElement("style");
-  hoja.textContent = ESTILO;
-  document.head.appendChild(hoja);
-  const b = document.createElement("button");
-  b.id = "pd-completa";
-  b.type = "button";
-  b.title = "Pantalla completa";
-  b.textContent = "⛶";
-  b.addEventListener("click", () => {
-    if (enPantallaCompleta()) {
-      document.exitFullscreen().catch(() => {});
-    } else {
-      raiz.requestFullscreen().catch(() => {});
-    }
-  });
-  document.addEventListener("fullscreenchange", () => {
-    b.textContent = enPantallaCompleta() ? "⤡" : "⛶";
-    b.title = enPantallaCompleta() ? "Salir de pantalla completa" : "Pantalla completa";
-  });
-  document.body.appendChild(b);
-}
-
 // src/ui/ui.ts
 var HERO_MS = 110;
 function repartirIdentificaciones(semilla) {
@@ -16554,6 +16655,7 @@ class UiManager {
   effects = new Effects;
   game = null;
   throwMode = null;
+  toqueConsumido = false;
   apuntarVarita = null;
   kills = 0;
   lastHeroAct = 0;
@@ -16581,7 +16683,7 @@ class UiManager {
     const guardado = acercamientoGuardado();
     if (guardado !== null)
       this.renderer.acerca(guardado);
-    conectaAcercamiento(this.canvas, this.renderer, () => {});
+    conectaAcercamiento(this.canvas, this.renderer, () => {}, () => this.game ? { w: this.game.level.w, h: this.game.level.h } : { w: 32, h: 32 });
     this.inventory.onZapRequest = (item) => {
       this.apuntarVarita = { slot: item.slot };
       this.inventory.close();
@@ -16597,7 +16699,17 @@ class UiManager {
     this.screens.hasSave = () => hasSave();
     this.screens.getSummary = () => this.deathSummary();
     window.addEventListener("keydown", (e) => this.handleKeyCapture(e), true);
-    window.addEventListener("pointerdown", (e) => this.handleTapCapture(e), true);
+    window.addEventListener("pointerdown", (e) => {
+      this.handleTapCapture(e);
+      this.toqueConsumido = e.defaultPrevented;
+    }, true);
+    window.addEventListener("pointerup", (e) => {
+      if (!this.toqueConsumido)
+        return;
+      this.toqueConsumido = false;
+      e.preventDefault();
+      e.stopPropagation();
+    }, true);
     window.addEventListener("resize", () => this.renderer.resize());
     window.addEventListener("keydown", (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
