@@ -2,6 +2,7 @@ import { Grid } from '../core/grid.js';
 import { findPath } from '../core/path.js';
 import type { Game } from './loop.js';
 import type { HeroIntent } from './seams.js';
+import { fueArrastre } from '../orbarak/pantalla.js';
 
 /**
  * Keyboard + pointer input. Produces HeroIntents and feeds them to the Game;
@@ -33,18 +34,22 @@ export class InputHandler {
     this.game = game;
 
     const onKey = (e: KeyboardEvent): void => this.handleKey(e);
+    // Al soltar, no al tocar: asi un arrastre para asomarse no manda al heroe
+    // a caminar. Shattered hace lo mismo (CellSelector: onSelect va en el
+    // PointerEvent de soltar, y no corre si hubo arrastre).
     const onPointer = (e: PointerEvent): void => {
       const t = this.screenToTile;
       const g = this.game;
       if (!t || !g) return;
+      if (fueArrastre()) return;
       const tile = t(e.clientX, e.clientY);
       this.handleTileTap(tile.x, tile.y);
     };
     window.addEventListener('keydown', onKey);
-    canvas.addEventListener('pointerdown', onPointer);
+    canvas.addEventListener('pointerup', onPointer);
     this.detachFns = [
       () => window.removeEventListener('keydown', onKey),
-      () => canvas.removeEventListener('pointerdown', onPointer),
+      () => canvas.removeEventListener('pointerup', onPointer),
     ];
   }
 
@@ -145,15 +150,36 @@ export class InputHandler {
       game.queueIntent({ kind: 'pickup' });
       return;
     }
-    const hayAlgo = algoAhi && !enemigosALaVista;
-    if (tapped === level.stairsDown && here === level.stairsDown) {
-      game.queueIntent({ kind: 'descend' });
-      return;
+    // Tocar una escalera, aunque este lejos, es "usa esa escalera": el heroe
+    // camina y la usa al llegar (Hero.handle -> HeroAction.LvlTransition,
+    // Hero.java:1992-1999). Con enemigos a la vista no se activa sola, salvo
+    // que ya estes encima, igual que alla.
+    const escalera: HeroIntent | null =
+      tapped === level.stairsDown
+        ? { kind: 'descend' }
+        : tapped === level.stairsUp
+          ? { kind: 'ascend' }
+          : null;
+    if (escalera !== null && (!enemigosALaVista || tapped === here)) {
+      if (tapped === here) {
+        game.queueIntent(escalera);
+        return;
+      }
+      const camino = findPath(
+        level,
+        (x, y) => level.isPassable(x, y) && !level.mobAt(x, y),
+        hero.x,
+        hero.y,
+        tx,
+        ty,
+      );
+      if (camino && camino.length > 0) {
+        game.setPath(camino, escalera);
+        return;
+      }
     }
-    if (tapped === level.stairsUp && here === level.stairsUp) {
-      game.queueIntent({ kind: 'ascend' });
-      return;
-    }
+
+    const hayAlgo = algoAhi && !enemigosALaVista ? ({ kind: 'pickup' } as HeroIntent) : null;
 
     // Otherwise: A* tap-to-move, one step per hero turn.
     const path = findPath(

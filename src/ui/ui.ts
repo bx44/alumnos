@@ -70,6 +70,8 @@ export class UiManager {
 
   private game: Game | null = null;
   private throwMode: { slot: number } | null = null;
+  /** El toque de abajo ya se lo quedó un botón o una ventana. */
+  private toqueConsumido = false;
   private apuntarVarita: { slot: number } | null = null;
   private kills = 0;
   private lastHeroAct = 0;
@@ -96,7 +98,9 @@ export class UiManager {
     ponBotonPantallaCompleta();
     const guardado = acercamientoGuardado();
     if (guardado !== null) this.renderer.acerca(guardado);
-    conectaAcercamiento(this.canvas, this.renderer, () => {});
+    conectaAcercamiento(this.canvas, this.renderer, () => {}, () =>
+      this.game ? { w: this.game.level.w, h: this.game.level.h } : { w: 32, h: 32 },
+    );
     this.inventory.onZapRequest = (item) => {
       this.apuntarVarita = { slot: item.slot };
       this.inventory.close();
@@ -118,7 +122,26 @@ export class UiManager {
     this.screens.getSummary = (): RunSummary | null => this.deathSummary();
 
     window.addEventListener('keydown', (e) => this.handleKeyCapture(e), true);
-    window.addEventListener('pointerdown', (e) => this.handleTapCapture(e), true);
+    window.addEventListener(
+      'pointerdown',
+      (e) => {
+        this.handleTapCapture(e);
+        // Los botones y las ventanas se quedan con el toque llamando
+        // preventDefault; si asi fue, al soltar tampoco debe llegar al mapa.
+        this.toqueConsumido = e.defaultPrevented;
+      },
+      true,
+    );
+    window.addEventListener(
+      'pointerup',
+      (e) => {
+        if (!this.toqueConsumido) return;
+        this.toqueConsumido = false;
+        e.preventDefault();
+        e.stopPropagation();
+      },
+      true,
+    );
     window.addEventListener('resize', () => this.renderer.resize());
     window.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {

@@ -365,3 +365,31 @@ describe('scheduler tie-break policy', () => {
     expect(order).toEqual(['a', 'b', 'a', 'b']);
   });
 });
+
+/**
+ * Tocar la escalera desde lejos: el heroe camina y la usa al llegar.
+ *
+ * Shattered lo resuelve asi (Hero.handle -> HeroAction.LvlTransition ->
+ * actTransition: si no estas encima, getCloser y al llegar se activa). Aqui
+ * hacia falta estar parado encima y volver a tocar, y en el celular eso se
+ * siente como que la escalera no sirve.
+ */
+describe('escaleras: un toque lejos baja al llegar', () => {
+  test('caminar a la escalera de bajada y bajar sola', () => {
+    const g = new Game(42, { gen: contentLevelGen, mechanics: contentMechanics });
+    const nivel = g.level;
+    const sx = nivel.stairsDown % nivel.w;
+    const sy = Math.floor(nivel.stairsDown / nivel.w);
+    expect(nivel.idx(g.hero.x, g.hero.y)).not.toBe(nivel.stairsDown);
+
+    const { InputHandler } = require('../src/engine/input.js');
+    const entrada = new InputHandler();
+    entrada.game = g;
+    entrada.handleTileTap(sx, sy);
+    expect(g.pathLength).toBeGreaterThan(0);
+
+    const profundidad = g.level.depth;
+    for (let i = 0; i < 4000 && g.level.depth === profundidad; i++) g.pump();
+    expect(g.level.depth).toBe(profundidad + 1);
+  });
+});

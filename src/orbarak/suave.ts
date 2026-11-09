@@ -107,8 +107,16 @@ export function pasoDe(id: string, x: number, y: number): {
   const t = ahora();
   const p = avance(r, t);
   const quieto = r.deX === r.aX && r.deY === r.aY;
+  // Entre paso y paso hay un hueco: el deslizamiento dura 100 ms pero el turno
+  // siguiente tarda un poco mas en resolverse. Si en ese hueco se volviera a
+  // la pose quieta, el monito parpadearia en cada paso. Shattered no lo hace:
+  // la animacion de caminar sigue corriendo y solo se corta cuando de verdad
+  // se detiene (CharSprite.update: vuelve a idle al terminar de moverse, y el
+  // siguiente paso entra sin soltar la animacion). Se le da ese respiro.
+  const GRACIA = PASO_MS * 1.6;
+  const andando = !quieto && t - r.inicio < GRACIA;
   // La caminata corre con su propio reloj a 20 cuadros por segundo y no se
   // reinicia en cada paso, igual que la Animation de Shattered.
   const cuadro = Math.floor((t / 1000) * CUADROS_POR_SEG) % CUADROS_CAMINATA;
-  return { x: v.x, y: v.y, caminando: !quieto && p < 1, mira: r.mira, avance: p, cuadro };
+  return { x: v.x, y: v.y, caminando: andando, mira: r.mira, avance: p, cuadro };
 }

@@ -170,6 +170,9 @@ export class Renderer {
   /** Camera top-left in tile units (fractional for smooth centering). */
   private camX = 0;
   private camY = 0;
+  /** Lo que el dedo corrio la camara, en casillas (0 = pegada al heroe). */
+  private desvioX = 0;
+  private desvioY = 0;
   private dpr = 1;
   /** Acercamiento actual, en pixeles de arte por casilla, y sus topes. */
   private acercamiento = 3;
@@ -196,6 +199,30 @@ export class Renderer {
     this.acercamiento = v;
     this.cache.clear(); // los dibujos vienen precocinados a un tamano
     return true;
+  }
+
+  /**
+   * Corre la camara con el dedo, en pixeles de pantalla.
+   * Shattered: camera.shift((anterior - actual) / zoom) — el mapa sigue al
+   * dedo (CellSelector.onDrag). No se deja ir mas alla de media pantalla
+   * fuera del nivel, para no perderse en lo negro.
+   */
+  corre(dxPx: number, dyPx: number, level: { w: number; h: number }): void {
+    const tope = 1.5;
+    this.desvioX = Math.max(
+      -level.w * tope,
+      Math.min(level.w * tope, this.desvioX - dxPx / this.tile),
+    );
+    this.desvioY = Math.max(
+      -level.h * tope,
+      Math.min(level.h * tope, this.desvioY - dyPx / this.tile),
+    );
+  }
+
+  /** Vuelve a pegar la camara al heroe (al cambiar de piso, por ejemplo). */
+  centra(): void {
+    this.desvioX = 0;
+    this.desvioY = 0;
   }
 
   /** Recalcula el acercamiento de arranque para la pantalla de ahora. */
@@ -299,7 +326,24 @@ export class Renderer {
     const level = game.level;
     const heroePaso = pasoDe('heroe', game.hero.x, game.hero.y);
     const heroeVis = { x: heroePaso.x, y: heroePaso.y };
-    const cam = cameraTileRect(heroeVis.x, heroeVis.y, vw, vh, level.w, level.h, this.tile);
+    // El dedo puede correr la camara para asomarse. En cuanto el heroe da un
+    // paso, la camara se le regresa, como el panFollow de Shattered
+    // (HeroSprite.move -> Camera.panFollow(this, 20f)).
+    if (heroePaso.caminando) {
+      this.desvioX *= 0.8;
+      this.desvioY *= 0.8;
+      if (Math.abs(this.desvioX) < 0.02) this.desvioX = 0;
+      if (Math.abs(this.desvioY) < 0.02) this.desvioY = 0;
+    }
+    const cam = cameraTileRect(
+      heroeVis.x + this.desvioX,
+      heroeVis.y + this.desvioY,
+      vw,
+      vh,
+      level.w,
+      level.h,
+      this.tile,
+    );
     this.camX = cam.camX;
     this.camY = cam.camY;
 

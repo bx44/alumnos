@@ -55,7 +55,13 @@ export class Game {
   /** Tap-to-move path; consumed one step per hero turn. */
   private path: XY[] = [];
   private pendingIntent: HeroIntent | null = null;
-  private recogerAlLlegar = false;
+  /**
+   * Que hacer al terminar el camino: recoger lo que hay tirado, o usar la
+   * escalera. En Shattered un toque lejos no es "camina": es "recoge eso" o
+   * "usa esa escalera", y caminar es nada mas la parte de en medio
+   * (Hero.handle -> HeroAction.PickUp / LvlTransition).
+   */
+  private alLlegar: HeroIntent | null = null;
   private readonly deps: GameDeps;
   private readonly logCap: number;
 
@@ -93,21 +99,21 @@ export class Game {
 
   /**
    * Set a tap-to-move path (clears any pending manual intent).
-   * `recogerAlLlegar` marca que en la casilla de destino hay algo tirado:
-   * al llegar se levanta solo, como en el original (Hero.java:981-986, un
-   * toque sobre un monton es una accion de recoger, no de caminar).
+   * `alLlegar` es lo que se hace al pisar el destino: recoger lo que hay
+   * tirado, o usar la escalera. Como en el original (Hero.handle), donde un
+   * toque lejos ya trae decidida la accion y caminar es solo el trayecto.
    */
-  setPath(path: XY[], recogerAlLlegar = false): void {
+  setPath(path: XY[], alLlegar: HeroIntent | null = null): void {
     if (this.gameOver) return;
     this.pendingIntent = null;
     this.path = path;
-    this.recogerAlLlegar = recogerAlLlegar;
+    this.alLlegar = alLlegar;
   }
 
   /** Cancel pathfinding (e.g. new manual input arrived mid-path). */
   cancelPath(): void {
     this.path = [];
-    this.recogerAlLlegar = false;
+    this.alLlegar = null;
   }
 
   get pathLength(): number {
@@ -292,10 +298,10 @@ export class Game {
     }
     if (this.path.length > 0) {
       const step = this.path.shift()!;
-      // ultimo paso del camino y en esa casilla hay algo: se levanta al llegar
-      if (this.path.length === 0 && this.recogerAlLlegar) {
-        this.recogerAlLlegar = false;
-        this.pendingIntent = { kind: 'pickup' };
+      // ultimo paso del camino: al pisar el destino se hace lo que se pidio
+      if (this.path.length === 0 && this.alLlegar !== null) {
+        this.pendingIntent = this.alLlegar;
+        this.alLlegar = null;
       }
       const dx = step.x - this.hero.x;
       const dy = step.y - this.hero.y;

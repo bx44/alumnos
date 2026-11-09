@@ -28,4 +28,10 @@ renameSync(DIST + 'main.js', DIST + hashedName);
 const html = readFileSync(ROOT + 'index.html', 'utf8').replace('./main.js', `./${hashedName}`);
 writeFileSync(DIST + 'index.html', html);
 
+// Estaticos que acompañan a la pagina (el manifiesto es lo que deja
+// guardarla en la pantalla de inicio y abrirla sin barras).
+for (const extra of ['manifest.webmanifest']) {
+  writeFileSync(DIST + extra, readFileSync(ROOT + extra));
+}
+
 console.log(`build ok -> dist/${hashedName}`);
