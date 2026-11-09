@@ -1,5 +1,6 @@
 import { ART_PX, PALETTE, REGION_TINTS, SPRITES } from '../assets/sprites.js';
 import { ORIGINAL_SPRITES } from '../assets/original_sprites.js';
+import { WATER_SPRITES } from '../assets/water_sprites.js';
 import { Terrain, regionForDepth, type Region } from '../core/grid.js';
 import type { Level } from '../dungeon/level.js';
 import type { Game } from './loop.js';
@@ -75,6 +76,61 @@ export interface CameraRect {
   y0: number;
   x1: number;
   y1: number;
+}
+
+/**
+ * Que cuenta como tierra al orillar el agua.
+ *
+ * Es la lista de Shattered tal cual (DungeonTileSheet.waterStitcheable):
+ * piso, pasto, escaleras, brasas, barricada, trampas, pozo, estatua,
+ * alquimia y puertas. Lo que no esta aqui -pared, abismo, mas agua, puerta
+ * secreta, muebles- no lleva orilla: el agua llega hasta el borde.
+ */
+const ORILLABLE = new Set<Terrain>([
+  Terrain.FLOOR,
+  Terrain.GRASS,
+  Terrain.HIGH_GRASS,
+  Terrain.ENTRANCE,
+  Terrain.EXIT,
+  Terrain.EMBERS,
+  Terrain.BARRICADE,
+  Terrain.WELL,
+  Terrain.ALCHEMY,
+  Terrain.STATUE,
+  Terrain.TRAP_INACTIVE,
+  Terrain.DOOR,
+  Terrain.OPEN_DOOR,
+  Terrain.DOOR_LOCKED,
+  Terrain.EXIT_LOCKED,
+  Terrain.TRAP_TOXIC,
+  Terrain.TRAP_TOXIC_HIDDEN,
+  Terrain.TRAP_FIRE,
+  Terrain.TRAP_FIRE_HIDDEN,
+  Terrain.TRAP_PARALYTIC,
+  Terrain.TRAP_PARALYTIC_HIDDEN,
+  Terrain.TRAP_POISON,
+  Terrain.TRAP_POISON_HIDDEN,
+  Terrain.TRAP_ALARM,
+  Terrain.TRAP_ALARM_HIDDEN,
+  Terrain.TRAP_LIGHTNING,
+  Terrain.TRAP_LIGHTNING_HIDDEN,
+  Terrain.TRAP_GRIPPING,
+  Terrain.TRAP_GRIPPING_HIDDEN,
+  Terrain.TRAP_SUMMONING,
+  Terrain.TRAP_SUMMONING_HIDDEN,
+]);
+
+/**
+ * Cual de los 16 dibujos del agua va en esta casilla.
+ * stitchWaterTile: +1 arriba, +2 derecha, +4 abajo, +8 izquierda.
+ */
+export function orillaDelAgua(level: Level, x: number, y: number): number {
+  return (
+    (ORILLABLE.has(level.get(x, y - 1)) ? 1 : 0) +
+    (ORILLABLE.has(level.get(x + 1, y)) ? 2 : 0) +
+    (ORILLABLE.has(level.get(x, y + 1)) ? 4 : 0) +
+    (ORILLABLE.has(level.get(x - 1, y)) ? 8 : 0)
+  );
 }
 
 export function cameraTileRect(
@@ -373,7 +429,10 @@ export class Renderer {
         name = 'stairs_down';
         break;
       case Terrain.WATER:
-        name = 'water';
+        // Shattered no pinta el agua cuadrada: escoge entre 16 dibujos segun
+        // que vecinos son tierra, y asi la orilla queda redondeada
+        // (DungeonTerrainTilemap.getTileVisual -> stitchWaterTile).
+        name = 'water_' + orillaDelAgua(level, x, y);
         break;
       case Terrain.GRASS:
         name = 'grass';
@@ -485,7 +544,7 @@ export class Renderer {
     // Original Watabou sprites (GPL-3.0): embedded RGBA, decoded
     // synchronously — no async image loading, no palette remap. These are
     // pre-colored, so region tinting does not apply to them.
-    const orig = ORIGINAL_SPRITES[name];
+    const orig = ORIGINAL_SPRITES[name] ?? WATER_SPRITES[name];
     if (orig) {
       const bin = atob(orig.rgba);
       const bytes = new Uint8ClampedArray(bin.length);
