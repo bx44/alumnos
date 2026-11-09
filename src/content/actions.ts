@@ -64,6 +64,8 @@ import { heroOf, strikeHeroVsMob, buildMob, nextMobId, type ContentMob } from '.
 // Stage 2 (wands/rings worker): id predicates for the inventory use-path.
 import { isWandId } from './wands.js';
 import { isRingId } from './rings.js';
+import { parseWandId, normalizeWandPickup, instanceItemDef } from './wands.js';
+import { parseRingId, normalizeRingPickup } from './rings.js';
 
 /**
  * Hero.actPickUp (Hero.java:1038-1054): one heap per action, takes 1 turn
@@ -89,8 +91,18 @@ export function pickupAt(ctx: ActionContext, hero: ContentHero): number {
     hero.gold += qty;
     ctx.log(`Levantas ${qty} de oro.`); // TXT_VALUE %d
   } else {
-    addToInventory(hero, defId, qty);
-    const label = qty > 1 ? `${qty}x ${def.name}` : def.name;
+    // Una varita o un anillo recogidos tienen que nacer como instancia
+    // propia (sus cargas, su nivel, su maldicion). Si entran con el id
+    // pelado del catalogo quedan muertos: no se pueden disparar ni poner.
+    const idReal =
+      parseWandId(item.itemId) != null
+        ? normalizeWandPickup(ctx.rng, item.itemId)
+        : parseRingId(item.itemId) != null
+          ? normalizeRingPickup(ctx.rng, item.itemId)
+          : defId;
+    addToInventory(hero, idReal, qty);
+    const nombre = instanceItemDef(idReal)?.name ?? getItem(idReal).name;
+    const label = qty > 1 ? `${qty}x ${nombre}` : nombre;
     ctx.log(`Levantas ${label}.`);
   }
   return 1;

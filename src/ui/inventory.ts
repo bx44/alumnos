@@ -16,8 +16,10 @@ import type { Hero } from '../mechanics/char.js';
 import { drawButton, drawPanel, inRect, roundRect, TAP, UI, type Rect, type SpriteSource, type View } from './palette.js';
 import { nombreClase } from '../orbarak/regiones.js';
 
-export type ItemKind = 'weapon' | 'armor' | 'missile' | 'potion' | 'food' | 'scroll' | 'misc';
-export type ItemAction = 'use' | 'equip' | 'drop' | 'throw' | 'shatter' | 'mine';
+export type ItemKind =
+  | 'weapon' | 'armor' | 'missile' | 'potion' | 'food' | 'scroll'
+  | 'ring' | 'wand' | 'misc';
+export type ItemAction = 'use' | 'equip' | 'drop' | 'throw' | 'shatter' | 'mine' | 'zap';
 
 export interface UiItem {
   /** Slot index understood by the mechanics' useItem/equip/drop intents. */
@@ -159,6 +161,11 @@ export function actionsFor(item: UiItem): ItemAction[] {
     case 'food':
     case 'scroll':
       return ['use', 'drop'];
+    // Un anillo se pone y se quita; una varita se apunta y se dispara.
+    case 'ring':
+      return ['equip', 'drop'];
+    case 'wand':
+      return ['zap', 'drop'];
     default:
       return ['drop'];
   }
@@ -169,6 +176,7 @@ export function actionLabel(action: ItemAction, item: UiItem): string {
     case 'use':
       return item.kind === 'potion' ? 'Tomar' : item.kind === 'food' ? 'Comer' : item.kind === 'scroll' ? 'Leer' : 'Usar';
     case 'equip':
+      if (item.kind === 'ring') return item.equipped ? 'Quitarse' : 'Ponerse';
       return item.equipped ? (item.kind === 'armor' ? 'Quitarse' : 'Guardar') : item.kind === 'armor' ? 'Ponerse' : 'Empuñar';
     case 'drop':
       return 'Tirar';
@@ -178,6 +186,8 @@ export function actionLabel(action: ItemAction, item: UiItem): string {
       return 'Romper'; // Honeypot AC_SHATTER
     case 'mine':
       return 'Picar'; // Pickaxe AC_MINE
+    case 'zap':
+      return 'Apuntar';
   }
 }
 
@@ -185,7 +195,11 @@ export function actionLabel(action: ItemAction, item: UiItem): string {
  * Dispatch an inventory action. Returns 'throw-targeting' when the UI should
  * enter throw-targeting mode (the UiManager owns that interaction).
  */
-export function doItemAction(game: Game, item: UiItem, action: ItemAction): 'done' | 'throw-targeting' {
+export function doItemAction(
+  game: Game,
+  item: UiItem,
+  action: ItemAction,
+): 'done' | 'throw-targeting' | 'zap-targeting' {
   switch (action) {
     case 'use':
       game.queueIntent({ kind: 'useItem', slot: item.slot });
@@ -204,6 +218,8 @@ export function doItemAction(game: Game, item: UiItem, action: ItemAction): 'don
     case 'mine':
       game.queueIntent({ kind: 'mineItem', slot: item.slot });
       return 'done';
+    case 'zap':
+      return 'zap-targeting';
   }
 }
 
@@ -224,6 +240,7 @@ export class InventoryPanel {
   selected = 0;
   /** Called when the player picks Throw on an item (UiManager owns targeting). */
   onThrowRequest: (item: UiItem) => void = () => {};
+  onZapRequest: (item: UiItem) => void = () => {};
 
   toggle(): void {
     this.open = !this.open;
@@ -286,6 +303,7 @@ export class InventoryPanel {
       if (inRect(a.rect, x, y) && sel) {
         const r = doItemAction(game, sel, a.action);
         if (r === 'throw-targeting') this.onThrowRequest(sel);
+        if (r === 'zap-targeting') this.onZapRequest(sel);
         else this.close();
         return true;
       }

@@ -83,6 +83,41 @@ import { resetQuestState, type NpcMob } from './npcs.js';
  * weapon (slot -1) and armor (slot -2). The 'equip'/'drop' intents reuse the
  * same slot convention (see equipSlot/dropSlot in actions.ts).
  */
+/**
+ * Ponerse o quitarse lo que haya en esa ranura.
+ *
+ * Un anillo no es arma ni armadura: tiene sus dos dedos aparte. Si la ranura
+ * trae un anillo, va por ahí; si no, por el camino de siempre.
+ */
+import { equipRing, unequipRing, isRingId, equippedRings } from './rings.js';
+import { instanceItemDef } from './wands.js';
+
+import { zapWandFromSlot } from './wands.js';
+
+function equipAnilloOGear(ctx: ActionContext, hero: ContentHero, slot: number): number {
+  // -3 y -4 son los dos dedos: quitarse el anillo que ya traes puesto.
+  if (slot === -3 || slot === -4) {
+    const dedo = slot === -3 ? 1 : 2;
+    return unequipRing(ctx, hero, dedo) ? 1 : 0;
+  }
+  const stack = slot >= 0 ? hero.inventory[slot] : undefined;
+  if (stack && isRingId(stack.itemId)) {
+    const [dedo1, dedo2] = equippedRings();
+    if (stack.itemId === dedo1) return unequipRing(ctx, hero, 1) ? 1 : 0;
+    if (stack.itemId === dedo2) return unequipRing(ctx, hero, 2) ? 1 : 0;
+    const costo = equipRing(ctx, hero, slot);
+    if (costo === 0) ctx.log('Ya traes dos anillos puestos.');
+    return costo;
+  }
+  return equipSlot(ctx, hero, slot);
+}
+
+/** ¿Ese anillo lo trae puesto en algún dedo? */
+function esAnilloPuesto(itemId: string): boolean {
+  const [uno, dos] = equippedRings();
+  return itemId === uno || itemId === dos;
+}
+
 function catalogKind(def: ItemDef): ItemKind {
   switch (def.type) {
     case 'weapon':
@@ -102,10 +137,12 @@ function catalogKind(def: ItemDef): ItemKind {
     case 'dewdrop':
     case 'seed':
     case 'quest':
+    case 'wand':
+      return 'wand';
+    case 'ring':
+      return 'ring';
     case 'bag':
     case 'misc':
-    case 'wand':
-    case 'ring':
       return 'misc';
   }
 }
@@ -113,7 +150,9 @@ function catalogKind(def: ItemDef): ItemKind {
 function contentInventoryAdapter(game: Game): UiItem[] {
   const hero = game.hero as unknown as ContentHero;
   const items: UiItem[] = hero.inventory.map((s, slot) => {
-    const def = getItem(s.itemId);
+    // Una varita o un anillo traen su propia instancia (wand_of_x#1) y no
+    // estan en el catalogo estatico: su definicion la da el modulo.
+    const def = instanceItemDef(s.itemId) ?? getItem(s.itemId);
     // Stage 2 (Worker 4): potions/scrolls show their run-assigned
     // color/rune names and sprites once the ID system is initialized.
     const potionInfo = potionUiInfo(s.itemId, def.name, def.sprite);
@@ -126,7 +165,7 @@ function contentInventoryAdapter(game: Game): UiItem[] {
       sprite: info?.sprite ?? def.sprite,
       qty: s.qty,
       kind: catalogKind(def),
-      equipped: false,
+      equipped: esAnilloPuesto(s.itemId),
       identified: info?.identified ?? true,
     };
   });
@@ -156,6 +195,22 @@ function contentInventoryAdapter(game: Game): UiItem[] {
       identified: true,
     });
   }
+  // Los anillos puestos salen de la mochila y se van a los dedos. Si no se
+  // listaran aqui, nunca te los podrias quitar. Ranuras -3 y -4 = dedo 1 y 2.
+  equippedRings().forEach((anilloId, i) => {
+    if (!anilloId) return;
+    const def = instanceItemDef(anilloId) ?? getItem(anilloId);
+    items.push({
+      slot: -3 - i,
+      id: anilloId,
+      name: def.name,
+      sprite: def.sprite,
+      qty: 1,
+      kind: 'ring',
+      equipped: true,
+      identified: true,
+    });
+  });
   return items;
 }
 
@@ -414,7 +469,7 @@ export const contentMechanics: MechanicsHooks = {
         cost = useInventorySlot(ctx, hero, intent.slot);
         break;
       case 'equip':
-        cost = equipSlot(ctx, hero, intent.slot);
+        cost = equipAnilloOGear(ctx, hero, intent.slot);
         break;
       case 'drop':
         cost = dropSlot(ctx, hero, intent.slot);
@@ -453,6 +508,12 @@ export const contentMechanics: MechanicsHooks = {
         // Stage 2 (Worker 5): Pickaxe AC_MINE — mine an adjacent dark
         // gold vein (Pickaxe.java:59-108).
         cost = mineDarkGold(ctx, hero, intent.slot);
+        break;
+      }
+      case 'zapItem': {
+        // Disparar una varita hacia una casilla (Wand.java: el rayo viaja
+        // y pega a lo primero que encuentra).
+        cost = zapWandFromSlot(ctx, hero, intent.slot, intent.targetCell);
         break;
       }
       case 'talk': {

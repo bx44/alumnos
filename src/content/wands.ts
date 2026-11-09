@@ -77,6 +77,7 @@ import {
   getItem,
   parseItemId,
   type ItemDef,
+  registerInstanceResolver,
 } from './items.js';
 import {
   isWandKnown as idIsWandKnown,
@@ -1440,3 +1441,6 @@ export function restoreWandState(data: WandSaveData | undefined): void {
   wandSeq = data.seq;
   for (const st of data.states) wandStates.set(st.instanceId, { ...st });
 }
+
+// Para que getItem sepa resolver wand_of_x#1 y ring_of_x#1 sin importarnos.
+registerInstanceResolver((id) => instanceItemDef(id));

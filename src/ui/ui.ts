@@ -65,6 +65,7 @@ export class UiManager {
 
   private game: Game | null = null;
   private throwMode: { slot: number } | null = null;
+  private apuntarVarita: { slot: number } | null = null;
   private kills = 0;
   private lastHeroAct = 0;
   private view: View = { w: 390, h: 700 };
@@ -85,6 +86,10 @@ export class UiManager {
     };
     this.inventory.onThrowRequest = (item) => {
       this.throwMode = { slot: item.slot };
+      this.inventory.close();
+    };
+    this.inventory.onZapRequest = (item) => {
+      this.apuntarVarita = { slot: item.slot };
       this.inventory.close();
     };
     this.effects.onMobDeath = () => {
@@ -162,6 +167,7 @@ export class UiManager {
     this.shop.close();
     this.minimap.open = false;
     this.throwMode = null;
+    this.apuntarVarita = null;
     this.screens.show('playing');
   }
 
@@ -179,6 +185,7 @@ export class UiManager {
     this.shop.close();
     this.minimap.open = false;
     this.throwMode = null;
+    this.apuntarVarita = null;
     this.screens.show('playing');
   }
 
@@ -190,6 +197,7 @@ export class UiManager {
     this.shop.close();
     this.minimap.open = false;
     this.throwMode = null;
+    this.apuntarVarita = null;
     this.screens.show('title');
   }
 
@@ -240,8 +248,14 @@ export class UiManager {
       return;
     }
     const k = e.key;
+    if (this.apuntarVarita && k === 'Escape') {
+      this.apuntarVarita = null;
+      this.game?.logMsg('Ya no apuntas.');
+      return;
+    }
     if (this.throwMode && (k === 'Escape' || k.toLowerCase() === 'p')) {
       this.throwMode = null;
+    this.apuntarVarita = null;
       e.preventDefault();
       e.stopPropagation();
       return;
@@ -320,6 +334,25 @@ export class UiManager {
       return;
     }
 
+    // Apuntar una varita: el siguiente toque escoge la casilla. Shattered
+    // dispara hacia una casilla y el rayo pega a lo primero que encuentre.
+    if (this.apuntarVarita) {
+      const t = this.renderer.screenToTile(e.clientX, e.clientY);
+      if (t.x >= 0 && t.y >= 0 && t.x < g.level.w && t.y < g.level.h) {
+        g.queueIntent({
+          kind: 'zapItem',
+          slot: this.apuntarVarita.slot,
+          targetCell: g.level.idx(t.x, t.y),
+        });
+      } else {
+        g.logMsg('Ahí no.');
+      }
+      this.apuntarVarita = null;
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+
     // Throw targeting: next tap picks the target.
     if (this.throwMode) {
       const t = this.renderer.screenToTile(e.clientX, e.clientY);
@@ -332,6 +365,7 @@ export class UiManager {
         g.logMsg('Throw cancelled.');
       }
       this.throwMode = null;
+    this.apuntarVarita = null;
       e.preventDefault();
       e.stopPropagation();
       return;
@@ -410,6 +444,7 @@ export class UiManager {
       // Quest dialogs render above every other overlay.
       if (dialogOpen()) this.dialogs.draw(ctx, this.renderer, this.view);
       if (this.throwMode) this.drawThrowHint(ctx);
+      if (this.apuntarVarita) this.drawZapHint(ctx);
     } else {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.fillStyle = UI.backdrop;
@@ -420,8 +455,15 @@ export class UiManager {
     }
   }
 
+  private drawZapHint(ctx: CanvasRenderingContext2D): void {
+    this.drawHint(ctx, 'Toca a dónde disparar · Esc cancela');
+  }
+
   private drawThrowHint(ctx: CanvasRenderingContext2D): void {
-    const label = 'Tap a target to throw · Esc cancels';
+    this.drawHint(ctx, 'Toca a quién le avientas · Esc cancela');
+  }
+
+  private drawHint(ctx: CanvasRenderingContext2D, label: string): void {
     ctx.font = 'bold 13px system-ui, sans-serif';
     const w = ctx.measureText(label).width + 28;
     const r = { x: (this.view.w - w) / 2, y: 70, w, h: 34 };

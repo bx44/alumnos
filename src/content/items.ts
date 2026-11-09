@@ -722,11 +722,35 @@ export const ITEMS: Readonly<Record<string, ItemDef>> = {
   ...RING_BASE_DEFS,
 };
 
+/**
+ * Las varitas y los anillos no viven en el catalogo estatico: cada uno es
+ * una instancia con su propio id (wand_of_firebolt#1) porque carga sus
+ * cargas, su nivel y su maldicion. Sus modulos se registran aqui al
+ * cargarse, y asi getItem los encuentra sin que items.ts tenga que
+ * importarlos (seria una dependencia circular).
+ */
+type ResolvedorDeInstancias = (id: string) => ItemDef | null;
+// wands.ts se registra mientras items.ts todavia se esta inicializando.
+// Tiene que ser `var`: un `let` o un `const` estarian en zona muerta en ese
+// momento y tronaria con "Cannot access before initialization". Con `var`
+// el nombre ya existe (vale undefined) desde el principio del modulo.
+// eslint-disable-next-line no-var
+var resolvedores: ResolvedorDeInstancias[] | undefined;
+
+export function registerInstanceResolver(fn: ResolvedorDeInstancias): void {
+  if (!resolvedores) resolvedores = [];
+  resolvedores.push(fn);
+}
+
 export function getItem(id: string): ItemDef {
   const { defId } = parseItemId(id);
   const def = ITEMS[defId];
-  if (!def) throw new Error(`unknown item id: ${id}`);
-  return def;
+  if (def) return def;
+  for (const r of resolvedores ?? []) {
+    const inst = r(id);
+    if (inst) return inst;
+  }
+  throw new Error(`unknown item id: ${id}`);
 }
 
 /**

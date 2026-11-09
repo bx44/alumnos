@@ -38,6 +38,12 @@ export type HeroIntent =
    */
   | { kind: 'mineItem'; slot: number }
   /**
+   * Disparar una varita de la mochila hacia una casilla. Las varitas apuntan
+   * a una casilla, no a un enemigo: en Shattered el rayo viaja y pega a lo
+   * primero que encuentra (Wand.java / Ballistica).
+   */
+  | { kind: 'zapItem'; slot: number; targetCell: number }
+  /**
    * Talk to an NPC (Sad Ghost / Wandmaker / shopkeeper). Produced by
    * src/engine/input.ts when the tapped tile holds a talkable mob and by
    * Game's path-bump routing when the path ends on one. Vanilla
