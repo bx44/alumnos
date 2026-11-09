@@ -8,6 +8,26 @@ import { posSuave, pasoDe, limpiaSalvo } from '../orbarak/suave.js';
 /** Rendered tile size: 3x of the 16px art (SPEC). */
 export const TILE_PX = 48;
 
+/**
+ * Cuanto acercar, con la cuenta de Shattered (PixelScene.updateCamera).
+ *
+ * La pantalla, medida en pixeles de juego, no puede quedar mas angosta que
+ * 135 ni mas baja que 225 de pie (240 x 160 acostada). De ahi sale el
+ * acercamiento maximo; el de arranque es 2.5 veces la densidad, recortado
+ * entre 2 y ese maximo. El jugador lo puede mover entre 1 y el doble.
+ */
+export function acercamientoBase(
+  anchoFisico: number,
+  altoFisico: number,
+  densidad: number,
+): number {
+  const acostada = anchoFisico > altoFisico;
+  const minAncho = acostada ? 240 : 135;
+  const minAlto = acostada ? 160 : 225;
+  const tope = Math.max(2, Math.floor(Math.min(anchoFisico / minAncho, altoFisico / minAlto)));
+  return Math.max(2, Math.min(Math.ceil(densidad * 2.5), tope));
+}
+
 /** Chars with per-region overrides in REGION_TINTS. */
 const TINTABLE = new Set(['F', 'f', 'W', 'w']);
 
@@ -95,6 +115,51 @@ export class Renderer {
   private camX = 0;
   private camY = 0;
   private dpr = 1;
+  /** Acercamiento actual, en pixeles de arte por casilla, y sus topes. */
+  private acercamiento = 3;
+  private acercamientoMin = 1;
+  private acercamientoMax = 6;
+
+  /** Pixeles de pantalla (CSS) que mide una casilla ahora mismo. */
+  get tile(): number {
+    return (ART_PX * this.acercamiento) / this.dpr;
+  }
+
+  get acercamientoActual(): number {
+    return this.acercamiento;
+  }
+
+  get acercamientoTopes(): [number, number] {
+    return [this.acercamientoMin, this.acercamientoMax];
+  }
+
+  /** Cambia el acercamiento dentro de sus topes. Devuelve true si cambio. */
+  acerca(nuevo: number): boolean {
+    const v = Math.max(this.acercamientoMin, Math.min(this.acercamientoMax, Math.round(nuevo)));
+    if (v === this.acercamiento) return false;
+    this.acercamiento = v;
+    this.cache.clear(); // los dibujos vienen precocinados a un tamano
+    return true;
+  }
+
+  /** Recalcula el acercamiento de arranque para la pantalla de ahora. */
+  private baseCalculada = false;
+
+  private recalculaAcercamiento(): void {
+    const base = acercamientoBase(this.canvas.width, this.canvas.height, this.dpr);
+    this.acercamientoMin = 1;
+    this.acercamientoMax = base * 2;
+    // La primera vez se toma el de arranque; despues solo se recorta, para
+    // no pisar lo que el jugador haya escogido con los dedos.
+    if (!this.baseCalculada) {
+      this.baseCalculada = true;
+      this.acercamiento = base;
+      this.cache.clear();
+    } else if (this.acercamiento < this.acercamientoMin || this.acercamiento > this.acercamientoMax) {
+      this.acercamiento = Math.max(this.acercamientoMin, Math.min(this.acercamientoMax, this.acercamiento));
+      this.cache.clear();
+    }
+  }
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -111,6 +176,7 @@ export class Renderer {
     const h = this.canvas.clientHeight || window.innerHeight;
     this.canvas.width = Math.round(w * this.dpr);
     this.canvas.height = Math.round(h * this.dpr);
+    this.recalculaAcercamiento();
   }
 
   /**
@@ -131,6 +197,10 @@ export class Renderer {
       this.dpr = dpr;
       this.canvas.width = w;
       this.canvas.height = h;
+      // El lienzo todavia no tiene tamano cuando se construye el
+      // renderizador, asi que el acercamiento hay que rehacerlo aqui, la
+      // primera vez que se sabe de verdad cuanta pantalla hay.
+      this.recalculaAcercamiento();
     }
   }
 
@@ -150,16 +220,16 @@ export class Renderer {
     const px = sx - rect.left;
     const py = sy - rect.top;
     return {
-      x: Math.floor(this.camX + px / TILE_PX),
-      y: Math.floor(this.camY + py / TILE_PX),
+      x: Math.floor(this.camX + px / this.tile),
+      y: Math.floor(this.camY + py / this.tile),
     };
   }
 
   /** CSS-pixel center of a tile (inverse of screenToTile; for UI overlays). */
   tileToScreen(tx: number, ty: number): { x: number; y: number } {
     return {
-      x: (tx + 0.5 - this.camX) * TILE_PX,
-      y: (ty + 0.5 - this.camY) * TILE_PX,
+      x: (tx + 0.5 - this.camX) * this.tile,
+      y: (ty + 0.5 - this.camY) * this.tile,
     };
   }
 
@@ -173,7 +243,7 @@ export class Renderer {
     const level = game.level;
     const heroePaso = pasoDe('heroe', game.hero.x, game.hero.y);
     const heroeVis = { x: heroePaso.x, y: heroePaso.y };
-    const cam = cameraTileRect(heroeVis.x, heroeVis.y, vw, vh, level.w, level.h);
+    const cam = cameraTileRect(heroeVis.x, heroeVis.y, vw, vh, level.w, level.h, this.tile);
     this.camX = cam.camX;
     this.camY = cam.camY;
 
@@ -185,17 +255,17 @@ export class Renderer {
     for (let y = y0; y <= y1; y++) {
       for (let x = x0; x <= x1; x++) {
         const i = level.idx(x, y);
-        const dx = (x - this.camX) * TILE_PX;
-        const dy = (y - this.camY) * TILE_PX;
+        const dx = (x - this.camX) * this.tile;
+        const dy = (y - this.camY) * this.tile;
         if (!level.explored[i]) {
           ctx.fillStyle = '#000';
-          ctx.fillRect(dx, dy, TILE_PX, TILE_PX);
+          ctx.fillRect(dx, dy, this.tile, this.tile);
           continue;
         }
         const seen = level.visible[i] === 1;
         ctx.globalAlpha = seen ? 1 : 0.45;
         const sprite = this.tileSprite(level, x, y);
-        ctx.drawImage(sprite, dx, dy, TILE_PX, TILE_PX);
+        ctx.drawImage(sprite, dx, dy, this.tile, this.tile);
         ctx.globalAlpha = 1;
       }
     }
@@ -210,10 +280,10 @@ export class Renderer {
       ctx.globalAlpha = level.visible[i] ? 1 : 0.45;
       ctx.drawImage(
         this.entitySprite(item.sprite),
-        (x - this.camX) * TILE_PX,
-        (y - this.camY) * TILE_PX,
-        TILE_PX,
-        TILE_PX,
+        (x - this.camX) * this.tile,
+        (y - this.camY) * this.tile,
+        this.tile,
+        this.tile,
       );
       ctx.globalAlpha = 1;
     }
@@ -228,10 +298,10 @@ export class Renderer {
       const v = posSuave(id, m.x, m.y);
       ctx.drawImage(
         this.entitySprite(m.sprite),
-        (v.x - this.camX) * TILE_PX,
-        (v.y - this.camY) * TILE_PX,
-        TILE_PX,
-        TILE_PX,
+        (v.x - this.camX) * this.tile,
+        (v.y - this.camY) * this.tile,
+        this.tile,
+        this.tile,
       );
     }
     limpiaSalvo(vivos);
@@ -241,28 +311,28 @@ export class Renderer {
     for (const p of game.currentPath) {
       const i = level.idx(p.x, p.y);
       if (!level.visible[i]) continue;
-      const cx = (p.x - this.camX) * TILE_PX + TILE_PX / 2;
-      const cy = (p.y - this.camY) * TILE_PX + TILE_PX / 2;
+      const cx = (p.x - this.camX) * this.tile + this.tile / 2;
+      const cy = (p.y - this.camY) * this.tile + this.tile / 2;
       ctx.beginPath();
       ctx.arc(cx, cy, 4, 0, Math.PI * 2);
       ctx.fill();
     }
 
     // Hero: cuadro de caminata mientras se mueve, y volteado hacia donde va.
-    const hx = (heroeVis.x - this.camX) * TILE_PX;
-    const hy = (heroeVis.y - this.camY) * TILE_PX;
+    const hx = (heroeVis.x - this.camX) * this.tile;
+    const hy = (heroeVis.y - this.camY) * this.tile;
     const cuadro = heroePaso.caminando
       ? 'hero_run' + heroePaso.cuadro
       : game.hero.sprite;
     const dibujo = this.entitySprite(cuadro);
     if (heroePaso.mira < 0) {
       ctx.save();
-      ctx.translate(hx + TILE_PX, hy);
+      ctx.translate(hx + this.tile, hy);
       ctx.scale(-1, 1);
-      ctx.drawImage(dibujo, 0, 0, TILE_PX, TILE_PX);
+      ctx.drawImage(dibujo, 0, 0, this.tile, this.tile);
       ctx.restore();
     } else {
-      ctx.drawImage(dibujo, hx, hy, TILE_PX, TILE_PX);
+      ctx.drawImage(dibujo, hx, hy, this.tile, this.tile);
     }
   }
 
@@ -459,12 +529,16 @@ export class Renderer {
 
   /** Scale a sprite canvas up to render size with smoothing off (crisp pixels). */
   private scaleUp(img: HTMLCanvasElement): HTMLCanvasElement {
+    // Se precocina en pixeles fisicos (16 x acercamiento), que siempre es
+    // entero. Si se hiciera en pixeles CSS, con densidad 3 saldria 42.67 y
+    // el reescalado dejaria el dibujo despintado.
+    const lado = ART_PX * this.acercamiento;
     const big = document.createElement('canvas');
-    big.width = TILE_PX;
-    big.height = TILE_PX;
+    big.width = lado;
+    big.height = lado;
     const bg = big.getContext('2d')!;
     bg.imageSmoothingEnabled = false;
-    bg.drawImage(img, 0, 0, TILE_PX, TILE_PX);
+    bg.drawImage(img, 0, 0, lado, lado);
     return big;
   }
 }

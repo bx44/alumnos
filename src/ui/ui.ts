@@ -33,6 +33,11 @@ import { RNG } from '../core/rng.js';
 import { initIdentification } from '../content/identification.js';
 import { potionFamilyDef } from '../content/potions.js';
 import { scrollFamilyDef } from '../content/scrolls.js';
+import {
+  conectaAcercamiento,
+  acercamientoGuardado,
+  ponBotonPantallaCompleta,
+} from '../orbarak/pantalla.js';
 
 const HERO_MS = 110; // at most one hero-visible action per 110ms
 
@@ -88,6 +93,10 @@ export class UiManager {
       this.throwMode = { slot: item.slot };
       this.inventory.close();
     };
+    ponBotonPantallaCompleta();
+    const guardado = acercamientoGuardado();
+    if (guardado !== null) this.renderer.acerca(guardado);
+    conectaAcercamiento(this.canvas, this.renderer, () => {});
     this.inventory.onZapRequest = (item) => {
       this.apuntarVarita = { slot: item.slot };
       this.inventory.close();
