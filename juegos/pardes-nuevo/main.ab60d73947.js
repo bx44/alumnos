@@ -3839,6 +3839,19 @@ var BURNING_DURATION = 8;
 var POISON_TRAP_BASE = 4;
 var PARALYSIS_DURATION = 10;
 var CRIPPLE_DURATION = 10;
+var SLOW_DURATION = 10;
+var VERTIGO_DURATION = 10;
+function elementsDurationFactor(elementsLevel) {
+  if (elementsLevel === null || elementsLevel < 0)
+    return 1;
+  return (2 + 0.5 * elementsLevel) / (2 + elementsLevel);
+}
+function slowDuration(elementsLevel) {
+  return elementsDurationFactor(elementsLevel) * SLOW_DURATION;
+}
+function vertigoDuration(elementsLevel) {
+  return elementsDurationFactor(elementsLevel) * VERTIGO_DURATION;
+}
 var OOZE_DAMAGE = 1;
 function burningTick(rng, hp, ht, left, inWater, flying) {
   const damage = rng.int(1, 5);
@@ -4937,12 +4950,195 @@ function wandSpec(id) {
     throw new Error(`wands: unknown wand id ${id}`);
   return spec;
 }
+function magicMissileDamage(rng, power) {
+  return rng.int(1, 6 + 2 * power);
+}
+function fireboltDamage(rng, power) {
+  return rng.int(1, 8 + power * power);
+}
+function lightningInitialDamage(rng, power) {
+  return rng.int(5 + Math.floor(power / 2), 10 + power);
+}
+function lightningChainDamage(rng, damage) {
+  return rng.int(Math.floor(damage / 2), damage);
+}
+function disintegrationMaxDistance(rawLevel) {
+  return rawLevel + 4;
+}
+function disintegrationDamage(rng, power, targets) {
+  const lvl = power + targets;
+  return rng.normalIntRange(lvl, 8 + Math.floor(lvl * lvl / 3));
+}
+function avalancheSize(power) {
+  return 1 + Math.floor(power / 3);
+}
+function avalancheDamage(rng, size, dist) {
+  return rng.int(2, 6 + (size - dist) * 2);
+}
+function avalancheParalyzes(rng, dist) {
+  return rng.int(0, 2 + dist) === 0;
+}
+function avalancheParalysisDuration(rng) {
+  return rng.intRange(2, 6);
+}
+function poisonWandDuration(power) {
+  return 5 + power;
+}
+function amokDuration(power) {
+  return 3 + power;
+}
+function blinkDestinationCell(trace, distance, power, impactCellOccupied) {
+  let cell;
+  if (distance > power + 4) {
+    cell = trace[power + 3];
+  } else {
+    cell = trace[distance - 1];
+    if (impactCellOccupied && distance > 1) {
+      cell = trace[distance - 2];
+    }
+  }
+  return cell;
+}
+function flockSheepCount(power) {
+  return power + 2;
+}
+function flockLifespan(power, rng) {
+  return power + 3 + rng.float(0, 2);
+}
+function flockSheepPositions(w, h, cell, passable, occupiedAt, n) {
+  const trav = (pos) => passable(pos) && !occupiedAt(pos);
+  const dist = buildDistanceMap2(w, h, cell, trav, n);
+  let d = 0;
+  if (occupiedAt(cell)) {
+    dist[cell] = Infinity;
+    d = 1;
+  }
+  const placed = [];
+  const length = w * h;
+  sheepLoop:
+    for (let i = 0;i < n; i++) {
+      while (d < n) {
+        for (let j = 0;j < length; j++) {
+          if (dist[j] === d) {
+            placed.push(j);
+            dist[j] = Infinity;
+            continue sheepLoop;
+          }
+        }
+        d++;
+      }
+    }
+  return placed;
+}
+function reachDistance(ballisticaDistance, power) {
+  return Math.min(ballisticaDistance, power + 4);
+}
+function regrowthSeedAmount(power) {
+  return (power + 2) * 20;
+}
+var TXT_SELF_TARGET = "No te puedes apuntar a ti mismo";
 function txtWandIdentified(wandName) {
   return `Ya le agarraste el modo a tu ${wandName}.`;
 }
+function txtReachTransported(itemName) {
+  return `${itemName} aparece en tu mochila como por arte de magia`;
+}
+var TXT_NOTHING_HAPPENED = "no pasó nada";
 var USAGES_TO_KNOW = 40;
 function wandMaxCharges(initialCharges, level) {
   return Math.min(initialCharges + level, 9);
+}
+function wandPower(effectiveLevel, ringPowerLevel, charging) {
+  if (!charging)
+    return effectiveLevel;
+  if (ringPowerLevel === null)
+    return effectiveLevel;
+  return Math.max(effectiveLevel + ringPowerLevel, 0);
+}
+function ballisticaCast(world, from, to, magic, hitChars) {
+  const w = world.w;
+  const x0 = from % w;
+  const x1 = to % w;
+  const y0 = Math.floor(from / w);
+  const y1 = Math.floor(to / w);
+  let dx = x1 - x0;
+  let dy = y1 - y0;
+  const stepX = dx > 0 ? 1 : -1;
+  const stepY = dy > 0 ? 1 : -1;
+  dx = Math.abs(dx);
+  dy = Math.abs(dy);
+  let stepA;
+  let stepB;
+  let dA;
+  let dB;
+  if (dx > dy) {
+    stepA = stepX;
+    stepB = stepY * w;
+    dA = dx;
+    dB = dy;
+  } else {
+    stepA = stepY * w;
+    stepB = stepX;
+    dA = dy;
+    dB = dx;
+  }
+  const trace = [from];
+  let distance = 1;
+  let cell = from;
+  let err = Math.floor(dA / 2);
+  while (cell !== to || magic) {
+    cell += stepA;
+    err += dB;
+    if (err >= dA) {
+      err = err - dA;
+      cell = cell + stepB;
+    }
+    trace.push(cell);
+    distance++;
+    if (!world.beamPassableAt(cell)) {
+      distance--;
+      return { trace, distance, cell: trace[distance - 1] };
+    }
+    if (world.losBlockingAt(cell) || hitChars && world.charAt(cell)) {
+      return { trace, distance, cell };
+    }
+  }
+  trace.push(cell);
+  distance++;
+  return { trace, distance, cell: to };
+}
+function buildDistanceMap2(w, h, from, passable, maxDistance) {
+  const length = w * h;
+  const dist = new Float64Array(length).fill(Infinity);
+  if (from < 0 || from >= length)
+    return dist;
+  dist[from] = 0;
+  let frontier = [from];
+  let d = 0;
+  while (frontier.length > 0 && d < maxDistance) {
+    d++;
+    const next = [];
+    for (const pos of frontier) {
+      const x = pos % w;
+      const y = Math.floor(pos / w);
+      const push = (n) => {
+        if (dist[n] === Infinity && passable(n)) {
+          dist[n] = d;
+          next.push(n);
+        }
+      };
+      if (x > 0)
+        push(pos - 1);
+      if (x < w - 1)
+        push(pos + 1);
+      if (y > 0)
+        push(pos - w);
+      if (y < h - 1)
+        push(pos + w);
+    }
+    frontier = next;
+  }
+  return dist;
 }
 
 // src/mechanics/combat.ts
@@ -5565,7 +5761,7 @@ function reigniteBurning(ch, duration) {
     return;
   ch.buffs["burning"] = { kind: "burning", left: duration };
 }
-var VERTIGO_DURATION = 10;
+var VERTIGO_DURATION2 = 10;
 var TERROR_DURATION = 10;
 var FROST_DURATION = 5;
 function deathProc(fx, _attacker, defender, level) {
@@ -5588,7 +5784,7 @@ function fireProc(fx, _attacker, defender, _damage, level) {
 function horrorProc(fx, attacker, defender, level) {
   if (fx.rng.int(0, level + 5) >= 4) {
     if (defender.kind === "hero") {
-      affectBuff(defender, "vertigo", VERTIGO_DURATION);
+      affectBuff(defender, "vertigo", VERTIGO_DURATION2);
     } else {
       affectBuff(defender, "terror", TERROR_DURATION, {
         sourceId: attacker.id
@@ -7740,7 +7936,10 @@ var RING_GEMS = [
   "agate"
 ];
 var RING_PRICE_BASE = 80;
+var TICKS_TO_KNOW = 200;
 var ringStates = new Map;
+var ringSeq = 0;
+var ringSlots = [null, null];
 function parseRingId(itemId) {
   const hash = itemId.indexOf("#");
   const base = hash === -1 ? itemId : itemId.slice(0, hash);
@@ -7753,6 +7952,39 @@ function parseRingId(itemId) {
 }
 function isRingId(itemId) {
   return parseRingId(itemId) !== null;
+}
+function getRingState(instanceId) {
+  return ringStates.get(instanceId);
+}
+function createRing(rng, ringId, opts = {}) {
+  const spec = ringSpec(ringId);
+  const instanceId = `ring_of_${ringId}#${++ringSeq}`;
+  let level = 0;
+  let cursed = false;
+  if (spec.fixedPlusOne) {
+    level = 1;
+  } else if (opts.randomize) {
+    const lvl = rng.int(1, 3);
+    if (rng.float(0, 1) < 0.3) {
+      level = -lvl;
+      cursed = true;
+    } else {
+      level = lvl;
+    }
+  }
+  const st = {
+    instanceId,
+    ringId,
+    level,
+    cursed,
+    cursedKnown: false,
+    ticksToKnow: TICKS_TO_KNOW,
+    regenAcc: 0
+  };
+  ringStates.set(instanceId, st);
+  if (spec.fixedPlusOne)
+    identifyRingType(ringId);
+  return instanceId;
 }
 function ringEffectiveLevel(state) {
   return state.level;
@@ -7775,6 +8007,11 @@ function isRingTypeKnown(ringId) {
   ensureLocalLabels();
   return localKnown.has(spec.javaClass);
 }
+function identifyRingType(ringId) {
+  const spec = ringSpec(ringId);
+  ensureLocalLabels();
+  localKnown.add(spec.javaClass);
+}
 function ringGemLabel(ringId) {
   ensureLocalLabels();
   return localGemLabels.get(ringSpec(ringId).javaClass) ?? "diamond";
@@ -7785,6 +8022,79 @@ function registerRingIdClasses() {
     labels: RING_GEMS,
     images: RING_SPECS.map((s) => s.spriteKey)
   });
+}
+function equippedRings() {
+  return [ringSlots[0], ringSlots[1]];
+}
+function equippedRingStates() {
+  return [
+    ringSlots[0] ? ringStates.get(ringSlots[0]) ?? null : null,
+    ringSlots[1] ? ringStates.get(ringSlots[1]) ?? null : null
+  ];
+}
+function equippedRingLevels(hero, ringId) {
+  const out = [];
+  for (const st of equippedRingStates()) {
+    if (st && st.ringId === ringId)
+      out.push(ringEffectiveLevel(st));
+  }
+  return out;
+}
+function ringBonus(hero, ringId) {
+  return equippedRingLevels(hero, ringId).reduce((s, l) => s + l, 0);
+}
+function syncRingBuffs(hero) {
+  for (const spec of RING_SPECS) {
+    const key = spec.buffKind;
+    const levels = equippedRingLevels(hero, spec.id);
+    if (levels.length === 0) {
+      delete hero.buffs[key];
+    } else {
+      hero.buffs[key] = {
+        kind: key,
+        left: Infinity,
+        level: levels.reduce((s, l) => s + l, 0)
+      };
+    }
+  }
+}
+function equipRing(ctx, hero, slot) {
+  const stack = hero.inventory[slot];
+  if (!stack || !isRingId(stack.itemId))
+    return 0;
+  const st = getRingState(stack.itemId);
+  if (!st)
+    return 0;
+  const finger = ringSlots[0] === null ? 1 : ringSlots[1] === null ? 2 : 0;
+  if (finger === 0)
+    return 0;
+  removeFromInventory(hero, slot, 1);
+  ringSlots[finger - 1] = st.instanceId;
+  st.cursedKnown = true;
+  if (st.cursed) {
+    ctx.log(`${ringDisplayName(st.ringId)} te aprieta el dedo y duele`);
+  }
+  syncRingBuffs(hero);
+  return finger;
+}
+function unequipRing(ctx, hero, finger) {
+  const instanceId = ringSlots[finger - 1];
+  if (!instanceId)
+    return false;
+  const st = ringStates.get(instanceId);
+  if (!st)
+    return false;
+  if (st.cursed) {
+    ctx.log(`¡No te puedes quitar ${ringDisplayName(st.ringId)}!`);
+    return false;
+  }
+  ringSlots[finger - 1] = null;
+  addToInventory(hero, instanceId, 1);
+  syncRingBuffs(hero);
+  return true;
+}
+function powerRingBonus(hero) {
+  return ringBonus(hero, "power");
 }
 function ringDisplayName(ringId) {
   const spec = ringSpec(ringId);
@@ -7835,6 +8145,14 @@ function ringItemDefFor(defId) {
     stackable: false,
     price: ringPrice(st)
   };
+}
+function normalizeRingPickup(rng, itemId) {
+  const parsed = parseRingId(itemId);
+  if (!parsed)
+    return itemId;
+  if (parsed.instanceId)
+    return parsed.instanceId;
+  return createRing(rng, parsed.ringId, { randomize: true });
 }
 registerRingIdClasses();
 
@@ -7895,6 +8213,13 @@ function createWand(rng, wandId, opts = {}) {
     rechargeAcc: 0
   });
   return instanceId;
+}
+function wandEffectiveLevel(state) {
+  return state.level;
+}
+function wandZapPower(hero, state, charging) {
+  const eLevel = wandEffectiveLevel(state);
+  return wandPower(eLevel, powerRingBonus(hero), charging);
 }
 var WAND_WOODS = [
   "holly",
@@ -7963,6 +8288,14 @@ function wandItemDef(instanceId) {
     price: wandPrice(st)
   };
 }
+function normalizeWandPickup(rng, itemId) {
+  const parsed = parseWandId(itemId);
+  if (!parsed)
+    return itemId;
+  if (parsed.instanceId)
+    return parsed.instanceId;
+  return createWand(rng, parsed.wandId, { randomize: true });
+}
 function identifyWandType(wandId, log = () => {}) {
   const spec = wandSpec(wandId);
   if (spec.wood === null || isWandKnown(spec.className))
@@ -7970,16 +8303,528 @@ function identifyWandType(wandId, log = () => {}) {
   knowWand(spec.className);
   log(txtWandIdentified(spec.name));
 }
+function resolveZap(ctx, hero, state, targetCell, fx) {
+  if (targetCell === hero.pos) {
+    ctx.log(TXT_SELF_TARGET);
+    return { ok: false, reason: "self-target" };
+  }
+  const spec = wandSpec(state.wandId);
+  const ball = ballisticaCast(ballisticaWorldOf(ctx), hero.pos, targetCell, true, spec.hitChars);
+  applyZapEffect(ctx, hero, state, ball, fx);
+  state.curCharges--;
+  state.chargeKnown = true;
+  state.usagesToKnow--;
+  if (state.usagesToKnow <= 0)
+    identifyWandType(state.wandId, ctx.log);
+  return { ok: true, spent: 1 };
+}
 function createWandReward(rng, wandId) {
   return createWand(rng, wandId, { randomize: true, upgrades: 1 });
 }
+var WandFxNoop = () => {};
+function beamPassable(t) {
+  switch (t) {
+    case 0 /* WALL */:
+    case 8 /* CHASM */:
+    case 4 /* DOOR_SECRET */:
+    case 3 /* DOOR_LOCKED */:
+    case 5 /* EXIT_LOCKED */:
+    case 37 /* BARRICADE */:
+    case 15 /* STATUE */:
+    case 17 /* BOOKSHELF */:
+    case 14 /* PEDESTAL */:
+    case 13 /* ALCHEMY */:
+    case 18 /* CHEST */:
+    case 19 /* CHEST_LOCKED */:
+    case 16 /* TOMB */:
+      return false;
+    default:
+      return true;
+  }
+}
+function beamLosBlocking(t) {
+  switch (t) {
+    case 0 /* WALL */:
+    case 2 /* DOOR */:
+    case 4 /* DOOR_SECRET */:
+    case 3 /* DOOR_LOCKED */:
+    case 39 /* HIGH_GRASS */:
+    case 37 /* BARRICADE */:
+      return true;
+    default:
+      return false;
+  }
+}
+function solidAt(level, pos) {
+  const t = level.tiles[pos];
+  return !beamPassable(t) && t !== 2 /* DOOR */ && t !== 4 /* DOOR_SECRET */;
+}
+function ballisticaWorldOf(ctx) {
+  const level = ctx.level;
+  const w = level.w;
+  const hero = heroOf(ctx);
+  return {
+    w,
+    h: level.h,
+    beamPassableAt: (pos) => beamPassable(level.tiles[pos]),
+    losBlockingAt: (pos) => beamLosBlocking(level.tiles[pos]),
+    charAt: (pos) => hero.isAlive() && hero.pos === pos || ctx.mobs.some((m) => m.isAlive() && m.y * w + m.x === pos)
+  };
+}
+function isZapCharAlive(ch) {
+  return ch.isAlive();
+}
+function asTrapChar(ch) {
+  if (ch instanceof ContentHero)
+    return ch;
+  return Object.assign(ch, { kind: "mob" });
+}
+function damageZapChar(ctx, target, amount, source) {
+  if (target instanceof ContentHero) {
+    const applied = applyDamage(ctx.rng, {
+      hp: target.hp,
+      ht: target.ht,
+      paralysed: target.paralysed,
+      immunities: [],
+      resistances: []
+    }, amount, source);
+    target.hp = applied.hp;
+    if (applied.paralysisBroken)
+      target.paralysed = false;
+  } else {
+    damageMobDirect(ctx, target, amount, source);
+  }
+}
+function prolongBuff2(target, kind, duration) {
+  const cur = target.buffs[kind];
+  target.buffs[kind] = { kind, left: (cur ? cur.left : 0) + duration };
+}
+function elementsLevelOf(ch) {
+  if (ch instanceof ContentHero) {
+    const b = ch.buffs["ring_elements"];
+    return b ? b.level ?? 0 : null;
+  }
+  return null;
+}
+function randomRespawnCell(ctx, hero) {
+  const level = ctx.level;
+  const n = level.w * level.h;
+  for (let i = 0;i < 10; i++) {
+    const cell = ctx.rng.int(0, n);
+    const x = cell % level.w;
+    const y = Math.floor(cell / level.w);
+    if (!isRespawnPassable(level, x, y))
+      continue;
+    if (level.visible[cell])
+      continue;
+    if (hero.pos === cell)
+      continue;
+    if (charAtPos(ctx, cell))
+      continue;
+    return cell;
+  }
+  return -1;
+}
+function isRespawnPassable(level, x, y) {
+  if (x < 0 || y < 0 || x >= level.w || y >= level.h)
+    return false;
+  return beamPassable(level.tiles[y * level.w + x]);
+}
+function healDewdrop(ctx, hero, qty) {
+  const value = 1 + Math.floor((ctx.level.depth - 1) / 5);
+  const effect = Math.min(hero.ht - hero.hp, value * qty);
+  if (effect > 0) {
+    hero.hp += effect;
+    ctx.log(`+${effect}HP`);
+  }
+}
+function effectMagicMissile(ctx, hero, power, ball, fx) {
+  const target = charAtPos(ctx, ball.cell);
+  if (target) {
+    damageZapChar(ctx, target, magicMissileDamage(ctx.rng, power), "wand");
+  }
+  fx({ kind: "missile", from: hero.pos, to: ball.cell });
+}
+function effectFirebolt(ctx, hero, power, ball, fx) {
+  const level = ctx.level;
+  for (let i = 1;i < ball.distance - 1; i++) {
+    const c = ball.trace[i];
+    if (isFlamableForBlob(level.tiles[c])) {
+      seedBlob(level.blobs, "fire", c, 4, level.w * level.h);
+    }
+  }
+  seedBlob(level.blobs, "fire", ball.cell, 1, level.w * level.h);
+  const target = charAtPos(ctx, ball.cell);
+  if (target) {
+    damageZapChar(ctx, target, fireboltDamage(ctx.rng, power), "wand");
+    if (isZapCharAlive(target) && target.buffs["burning"]) {
+      const full = BURNING_DURATION * elementsDurationFactor(elementsLevelOf(target));
+      target.buffs["burning"] = { kind: "burning", left: full };
+    }
+  }
+  fx({ kind: "missile", from: hero.pos, to: ball.cell });
+}
+function effectLightning(ctx, hero, power, ball, fx) {
+  const level = ctx.level;
+  const w = level.w;
+  const affected = new Set;
+  const points = [hero.pos];
+  const hit = (ch, damage) => {
+    if (damage < 1)
+      return;
+    affected.add(ch);
+    const inWater = level.tiles[ch.pos] === 9 /* WATER */ && !ch.flying;
+    damageZapChar(ctx, ch, inWater ? damage * 2 : damage, "lightning");
+    points.push(ch.pos);
+    const ns = [];
+    const cx = ch.pos % w;
+    const cy = Math.floor(ch.pos / w);
+    for (let dy = -1;dy <= 1; dy++) {
+      for (let dx = -1;dx <= 1; dx++) {
+        if (dx === 0 && dy === 0)
+          continue;
+        const nx = cx + dx;
+        const ny = cy + dy;
+        if (nx < 0 || ny < 0 || nx >= w || ny >= level.h)
+          continue;
+        const n = charAtPos(ctx, ny * w + nx);
+        if (n && isZapCharAlive(n) && !affected.has(n))
+          ns.push(n);
+      }
+    }
+    if (ns.length > 0)
+      hit(ctx.rng.pick(ns), lightningChainDamage(ctx.rng, damage));
+  };
+  const first = charAtPos(ctx, ball.cell);
+  if (first && isZapCharAlive(first)) {
+    hit(first, lightningInitialDamage(ctx.rng, power));
+  } else {
+    points.push(ball.cell);
+  }
+  fx({ kind: "strike", points });
+  if (!hero.isAlive()) {
+    ctx.log("Te mataste con tu propia varita de rayos...");
+  }
+}
+function effectDisintegration(ctx, _hero, power, rawLevel, ball, fx) {
+  const level = ctx.level;
+  const effDistance = Math.min(ball.distance, disintegrationMaxDistance(rawLevel));
+  let terrainAffected = false;
+  const chars = [];
+  for (let i = 1;i < effDistance; i++) {
+    const c = ball.trace[i];
+    const ch = charAtPos(ctx, c);
+    if (ch && isZapCharAlive(ch))
+      chars.push(ch);
+    const t = level.tiles[c];
+    if (t === 2 /* DOOR */) {
+      setLevelTile(level, c, 38 /* EMBERS */);
+      terrainAffected = true;
+    } else if (t === 39 /* HIGH_GRASS */) {
+      setLevelTile(level, c, 10 /* GRASS */);
+      terrainAffected = true;
+    }
+  }
+  for (const ch of chars) {
+    damageZapChar(ctx, ch, disintegrationDamage(ctx.rng, power, chars.length), "wand");
+  }
+  fx({ kind: "beam", cells: ball.trace.slice(0, effDistance) });
+}
+function setLevelTile(level, pos, t) {
+  level.tiles[pos] = t;
+}
+function effectAvalanche(ctx, hero, power, ball, fx) {
+  const level = ctx.level;
+  const size = avalancheSize(power);
+  const dist = buildDistanceMap2(level.w, level.h, ball.cell, (pos) => !solidAt(level, pos), size);
+  const n = level.w * level.h;
+  const burst = [];
+  for (let i = 0;i < n; i++) {
+    const d = dist[i];
+    if (d === Infinity)
+      continue;
+    burst.push(i);
+    const ch = charAtPos(ctx, i);
+    if (ch && isZapCharAlive(ch)) {
+      damageZapChar(ctx, ch, avalancheDamage(ctx.rng, size, d), "wand");
+      if (isZapCharAlive(ch) && avalancheParalyzes(ctx.rng, d)) {
+        prolongBuff2(ch, "paralysis", avalancheParalysisDuration(ctx.rng));
+      }
+    }
+    pressTrapCell(ctx, i, ch && isZapCharAlive(ch) ? asTrapChar(ch) : null, (mobId, pos) => {
+      const mob = buildMob(mobId, nextMobId(), pos, level.w);
+      mob.state = "wandering";
+      ctx.addMob(mob, 2);
+    });
+  }
+  fx({ kind: "burst", cells: burst });
+}
+function effectPoison(ctx, hero, power, ball, _fx) {
+  const target = charAtPos(ctx, ball.cell);
+  if (target && isZapCharAlive(target)) {
+    const dur = poisonWandDuration(power) * elementsDurationFactor(elementsLevelOf(target));
+    target.buffs["poison"] = { kind: "poison", left: dur };
+  } else {
+    ctx.log(TXT_NOTHING_HAPPENED);
+  }
+}
+function effectAmok(ctx, hero, power, ball, _fx) {
+  const target = charAtPos(ctx, ball.cell);
+  if (target && isZapCharAlive(target)) {
+    if (target instanceof ContentHero) {
+      prolongBuff2(target, "vertigo", vertigoDuration(elementsLevelOf(target)));
+    } else {
+      prolongBuff2(target, "amok", amokDuration(power));
+    }
+  } else {
+    ctx.log(TXT_NOTHING_HAPPENED);
+  }
+}
+function effectSlowness(ctx, _hero, power, ball, _fx) {
+  const target = charAtPos(ctx, ball.cell);
+  if (target && isZapCharAlive(target)) {
+    prolongBuff2(target, "slow", slowDuration(elementsLevelOf(target)) / 3 + power);
+  } else {
+    ctx.log(TXT_NOTHING_HAPPENED);
+  }
+}
+function effectBlink(ctx, hero, power, ball, fx) {
+  const dest = blinkDestinationCell(ball.trace, ball.distance, power, charAtPos(ctx, ball.cell) != null);
+  const from = hero.pos;
+  hero.pos = dest;
+  fx({ kind: "missile", from, to: dest });
+}
+function effectTeleportation(ctx, hero, _power, ball, _fx) {
+  const target = charAtPos(ctx, ball.cell);
+  if (target && isZapCharAlive(target)) {
+    if (target instanceof ContentHero) {
+      identifyWandType("teleportation", ctx.log);
+      let cell = -1;
+      for (let count = 11;count > 0; count--) {
+        cell = randomRespawnCell(ctx, hero);
+        if (cell !== -1)
+          break;
+      }
+      if (cell !== -1) {
+        hero.pos = cell;
+      } else {
+        ctx.log("¡No hay a dónde aparecerse!");
+      }
+    } else {
+      let pos = -1;
+      for (let count = 11;count > 0; count--) {
+        pos = randomRespawnCell(ctx, hero);
+        if (pos !== -1)
+          break;
+      }
+      if (pos === -1) {
+        ctx.log("¡No hay a dónde aparecerse!");
+      } else {
+        target.pos = pos;
+        ctx.log(`${hero.name} teleported ${target.name} to somewhere`);
+      }
+    }
+  } else {
+    ctx.log(TXT_NOTHING_HAPPENED);
+  }
+}
+function effectFlock(ctx, hero, power, ball, fx) {
+  const level = ctx.level;
+  const n = flockSheepCount(power);
+  let cell = ball.cell;
+  if (charAtPos(ctx, cell) != null && ball.distance > 2) {
+    cell = ball.trace[ball.distance - 2];
+  }
+  const occupied = new Set;
+  if (hero.isAlive())
+    occupied.add(hero.pos);
+  for (const m of ctx.mobs)
+    if (m.isAlive())
+      occupied.add(m.y * level.w + m.x);
+  const positions = flockSheepPositions(level.w, level.h, cell, (pos) => beamPassable(level.tiles[pos]), (pos) => occupied.has(pos), n);
+  const lifespan = flockLifespan(power, ctx.rng);
+  for (const pos of positions) {
+    spawnFlockSheep(ctx, pos, lifespan);
+  }
+  fx({ kind: "sheep", cells: positions });
+}
+function effectRegrowth(ctx, _hero, power, ball, _fx) {
+  const level = ctx.level;
+  for (let i = 1;i < ball.distance - 1; i++) {
+    const c = ball.trace[i];
+    const t = level.tiles[c];
+    if (t === 1 /* FLOOR */ || t === 38 /* EMBERS */) {
+      setLevelTile(level, c, 10 /* GRASS */);
+    }
+  }
+  const cell = ball.cell;
+  const t = level.tiles[cell];
+  if (t === 1 /* FLOOR */ || t === 38 /* EMBERS */ || t === 10 /* GRASS */ || t === 39 /* HIGH_GRASS */) {
+    seedRegrowthBlob(level.blobs, cell, regrowthSeedAmount(power), level.w * level.h);
+  } else {
+    ctx.log(TXT_NOTHING_HAPPENED);
+  }
+}
+
+class RegrowthBlob extends Blob {
+  constructor(length) {
+    super("regrowth", length);
+  }
+  evolve(_rng, world) {
+    const { length } = world;
+    const { cur, off } = this;
+    for (let pos = 0;pos < length; pos++) {
+      if (cur[pos] > 0) {
+        const grown = cur[pos] > 1;
+        const v = cur[pos] - 1;
+        this.volume += off[pos] = v;
+        const t = world.tileAt(pos);
+        let c1 = t;
+        if (t === 1 /* FLOOR */ || t === 38 /* EMBERS */) {
+          c1 = grown ? 39 /* HIGH_GRASS */ : 10 /* GRASS */;
+        } else if (t === 10 /* GRASS */ && grown) {
+          c1 = 39 /* HIGH_GRASS */;
+        }
+        if (c1 !== t) {
+          world.setTile(pos, c1);
+        }
+      } else {
+        off[pos] = 0;
+      }
+    }
+  }
+}
+function seedRegrowthBlob(blobs, cell, amount, length) {
+  let blob = blobs.find((b) => b instanceof RegrowthBlob);
+  if (!blob) {
+    blob = new RegrowthBlob(length);
+    blobs.push(blob);
+  }
+  blob.seed(cell, amount);
+  return blob;
+}
+function effectReach(ctx, hero, power, ball, _fx) {
+  const level = ctx.level;
+  const reach = reachDistance(ball.distance, power);
+  for (let i = 1;i < reach; i++) {
+    const c = ball.trace[i];
+    const before = level.tiles[c];
+    const ch = charAtPos(ctx, c);
+    if (ch && isZapCharAlive(ch) && !(ch instanceof ContentHero)) {
+      const heroPos = hero.pos;
+      hero.pos = ch.pos;
+      ch.pos = heroPos;
+      break;
+    }
+    const heapIdx = level.items.findIndex((it) => it.pos === c);
+    if (heapIdx !== -1) {
+      const heap = level.items[heapIdx];
+      if (heap.lockedChest)
+        break;
+      level.items.splice(heapIdx, 1);
+      const { defId, qty } = parseItemId(heap.itemId);
+      if (defId === "dewdrop") {
+        healDewdrop(ctx, hero, qty);
+      } else {
+        const pickupId = parseWandId(heap.itemId) != null ? normalizeWandPickup(ctx.rng, heap.itemId) : parseRingId(heap.itemId) != null ? normalizeRingPickup(ctx.rng, heap.itemId) : heap.itemId;
+        addToInventory(hero, pickupId, qty);
+        ctx.log(txtReachTransported(getItem(pickupId).name));
+      }
+      break;
+    }
+    pressTrapCell(ctx, c, null, (mobId, pos) => {
+      const mob = buildMob(mobId, nextMobId(), pos, level.w);
+      mob.state = "wandering";
+      ctx.addMob(mob, 2);
+    });
+    if (before === 40 /* OPEN_DOOR */) {
+      setLevelTile(level, c, 2 /* DOOR */);
+    }
+  }
+}
+function applyZapEffect(ctx, hero, state, ball, fx) {
+  const power = wandZapPower(hero, state, true);
+  switch (state.wandId) {
+    case "magic_missile":
+      return effectMagicMissile(ctx, hero, power, ball, fx);
+    case "firebolt":
+      return effectFirebolt(ctx, hero, power, ball, fx);
+    case "lightning":
+      return effectLightning(ctx, hero, power, ball, fx);
+    case "disintegration":
+      return effectDisintegration(ctx, hero, power, state.level, ball, fx);
+    case "avalanche":
+      return effectAvalanche(ctx, hero, power, ball, fx);
+    case "poison":
+      return effectPoison(ctx, hero, power, ball, fx);
+    case "amok":
+      return effectAmok(ctx, hero, power, ball, fx);
+    case "slowness":
+      return effectSlowness(ctx, hero, power, ball, fx);
+    case "blink":
+      return effectBlink(ctx, hero, power, ball, fx);
+    case "teleportation":
+      return effectTeleportation(ctx, hero, power, ball, fx);
+    case "flock":
+      return effectFlock(ctx, hero, power, ball, fx);
+    case "regrowth":
+      return effectRegrowth(ctx, hero, power, ball, fx);
+    case "reach":
+      return effectReach(ctx, hero, power, ball, fx);
+  }
+}
+var SHEEP_DEF = {
+  id: "sheep",
+  name: "borrego",
+  sprite: "mob_sheep",
+  hp: 1,
+  atk: 0,
+  def: 0,
+  dmgMin: 0,
+  dmgMax: 0,
+  triangular: true,
+  dr: 0,
+  exp: 0,
+  maxLvl: 1,
+  speed: 1,
+  flying: false,
+  ability: null,
+  attackDelay: 1,
+  immunities: [],
+  resistances: []
+};
 var sheepLifespans = new Map;
+function spawnFlockSheep(ctx, pos, lifespan) {
+  const level = ctx.level;
+  const sheep = new ContentMob(nextMobId(), SHEEP_DEF, pos, level.w);
+  sheep.invulnerable = true;
+  sheep.hostile = false;
+  sheep.state = "wandering";
+  sheepLifespans.set(sheep.id, lifespan);
+  ctx.addMob(sheep);
+  pressTrapCell(ctx, pos, asTrapChar(sheep), (mobId, p) => {
+    const mob = buildMob(mobId, nextMobId(), p, level.w);
+    mob.state = "wandering";
+    ctx.addMob(mob, 2);
+  });
+}
+function zapWandFromSlot(ctx, hero, slot, targetCell, fx = WandFxNoop) {
+  const stack = hero.inventory[slot];
+  if (!stack)
+    return 1;
+  const st = getWandState(stack.itemId);
+  if (!st)
+    return 1;
+  const res = resolveZap(ctx, hero, st, targetCell, fx);
+  return res.ok ? res.spent : 1;
+}
 registerWandIdClasses();
 function instanceItemDef(defId) {
   if (defId.startsWith("wand_of_"))
     return wandItemDef(defId);
   return ringItemDefFor(defId);
 }
+registerInstanceResolver((id) => instanceItemDef(id));
 
 // src/content/hero.ts
 class ContentHero extends Actor {
@@ -8135,7 +8980,7 @@ function affectBuff2(buffs, kind, duration) {
   const cur = buffs[kind];
   buffs[kind] = cur ? { ...cur, left: cur.left + duration } : { kind, left: duration };
 }
-function prolongBuff2(buffs, kind, duration, extra) {
+function prolongBuff3(buffs, kind, duration, extra) {
   const cur = buffs[kind];
   const next = cur ? { ...cur, left: Math.max(cur.left, duration) } : { kind, left: duration };
   if (extra?.sourceId !== undefined)
@@ -8382,7 +9227,7 @@ function shatterPotionAt(ctx, hero, cell, id) {
       for (const c of affected) {
         const ch = charAtCell(ctx, hero, c);
         if (ch) {
-          prolongBuff2(ch.buffs, "frost", 5 * ctx.rng.float(1, 1.5));
+          prolongBuff3(ch.buffs, "frost", 5 * ctx.rng.float(1, 1.5));
           ch.paralysed = true;
           delete ch.buffs.burning;
         }
@@ -8789,7 +9634,7 @@ function doMagicMapping(ctx, _hero) {
 function doTeleportation(ctx, hero) {
   const level = ctx.level;
   for (let i = 0;i < 10; i++) {
-    const cell = randomRespawnCell(ctx, hero);
+    const cell = randomRespawnCell2(ctx, hero);
     if (cell !== -1) {
       hero.pos = cell;
       ctx.log("¡Te apareces en otro lado!");
@@ -8798,7 +9643,7 @@ function doTeleportation(ctx, hero) {
   }
   ctx.log("El pergamino se apaga.");
 }
-function randomRespawnCell(ctx, hero) {
+function randomRespawnCell2(ctx, hero) {
   const level = ctx.level;
   const n = level.w * level.h;
   for (let i = 0;i < 10; i++) {
@@ -8831,7 +9676,7 @@ function doChallenge(ctx, hero) {
       mob.beckonedTo = hero.pos;
     if (isMobVisible(ctx, mob.pos)) {
       const d = chebyshev(hero.pos, mob.pos, w);
-      prolongBuff2(mob.buffs, "rage", d);
+      prolongBuff3(mob.buffs, "rage", d);
     }
   }
   ctx.log("¡Sueltas un grito de reto!");
@@ -8840,7 +9685,7 @@ function doTerror(ctx, hero) {
   for (const m of ctx.mobs) {
     const mob = m;
     if (isMobVisible(ctx, mob.pos)) {
-      prolongBuff2(mob.buffs, "terror", 10, { sourceId: hero.id });
+      prolongBuff3(mob.buffs, "terror", 10, { sourceId: hero.id });
       mob.terrorFrom = hero.pos;
     }
   }
@@ -9482,12 +10327,23 @@ var ITEMS = {
   ...WAND_BASE_DEFS,
   ...RING_BASE_DEFS
 };
+var resolvedores;
+function registerInstanceResolver(fn) {
+  if (!resolvedores)
+    resolvedores = [];
+  resolvedores.push(fn);
+}
 function getItem(id) {
   const { defId } = parseItemId(id);
   const def = ITEMS[defId];
-  if (!def)
-    throw new Error(`unknown item id: ${id}`);
-  return def;
+  if (def)
+    return def;
+  for (const r of resolvedores ?? []) {
+    const inst = r(id);
+    if (inst)
+      return inst;
+  }
+  throw new Error(`unknown item id: ${id}`);
 }
 function parseItemId(id) {
   const colon = id.indexOf(":");
@@ -9519,8 +10375,10 @@ function pickupAt(ctx, hero) {
     hero.gold += qty;
     ctx.log(`Levantas ${qty} de oro.`);
   } else {
-    addToInventory(hero, defId, qty);
-    const label = qty > 1 ? `${qty}x ${def.name}` : def.name;
+    const idReal = parseWandId(item.itemId) != null ? normalizeWandPickup(ctx.rng, item.itemId) : parseRingId(item.itemId) != null ? normalizeRingPickup(ctx.rng, item.itemId) : defId;
+    addToInventory(hero, idReal, qty);
+    const nombre = instanceItemDef(idReal)?.name ?? getItem(idReal).name;
+    const label = qty > 1 ? `${qty}x ${nombre}` : nombre;
     ctx.log(`Levantas ${label}.`);
   }
   return 1;
@@ -10753,7 +11611,7 @@ function initWandmakerQuest(rng, waterCells, levelLength) {
   wandmakerQuest.wand1 = createWandReward(rng, rng.pick(battle));
   wandmakerQuest.wand2 = createWandReward(rng, rng.pick(nonBattle));
 }
-function randomRespawnCell2(ctx) {
+function randomRespawnCell3(ctx) {
   const level = ctx.level;
   const n = level.w * level.h;
   for (let i = 0;i < 100; i++) {
@@ -10952,7 +11810,7 @@ class GhostMob extends NpcMob {
 function relocateGhost(ctx, ghost) {
   let newPos = -1;
   for (let i = 0;i < 10; i++) {
-    newPos = randomRespawnCell2(ctx);
+    newPos = randomRespawnCell3(ctx);
     if (newPos !== -1)
       break;
   }
@@ -10993,7 +11851,7 @@ function onSewersKill(ctx, pos) {
     }
   } else if (ghostQuest.type === "rat") {
     const rat = new FetidRatMob(nextNpcId(), 0, ctx.level.w);
-    rat.pos = randomRespawnCell2(ctx);
+    rat.pos = randomRespawnCell3(ctx);
     if (rat.pos !== -1) {
       ctx.addMob(rat, 0);
       ghostQuest.processed = true;
@@ -11084,18 +11942,18 @@ function resolveWandRewardInstance(rng, rewardId) {
 }
 function placeWandmakerItem(ctx, type) {
   if (type === "berry") {
-    let pos = randomRespawnCell2(ctx);
+    let pos = randomRespawnCell3(ctx);
     let guard = 0;
     while (pos !== -1 && ctx.level.items.some((it) => it.pos === pos) && guard++ < 100) {
-      pos = randomRespawnCell2(ctx);
+      pos = randomRespawnCell3(ctx);
     }
     if (pos !== -1)
       dropItemAt(ctx, pos, "rotberry_seed");
   } else if (type === "dust") {
-    let pos = randomRespawnCell2(ctx);
+    let pos = randomRespawnCell3(ctx);
     let guard = 0;
     while (pos !== -1 && ctx.level.items.some((it) => it.pos === pos) && guard++ < 100) {
-      pos = randomRespawnCell2(ctx);
+      pos = randomRespawnCell3(ctx);
     }
     if (pos !== -1)
       dropItemAt(ctx, pos, "corpse_dust");
@@ -11111,10 +11969,10 @@ function placeWandmakerItem(ctx, type) {
       }
     }
     if (!placed) {
-      let pos = randomRespawnCell2(ctx);
+      let pos = randomRespawnCell3(ctx);
       let guard = 0;
       while (pos !== -1 && ctx.level.items.some((it) => it.pos === pos) && guard++ < 100) {
-        pos = randomRespawnCell2(ctx);
+        pos = randomRespawnCell3(ctx);
       }
       if (pos !== -1)
         dropItemAt(ctx, pos, "phantom_fish");
@@ -11906,6 +12764,10 @@ function actionsFor(item) {
     case "food":
     case "scroll":
       return ["use", "drop"];
+    case "ring":
+      return ["equip", "drop"];
+    case "wand":
+      return ["zap", "drop"];
     default:
       return ["drop"];
   }
@@ -11915,6 +12777,8 @@ function actionLabel(action, item) {
     case "use":
       return item.kind === "potion" ? "Tomar" : item.kind === "food" ? "Comer" : item.kind === "scroll" ? "Leer" : "Usar";
     case "equip":
+      if (item.kind === "ring")
+        return item.equipped ? "Quitarse" : "Ponerse";
       return item.equipped ? item.kind === "armor" ? "Quitarse" : "Guardar" : item.kind === "armor" ? "Ponerse" : "Empuñar";
     case "drop":
       return "Tirar";
@@ -11924,6 +12788,8 @@ function actionLabel(action, item) {
       return "Romper";
     case "mine":
       return "Picar";
+    case "zap":
+      return "Apuntar";
   }
 }
 function doItemAction(game, item, action) {
@@ -11945,6 +12811,8 @@ function doItemAction(game, item, action) {
     case "mine":
       game.queueIntent({ kind: "mineItem", slot: item.slot });
       return "done";
+    case "zap":
+      return "zap-targeting";
   }
 }
 var ROW_H = 56;
@@ -11953,6 +12821,7 @@ class InventoryPanel {
   open = false;
   selected = 0;
   onThrowRequest = () => {};
+  onZapRequest = () => {};
   toggle() {
     this.open = !this.open;
     this.selected = 0;
@@ -12012,6 +12881,8 @@ class InventoryPanel {
         const r = doItemAction(game, sel, a.action);
         if (r === "throw-targeting")
           this.onThrowRequest(sel);
+        if (r === "zap-targeting")
+          this.onZapRequest(sel);
         else
           this.close();
         return true;
@@ -12466,6 +13337,29 @@ class DM300Mob extends ContentMob {
 registerDM300(DM300Mob);
 
 // src/content/hooks.ts
+function equipAnilloOGear(ctx, hero, slot) {
+  if (slot === -3 || slot === -4) {
+    const dedo = slot === -3 ? 1 : 2;
+    return unequipRing(ctx, hero, dedo) ? 1 : 0;
+  }
+  const stack = slot >= 0 ? hero.inventory[slot] : undefined;
+  if (stack && isRingId(stack.itemId)) {
+    const [dedo1, dedo2] = equippedRings();
+    if (stack.itemId === dedo1)
+      return unequipRing(ctx, hero, 1) ? 1 : 0;
+    if (stack.itemId === dedo2)
+      return unequipRing(ctx, hero, 2) ? 1 : 0;
+    const costo = equipRing(ctx, hero, slot);
+    if (costo === 0)
+      ctx.log("Ya traes dos anillos puestos.");
+    return costo;
+  }
+  return equipSlot(ctx, hero, slot);
+}
+function esAnilloPuesto(itemId) {
+  const [uno, dos] = equippedRings();
+  return itemId === uno || itemId === dos;
+}
 function catalogKind(def) {
   switch (def.type) {
     case "weapon":
@@ -12485,17 +13379,19 @@ function catalogKind(def) {
     case "dewdrop":
     case "seed":
     case "quest":
+    case "wand":
+      return "wand";
+    case "ring":
+      return "ring";
     case "bag":
     case "misc":
-    case "wand":
-    case "ring":
       return "misc";
   }
 }
 function contentInventoryAdapter(game) {
   const hero = game.hero;
   const items = hero.inventory.map((s, slot) => {
-    const def = getItem(s.itemId);
+    const def = instanceItemDef(s.itemId) ?? getItem(s.itemId);
     const potionInfo = potionUiInfo(s.itemId, def.name, def.sprite);
     const scrollInfo = potionInfo ? null : scrollUiInfo(s.itemId, def.name, def.sprite);
     const info = potionInfo ?? scrollInfo;
@@ -12506,7 +13402,7 @@ function contentInventoryAdapter(game) {
       sprite: info?.sprite ?? def.sprite,
       qty: s.qty,
       kind: catalogKind(def),
-      equipped: false,
+      equipped: esAnilloPuesto(s.itemId),
       identified: info?.identified ?? true
     };
   });
@@ -12536,6 +13432,21 @@ function contentInventoryAdapter(game) {
       identified: true
     });
   }
+  equippedRings().forEach((anilloId, i) => {
+    if (!anilloId)
+      return;
+    const def = instanceItemDef(anilloId) ?? getItem(anilloId);
+    items.push({
+      slot: -3 - i,
+      id: anilloId,
+      name: def.name,
+      sprite: def.sprite,
+      qty: 1,
+      kind: "ring",
+      equipped: true,
+      identified: true
+    });
+  });
   return items;
 }
 setInventoryAdapter(contentInventoryAdapter);
@@ -12708,7 +13619,7 @@ var contentMechanics = {
         cost = useInventorySlot(ctx, hero, intent.slot);
         break;
       case "equip":
-        cost = equipSlot(ctx, hero, intent.slot);
+        cost = equipAnilloOGear(ctx, hero, intent.slot);
         break;
       case "drop":
         cost = dropSlot(ctx, hero, intent.slot);
@@ -12739,6 +13650,10 @@ var contentMechanics = {
       }
       case "mineItem": {
         cost = mineDarkGold(ctx, hero, intent.slot);
+        break;
+      }
+      case "zapItem": {
+        cost = zapWandFromSlot(ctx, hero, intent.slot, intent.targetCell);
         break;
       }
       case "talk": {
@@ -15431,6 +16346,7 @@ class UiManager {
   effects = new Effects;
   game = null;
   throwMode = null;
+  apuntarVarita = null;
   kills = 0;
   lastHeroAct = 0;
   view = { w: 390, h: 700 };
@@ -15451,6 +16367,10 @@ class UiManager {
     };
     this.inventory.onThrowRequest = (item) => {
       this.throwMode = { slot: item.slot };
+      this.inventory.close();
+    };
+    this.inventory.onZapRequest = (item) => {
+      this.apuntarVarita = { slot: item.slot };
       this.inventory.close();
     };
     this.effects.onMobDeath = () => {
@@ -15510,6 +16430,7 @@ class UiManager {
     this.shop.close();
     this.minimap.open = false;
     this.throwMode = null;
+    this.apuntarVarita = null;
     this.screens.show("playing");
   }
   continueRun() {
@@ -15527,6 +16448,7 @@ class UiManager {
     this.shop.close();
     this.minimap.open = false;
     this.throwMode = null;
+    this.apuntarVarita = null;
     this.screens.show("playing");
   }
   quitToTitle(save) {
@@ -15538,6 +16460,7 @@ class UiManager {
     this.shop.close();
     this.minimap.open = false;
     this.throwMode = null;
+    this.apuntarVarita = null;
     this.screens.show("title");
   }
   deathSummary() {
@@ -15580,8 +16503,14 @@ class UiManager {
       return;
     }
     const k = e.key;
+    if (this.apuntarVarita && k === "Escape") {
+      this.apuntarVarita = null;
+      this.game?.logMsg("Ya no apuntas.");
+      return;
+    }
     if (this.throwMode && (k === "Escape" || k.toLowerCase() === "p")) {
       this.throwMode = null;
+      this.apuntarVarita = null;
       e.preventDefault();
       e.stopPropagation();
       return;
@@ -15654,6 +16583,22 @@ class UiManager {
       e.stopPropagation();
       return;
     }
+    if (this.apuntarVarita) {
+      const t = this.renderer.screenToTile(e.clientX, e.clientY);
+      if (t.x >= 0 && t.y >= 0 && t.x < g.level.w && t.y < g.level.h) {
+        g.queueIntent({
+          kind: "zapItem",
+          slot: this.apuntarVarita.slot,
+          targetCell: g.level.idx(t.x, t.y)
+        });
+      } else {
+        g.logMsg("Ahí no.");
+      }
+      this.apuntarVarita = null;
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
     if (this.throwMode) {
       const t = this.renderer.screenToTile(e.clientX, e.clientY);
       const mob = g.level.mobAt(t.x, t.y);
@@ -15667,6 +16612,7 @@ class UiManager {
         g.logMsg("Throw cancelled.");
       }
       this.throwMode = null;
+      this.apuntarVarita = null;
       e.preventDefault();
       e.stopPropagation();
       return;
@@ -15738,6 +16684,8 @@ class UiManager {
         this.dialogs.draw(ctx, this.renderer, this.view);
       if (this.throwMode)
         this.drawThrowHint(ctx);
+      if (this.apuntarVarita)
+        this.drawZapHint(ctx);
     } else {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.fillStyle = UI.backdrop;
@@ -15747,8 +16695,13 @@ class UiManager {
       this.screens.draw(ctx, this.renderer, this.view, nowMs);
     }
   }
+  drawZapHint(ctx) {
+    this.drawHint(ctx, "Toca a dónde disparar · Esc cancela");
+  }
   drawThrowHint(ctx) {
-    const label = "Tap a target to throw · Esc cancels";
+    this.drawHint(ctx, "Toca a quién le avientas · Esc cancela");
+  }
+  drawHint(ctx, label) {
     ctx.font = "bold 13px system-ui, sans-serif";
     const w = ctx.measureText(label).width + 28;
     const r = { x: (this.view.w - w) / 2, y: 70, w, h: 34 };
