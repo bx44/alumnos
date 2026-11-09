@@ -14416,6 +14416,13 @@ class Game {
 
 // src/engine/render.ts
 var TILE_PX = 48;
+function acercamientoBase(anchoFisico, altoFisico, densidad) {
+  const acostada = anchoFisico > altoFisico;
+  const minAncho = acostada ? 240 : 135;
+  const minAlto = acostada ? 160 : 225;
+  const tope = Math.max(2, Math.floor(Math.min(anchoFisico / minAncho, altoFisico / minAlto)));
+  return Math.max(2, Math.min(Math.ceil(densidad * 2.5), tope));
+}
 var TINTABLE = new Set(["F", "f", "W", "w"]);
 function hexToRgb(hex) {
   const h = hex.replace("#", "");
@@ -14453,6 +14460,40 @@ class Renderer {
   camX = 0;
   camY = 0;
   dpr = 1;
+  acercamiento = 3;
+  acercamientoMin = 1;
+  acercamientoMax = 6;
+  get tile() {
+    return ART_PX * this.acercamiento / this.dpr;
+  }
+  get acercamientoActual() {
+    return this.acercamiento;
+  }
+  get acercamientoTopes() {
+    return [this.acercamientoMin, this.acercamientoMax];
+  }
+  acerca(nuevo) {
+    const v = Math.max(this.acercamientoMin, Math.min(this.acercamientoMax, Math.round(nuevo)));
+    if (v === this.acercamiento)
+      return false;
+    this.acercamiento = v;
+    this.cache.clear();
+    return true;
+  }
+  baseCalculada = false;
+  recalculaAcercamiento() {
+    const base = acercamientoBase(this.canvas.width, this.canvas.height, this.dpr);
+    this.acercamientoMin = 1;
+    this.acercamientoMax = base * 2;
+    if (!this.baseCalculada) {
+      this.baseCalculada = true;
+      this.acercamiento = base;
+      this.cache.clear();
+    } else if (this.acercamiento < this.acercamientoMin || this.acercamiento > this.acercamientoMax) {
+      this.acercamiento = Math.max(this.acercamientoMin, Math.min(this.acercamientoMax, this.acercamiento));
+      this.cache.clear();
+    }
+  }
   constructor(canvas) {
     this.canvas = canvas;
     const ctx = canvas.getContext("2d");
@@ -14468,6 +14509,7 @@ class Renderer {
     const h = this.canvas.clientHeight || window.innerHeight;
     this.canvas.width = Math.round(w * this.dpr);
     this.canvas.height = Math.round(h * this.dpr);
+    this.recalculaAcercamiento();
   }
   syncSize() {
     const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -14477,6 +14519,7 @@ class Renderer {
       this.dpr = dpr;
       this.canvas.width = w;
       this.canvas.height = h;
+      this.recalculaAcercamiento();
     }
   }
   viewSize() {
@@ -14490,14 +14533,14 @@ class Renderer {
     const px = sx - rect.left;
     const py = sy - rect.top;
     return {
-      x: Math.floor(this.camX + px / TILE_PX),
-      y: Math.floor(this.camY + py / TILE_PX)
+      x: Math.floor(this.camX + px / this.tile),
+      y: Math.floor(this.camY + py / this.tile)
     };
   }
   tileToScreen(tx, ty) {
     return {
-      x: (tx + 0.5 - this.camX) * TILE_PX,
-      y: (ty + 0.5 - this.camY) * TILE_PX
+      x: (tx + 0.5 - this.camX) * this.tile,
+      y: (ty + 0.5 - this.camY) * this.tile
     };
   }
   render(game) {
@@ -14509,7 +14552,7 @@ class Renderer {
     const level = game.level;
     const heroePaso = pasoDe("heroe", game.hero.x, game.hero.y);
     const heroeVis = { x: heroePaso.x, y: heroePaso.y };
-    const cam = cameraTileRect(heroeVis.x, heroeVis.y, vw, vh, level.w, level.h);
+    const cam = cameraTileRect(heroeVis.x, heroeVis.y, vw, vh, level.w, level.h, this.tile);
     this.camX = cam.camX;
     this.camY = cam.camY;
     ctx.fillStyle = "#000";
@@ -14518,17 +14561,17 @@ class Renderer {
     for (let y = y0;y <= y1; y++) {
       for (let x = x0;x <= x1; x++) {
         const i = level.idx(x, y);
-        const dx = (x - this.camX) * TILE_PX;
-        const dy = (y - this.camY) * TILE_PX;
+        const dx = (x - this.camX) * this.tile;
+        const dy = (y - this.camY) * this.tile;
         if (!level.explored[i]) {
           ctx.fillStyle = "#000";
-          ctx.fillRect(dx, dy, TILE_PX, TILE_PX);
+          ctx.fillRect(dx, dy, this.tile, this.tile);
           continue;
         }
         const seen = level.visible[i] === 1;
         ctx.globalAlpha = seen ? 1 : 0.45;
         const sprite = this.tileSprite(level, x, y);
-        ctx.drawImage(sprite, dx, dy, TILE_PX, TILE_PX);
+        ctx.drawImage(sprite, dx, dy, this.tile, this.tile);
         ctx.globalAlpha = 1;
       }
     }
@@ -14541,7 +14584,7 @@ class Renderer {
       if (x < x0 || x > x1 || y < y0 || y > y1)
         continue;
       ctx.globalAlpha = level.visible[i] ? 1 : 0.45;
-      ctx.drawImage(this.entitySprite(item.sprite), (x - this.camX) * TILE_PX, (y - this.camY) * TILE_PX, TILE_PX, TILE_PX);
+      ctx.drawImage(this.entitySprite(item.sprite), (x - this.camX) * this.tile, (y - this.camY) * this.tile, this.tile, this.tile);
       ctx.globalAlpha = 1;
     }
     const vivos = new Set(["heroe"]);
@@ -14552,7 +14595,7 @@ class Renderer {
       if (!level.visible[i])
         continue;
       const v = posSuave(id, m.x, m.y);
-      ctx.drawImage(this.entitySprite(m.sprite), (v.x - this.camX) * TILE_PX, (v.y - this.camY) * TILE_PX, TILE_PX, TILE_PX);
+      ctx.drawImage(this.entitySprite(m.sprite), (v.x - this.camX) * this.tile, (v.y - this.camY) * this.tile, this.tile, this.tile);
     }
     limpiaSalvo(vivos);
     ctx.fillStyle = "rgba(255,255,255,0.55)";
@@ -14560,24 +14603,24 @@ class Renderer {
       const i = level.idx(p.x, p.y);
       if (!level.visible[i])
         continue;
-      const cx = (p.x - this.camX) * TILE_PX + TILE_PX / 2;
-      const cy = (p.y - this.camY) * TILE_PX + TILE_PX / 2;
+      const cx = (p.x - this.camX) * this.tile + this.tile / 2;
+      const cy = (p.y - this.camY) * this.tile + this.tile / 2;
       ctx.beginPath();
       ctx.arc(cx, cy, 4, 0, Math.PI * 2);
       ctx.fill();
     }
-    const hx = (heroeVis.x - this.camX) * TILE_PX;
-    const hy = (heroeVis.y - this.camY) * TILE_PX;
+    const hx = (heroeVis.x - this.camX) * this.tile;
+    const hy = (heroeVis.y - this.camY) * this.tile;
     const cuadro = heroePaso.caminando ? "hero_run" + heroePaso.cuadro : game.hero.sprite;
     const dibujo = this.entitySprite(cuadro);
     if (heroePaso.mira < 0) {
       ctx.save();
-      ctx.translate(hx + TILE_PX, hy);
+      ctx.translate(hx + this.tile, hy);
       ctx.scale(-1, 1);
-      ctx.drawImage(dibujo, 0, 0, TILE_PX, TILE_PX);
+      ctx.drawImage(dibujo, 0, 0, this.tile, this.tile);
       ctx.restore();
     } else {
-      ctx.drawImage(dibujo, hx, hy, TILE_PX, TILE_PX);
+      ctx.drawImage(dibujo, hx, hy, this.tile, this.tile);
     }
   }
   tileSprite(level, x, y) {
@@ -14760,12 +14803,13 @@ class Renderer {
     return this.scaleUp(img);
   }
   scaleUp(img) {
+    const lado = ART_PX * this.acercamiento;
     const big = document.createElement("canvas");
-    big.width = TILE_PX;
-    big.height = TILE_PX;
+    big.width = lado;
+    big.height = lado;
     const bg = big.getContext("2d");
     bg.imageSmoothingEnabled = false;
-    bg.drawImage(img, 0, 0, TILE_PX, TILE_PX);
+    bg.drawImage(img, 0, 0, lado, lado);
     return big;
   }
 }
@@ -16325,6 +16369,114 @@ class Effects {
   }
 }
 
+// src/orbarak/pantalla.ts
+var LLAVE_ZOOM = "pardes-acercamiento";
+function acercamientoGuardado() {
+  try {
+    const v = localStorage.getItem(LLAVE_ZOOM);
+    if (v === null)
+      return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  } catch {
+    return null;
+  }
+}
+function guardaAcercamiento(v) {
+  try {
+    localStorage.setItem(LLAVE_ZOOM, String(v));
+  } catch {}
+}
+function conectaAcercamiento(lienzo, r, alCambiar) {
+  let distanciaInicial = 0;
+  let acercamientoInicial = 0;
+  const distancia = (t) => {
+    const a = t[0], b = t[1];
+    if (!a || !b)
+      return 0;
+    return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  };
+  const inicio = (e) => {
+    if (e.touches.length !== 2)
+      return;
+    distanciaInicial = distancia(e.touches);
+    acercamientoInicial = r.acercamientoActual;
+    e.preventDefault();
+  };
+  const mueve = (e) => {
+    if (e.touches.length !== 2 || distanciaInicial === 0)
+      return;
+    e.preventDefault();
+    const razon = distancia(e.touches) / distanciaInicial;
+    if (r.acerca(acercamientoInicial * razon)) {
+      guardaAcercamiento(r.acercamientoActual);
+      alCambiar();
+    }
+  };
+  const fin = (e) => {
+    if (e.touches.length < 2)
+      distanciaInicial = 0;
+  };
+  const rueda = (e) => {
+    e.preventDefault();
+    if (r.acerca(r.acercamientoActual + (e.deltaY < 0 ? 1 : -1))) {
+      guardaAcercamiento(r.acercamientoActual);
+      alCambiar();
+    }
+  };
+  lienzo.addEventListener("touchstart", inicio, { passive: false });
+  lienzo.addEventListener("touchmove", mueve, { passive: false });
+  lienzo.addEventListener("touchend", fin);
+  lienzo.addEventListener("touchcancel", fin);
+  lienzo.addEventListener("wheel", rueda, { passive: false });
+  return () => {
+    lienzo.removeEventListener("touchstart", inicio);
+    lienzo.removeEventListener("touchmove", mueve);
+    lienzo.removeEventListener("touchend", fin);
+    lienzo.removeEventListener("touchcancel", fin);
+    lienzo.removeEventListener("wheel", rueda);
+  };
+}
+var ESTILO = `
+#pd-completa{position:fixed;top:calc(4px + env(safe-area-inset-top));
+  right:calc(4px + env(safe-area-inset-right));z-index:50;width:30px;height:30px;
+  display:grid;place-items:center;border:0;border-radius:8px;cursor:pointer;
+  background:rgba(12,10,20,.45);color:#E8D7A8;font-size:15px;line-height:1;
+  font-family:system-ui,sans-serif;opacity:.55;padding:0}
+#pd-completa:hover,#pd-completa:active{opacity:1}
+`;
+function enPantallaCompleta() {
+  return document.fullscreenElement !== null;
+}
+function ponBotonPantallaCompleta() {
+  const raiz = document.documentElement;
+  const puede = typeof raiz.requestFullscreen === "function" && (document.fullscreenEnabled ?? false);
+  if (!puede)
+    return;
+  if (document.getElementById("pd-completa") !== null)
+    return;
+  const hoja = document.createElement("style");
+  hoja.textContent = ESTILO;
+  document.head.appendChild(hoja);
+  const b = document.createElement("button");
+  b.id = "pd-completa";
+  b.type = "button";
+  b.title = "Pantalla completa";
+  b.textContent = "⛶";
+  b.addEventListener("click", () => {
+    if (enPantallaCompleta()) {
+      document.exitFullscreen().catch(() => {});
+    } else {
+      raiz.requestFullscreen().catch(() => {});
+    }
+  });
+  document.addEventListener("fullscreenchange", () => {
+    b.textContent = enPantallaCompleta() ? "⤡" : "⛶";
+    b.title = enPantallaCompleta() ? "Salir de pantalla completa" : "Pantalla completa";
+  });
+  document.body.appendChild(b);
+}
+
 // src/ui/ui.ts
 var HERO_MS = 110;
 function repartirIdentificaciones(semilla) {
@@ -16369,6 +16521,11 @@ class UiManager {
       this.throwMode = { slot: item.slot };
       this.inventory.close();
     };
+    ponBotonPantallaCompleta();
+    const guardado = acercamientoGuardado();
+    if (guardado !== null)
+      this.renderer.acerca(guardado);
+    conectaAcercamiento(this.canvas, this.renderer, () => {});
     this.inventory.onZapRequest = (item) => {
       this.apuntarVarita = { slot: item.slot };
       this.inventory.close();
