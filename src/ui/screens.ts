@@ -29,17 +29,21 @@ interface Button {
 }
 
 export const CONTROLS: { key: string; action: string }[] = [
-  { key: 'Arrows / WASD / QEZC', action: 'Move (8 directions)' },
-  { key: 'Space / .', action: 'Wait a turn' },
-  { key: 'G', action: 'Pick up item' },
+  { key: 'Un dedo: tocar', action: 'Caminar hasta ahí' },
+  { key: 'Un dedo: arrastrar', action: 'Asomarse, mover el mapa' },
+  { key: 'Dos dedos', action: 'Acercar y alejar' },
+  { key: 'Tocar un bicho', action: 'Pegarle (si está al lado)' },
+  { key: 'Tocarte a ti', action: 'Esperar un turno' },
+  { key: 'Tocar la escalera', action: 'Ir y bajar (o subir)' },
+  { key: 'Tocar algo tirado', action: 'Ir y levantarlo' },
+  { key: 'Dardos → tocar bicho', action: 'Aventarle un dardo' },
+  { key: 'Flechas / WASD / QEZC', action: 'Caminar (8 lados)' },
+  { key: 'Espacio / .', action: 'Esperar un turno' },
+  { key: 'G', action: 'Levantar lo que pisas' },
   { key: 'I', action: 'Mochila' },
-  { key: 'M', action: 'Minimap' },
-  { key: '>  /  <', action: 'Descend / ascend stairs' },
-  { key: 'Esc', action: 'Pause / resume' },
-  { key: 'Tap dungeon', action: 'Walk there (tap-to-move)' },
-  { key: 'Tap enemy', action: 'Attack adjacent enemy' },
-  { key: 'Tap hero', action: 'Wait a turn' },
-  { key: 'Dart slot → tap foe', action: 'Throw a dart' },
+  { key: 'M', action: 'Mapa' },
+  { key: '>  /  <', action: 'Bajar / subir escaleras' },
+  { key: 'Esc', action: 'Pausa' },
 ];
 
 export class Screens {
@@ -235,13 +239,13 @@ export class Screens {
     ctx.lineWidth = 8;
     ctx.strokeStyle = UI.ink;
     const ty = view.h * 0.20;
-    ctx.strokeText('PIXEL DUNGEON', view.w / 2, ty);
+    ctx.strokeText('PARDÉS', view.w / 2, ty);
     ctx.fillStyle = UI.gold;
-    ctx.fillText('PIXEL DUNGEON', view.w / 2, ty);
+    ctx.fillText('PARDÉS', view.w / 2, ty);
     ctx.font = '15px system-ui, sans-serif';
     ctx.fillStyle = '#9a917e';
-    ctx.fillText('a storybook roguelike · v2', view.w / 2, ty + 30);
-    ctx.fillText('The Sewers await. Permadeath is forever.', view.w / 2, ty + 52);
+    ctx.fillText('Or Barak · de piso en piso', view.w / 2, ty + 30);
+    ctx.fillText('Si te matan, se acabó. Se empieza de nuevo.', view.w / 2, ty + 52);
     ctx.textAlign = 'left';
 
     const { buttons, seedRect } = this.titleLayout(view);
@@ -277,21 +281,21 @@ export class Screens {
     ctx.font = 'bold 44px system-ui, sans-serif';
     ctx.lineWidth = 8;
     ctx.strokeStyle = UI.ink;
-    ctx.strokeText('YOU DIED', view.w / 2, view.h * 0.22);
+    ctx.strokeText('TE MATARON', view.w / 2, view.h * 0.22);
     ctx.fillStyle = UI.danger;
-    ctx.fillText('YOU DIED', view.w / 2, view.h * 0.22);
+    ctx.fillText('TE MATARON', view.w / 2, view.h * 0.22);
     ctx.font = '15px system-ui, sans-serif';
     ctx.fillStyle = UI.textLight;
-    ctx.fillText(s?.cause ?? 'The dungeon claims another.', view.w / 2, view.h * 0.22 + 34);
+    ctx.fillText(s?.cause ?? 'Hasta aquí llegaste esta vez.', view.w / 2, view.h * 0.22 + 34);
 
     if (s) {
       const rows: [string, string][] = [
-        ['Depth', `${s.depth}`],
-        ['Turns', `${s.turns}`],
-        ['Level', `${s.lvl}`],
-        ['Kills', `${s.kills}`],
-        ['Gold', `${s.gold}`],
-        ['Seed', `${s.seed}`],
+        ['Piso', `${s.depth}`],
+        ['Turnos', `${s.turns}`],
+        ['Nivel', `${s.lvl}`],
+        ['Bichos', `${s.kills}`],
+        ['Oro', `${s.gold}`],
+        ['Semilla', `${s.seed}`],
       ];
       const pw = Math.min(320, view.w - 48);
       const px = (view.w - pw) / 2;
@@ -334,7 +338,7 @@ export class Screens {
     ctx.fillStyle = UI.text;
     ctx.font = 'bold 22px system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Paused', view.w / 2, py + 36);
+    ctx.fillText('En pausa', view.w / 2, py + 36);
     ctx.textAlign = 'left';
     ctx.font = '13px system-ui, sans-serif';
     CONTROLS.slice(0, 7).forEach((c, i) => {
@@ -369,7 +373,7 @@ export class Screens {
     ctx.fillStyle = UI.text;
     ctx.font = 'bold 22px system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Controls', view.w / 2, py + 36);
+    ctx.fillText('Controles', view.w / 2, py + 36);
     ctx.textAlign = 'left';
     ctx.font = '13px system-ui, sans-serif';
     CONTROLS.forEach((c, i) => {
