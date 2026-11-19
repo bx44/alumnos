@@ -16013,7 +16013,7 @@ class Screens {
     ctx.fillStyle = UI.text;
     ctx.font = "16px system-ui, sans-serif";
     ctx.textBaseline = "middle";
-    const shown = this.seedText === "" ? this.seedEditing ? "" : "seed (optional)" : this.seedText;
+    const shown = this.seedText === "" ? this.seedEditing ? "" : "semilla (opcional)" : this.seedText;
     ctx.fillStyle = this.seedText === "" && !this.seedEditing ? UI.textDim : UI.text;
     ctx.fillText(shown, seedRect.x + 12, seedRect.y + seedRect.h / 2);
     if (this.seedEditing && Math.floor(nowMs / 500) % 2 === 0) {
