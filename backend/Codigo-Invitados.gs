@@ -59,8 +59,8 @@ var INV_JUEGOS = [
   {
     id: 'pardes',
     nombre: 'Pardés',
-    linea: 'Doce pisos para abajo, del Bet Hamidrash al Pardés. Cada portón te hace una pregunta.',
-    jugadores: 'Un jugador · las preguntas salen de la hoja RetosJuego',
+    linea: 'Baja del Bet Hamidrash al Pardés, piso por piso. En cada portón, una kashiá.',
+    jugadores: 'Un jugador · preguntas de guemará y traducciones',
     url: './juegos/pardes/',
     listo: true
   }
