@@ -609,7 +609,7 @@ describe('thief (Thief.java)', () => {
     expect(c.hero.inventory.length).toBe(1);
     expect(thief.stolen).not.toBeNull();
     expect(thief.state).toBe('fleeing');
-    expect(c.logs.some((l) => l.includes('stole'))).toBe(true);
+    expect(c.logs.some((l) => l.includes('te robó'))).toBe(true);
     // Already carrying: no second steal.
     expect(thiefSteal(c.ctx, thief, c.hero)).toBe(false);
   });
@@ -701,7 +701,7 @@ describe('mob AI (Mob.java)', () => {
     const cost = rat.takeTurn(c.ctx);
     expect(cost).toBe(1); // attackDelay 1 * speed 1
     expect(
-      c.logs.some((l) => l.includes('hits you') || l.includes('misses you')),
+      c.logs.some((l) => l.includes('te pega') || l.includes('falla')),
     ).toBe(true);
   });
 
@@ -809,7 +809,7 @@ describe('goo (Goo.java)', () => {
     goo.takeTurn(c.ctx);
     expect(goo.pumpedUp).toBe(false);
     expect(
-      c.logs.some((l) => l.includes('hits you') || l.includes('misses you')),
+      c.logs.some((l) => l.includes('te pega') || l.includes('falla')),
     ).toBe(true);
   });
 
@@ -823,7 +823,7 @@ describe('goo (Goo.java)', () => {
       goo.state = 'hunting';
       c.hero.pos = 6 * 12 + 7;
       goo.takeTurn(c.ctx);
-      for (const l of c.logs) if (l.includes('ooze')) seen.push(l);
+      for (const l of c.logs) if (l.includes('baba')) seen.push(l);
     }
     expect(seen.length).toBeGreaterThan(0);
     for (const l of seen) {
@@ -851,7 +851,7 @@ describe('goo (Goo.java)', () => {
     damageMobDirect(c.ctx, goo, 999);
     expect(level.sealed).toBe(false);
     expect(level.items.some((it) => it.itemId === 'skeleton_key')).toBe(true);
-    expect(c.logs.some((l) => l.includes('glurp'))).toBe(true);
+    expect(c.logs.some((l) => l.includes('glup'))).toBe(true);
     expect(c.mobs.includes(goo)).toBe(false);
   });
 
@@ -1001,7 +1001,7 @@ describe('interactions', () => {
     c.hero.hp = 10;
     tickHeroClock(c.ctx.rng, c.ctx, c.hero, 1);
     expect(c.hero.hungerLevel).toBe(269);
-    expect(c.logs).toContain('You are hungry.');
+    expect(c.logs).toContain('Tienes hambre.');
     expect(c.hero.hp).toBe(11); // regen +1
   });
 });
@@ -1150,7 +1150,7 @@ describe('burning side effects (Burning.java:76-98)', () => {
     tickBuffs(c.ctx.rng, level, c.hero, c.ctx.log);
     expect(c.hero.hp).toBeLessThan(hp);
     expect(c.hero.inventory.find((s) => s.itemId === 'scroll')).toBeUndefined();
-    expect(c.logs).toContain('scroll burns up!');
+    expect(c.logs).toContain('¡pergamino se quema!');
   });
 
   test('non-scroll items are untouched by burning', () => {
@@ -1161,7 +1161,7 @@ describe('burning side effects (Burning.java:76-98)', () => {
     c.hero.buffs.burning = { kind: 'burning', left: 8 };
     tickBuffs(c.ctx.rng, level, c.hero, c.ctx.log);
     expect(c.hero.inventory.find((s) => s.itemId === 'potion_healing')?.qty).toBe(1);
-    expect(c.logs.some((l) => l.includes('burns up!'))).toBe(false);
+    expect(c.logs.some((l) => l.includes('se quema!'))).toBe(false);
   });
 
   test('item loss happens even on the killing tick, before the death line', () => {
@@ -1174,8 +1174,8 @@ describe('burning side effects (Burning.java:76-98)', () => {
     tickBuffs(c.ctx.rng, level, c.hero, c.ctx.log);
     expect(c.hero.isAlive()).toBe(false);
     expect(c.hero.inventory.find((s) => s.itemId === 'scroll')).toBeUndefined();
-    const burnIdx = c.logs.indexOf('scroll burns up!');
-    const deathIdx = c.logs.indexOf('You burned to death...');
+    const burnIdx = c.logs.indexOf('¡pergamino se quema!');
+    const deathIdx = c.logs.indexOf('Te quemaste...');
     expect(burnIdx).toBeGreaterThanOrEqual(0);
     expect(deathIdx).toBeGreaterThan(burnIdx);
   });
@@ -1188,7 +1188,7 @@ describe('burning side effects (Burning.java:76-98)', () => {
     rat.buffs.burning = { kind: 'burning', left: 8 };
     tickBuffs(c.ctx.rng, level, rat, c.ctx.log);
     expect(rat.isAlive()).toBe(false);
-    expect(c.logs.some((l) => /you burned|burns up/i.test(l))).toBe(false);
+    expect(c.logs.some((l) => /te quemaste|se quema/i.test(l))).toBe(false);
   });
 });
 
@@ -1199,7 +1199,7 @@ describe('buff death messages', () => {
     c.hero.hp = 1;
     c.hero.buffs.burning = { kind: 'burning', left: 8 };
     tickBuffs(c.ctx.rng, level, c.hero, c.ctx.log);
-    expect(c.logs).toContain('You burned to death...');
+    expect(c.logs).toContain('Te quemaste...');
   });
 
   test('poison kill logs "Te mató el veneno..." (Poison.java:94)', () => {
@@ -1208,7 +1208,7 @@ describe('buff death messages', () => {
     c.hero.hp = 1;
     c.hero.buffs.poison = { kind: 'poison', left: 2 }; // damage = (2/3|0)+1 = 1
     tickBuffs(c.ctx.rng, level, c.hero, c.ctx.log);
-    expect(c.logs).toContain('You died from poison...');
+    expect(c.logs).toContain('Te mató el veneno...');
   });
 
   test('ooze kill logs "La baba cáustica te mató..." (Ooze.java:50)', () => {
@@ -1217,7 +1217,7 @@ describe('buff death messages', () => {
     c.hero.hp = 1;
     c.hero.buffs.ooze = { kind: 'ooze', left: 8 };
     tickBuffs(c.ctx.rng, level, c.hero, c.ctx.log);
-    expect(c.logs).toContain('Caustic ooze killed you...');
+    expect(c.logs).toContain('La baba cáustica te mató...');
   });
 
   test('surviving a buff tick logs no death line', () => {
@@ -1236,13 +1236,13 @@ describe('hunger messages (Hunger.java)', () => {
     const c = makeCtx(level, 51);
     c.hero.hungerLevel = 255; // one STEP (10) from HUNGRY=260
     tickHeroClock(c.ctx.rng, c.ctx, c.hero, 10);
-    expect(c.logs).toContain('You are hungry.');
+    expect(c.logs).toContain('Tienes hambre.');
     c.hero.hungerLevel = 355; // one STEP from STARVING=360
     tickHeroClock(c.ctx.rng, c.ctx, c.hero, 10);
-    expect(c.logs).toContain('You are starving!');
+    expect(c.logs).toContain('¡Te estás muriendo de hambre!');
   });
 
-  test('each starvation damage proc re-logs "You are starving!" (Hunger.java:68)', () => {
+  test('each starvation damage proc re-logs "¡Te estás muriendo de hambre!" (Hunger.java:68)', () => {
     const level = makeLevel();
     const c = makeCtx(level, 51);
     c.hero.hungerLevel = 360;
@@ -1255,10 +1255,10 @@ describe('hunger messages (Hunger.java)', () => {
     };
     tickHeroClock(script, c.ctx, c.hero, 10);
     expect(c.hero.hp).toBe(19);
-    expect(c.logs.filter((l) => l === 'You are starving!').length).toBe(1);
+    expect(c.logs.filter((l) => l === '¡Te estás muriendo de hambre!').length).toBe(1);
   });
 
-  test('starvation death logs "You starved to death..." (Hunger.java:156)', () => {
+  test('starvation death logs "Te moriste de hambre..." (Hunger.java:156)', () => {
     const level = makeLevel();
     const c = makeCtx(level, 51);
     c.hero.hungerLevel = 360;
@@ -1272,6 +1272,6 @@ describe('hunger messages (Hunger.java)', () => {
     };
     tickHeroClock(script, c.ctx, c.hero, 10);
     expect(c.hero.isAlive()).toBe(false);
-    expect(c.logs).toContain('You starved to death...');
+    expect(c.logs).toContain('Te moriste de hambre...');
   });
 });

@@ -401,7 +401,7 @@ describe('zap flow (Wand.zap, Wand.java:121-146)', () => {
     const { fizzled } = beginZap(ctx, hero, st);
     expect(fizzled).toBe(true);
     expect(isWandTypeKnown('firebolt')).toBe(true);
-    expect(logs.some((l) => l.includes('fizzles'))).toBe(true);
+    expect(logs.some((l) => l.includes('chisporrotea'))).toBe(true);
   });
 
   test('a zap spends 1 charge and counts toward the 40-use identification', () => {

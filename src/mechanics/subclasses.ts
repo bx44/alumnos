@@ -137,7 +137,7 @@ export const TOME_READ_ACTION = 'READ';
  * a subclass, otherwise "Tome of Mastery".
  */
 export function tomeDisplayName(subClass: HeroSubClass): string {
-  return subClass === 'none' ? 'Tome of Mastery' : 'Tome of Remastery';
+  return subClass === 'none' ? 'tomo de maestría' : 'tomo de remastería';
 }
 
 /**

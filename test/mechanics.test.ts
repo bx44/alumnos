@@ -500,16 +500,16 @@ describe('seeded RNG sanity', () => {
 
 describe('buff messages (exact Java strings)', () => {
   test('death messages are verbatim from the Java sources', () => {
-    expect(MSG_BURNED_TO_DEATH).toBe('You burned to death...'); // Burning.java:46
-    expect(MSG_DIED_FROM_POISON).toBe('You died from poison...'); // Poison.java:94
-    expect(MSG_OOZE_KILLED).toBe('Caustic ooze killed you...'); // Ooze.java:29 + toString
+    expect(MSG_BURNED_TO_DEATH).toBe('Te quemaste...'); // Burning.java:46
+    expect(MSG_DIED_FROM_POISON).toBe('Te mató el veneno...'); // Poison.java:94
+    expect(MSG_OOZE_KILLED).toBe('La baba cáustica te mató...'); // Ooze.java:29 + toString
     expect(MSG_BLED_TO_DEATH).toBe('Te desangraste...'); // Bleeding.java:77
-    expect(MSG_STARVED_TO_DEATH).toBe('You starved to death...'); // Hunger.java:41
+    expect(MSG_STARVED_TO_DEATH).toBe('Te moriste de hambre...'); // Hunger.java:41
   });
 
   test('act-time messages are verbatim', () => {
-    expect(MSG_HUNGRY).toBe('You are hungry.'); // Hunger.java:39
-    expect(MSG_STARVING).toBe('You are starving!'); // Hunger.java:40
+    expect(MSG_HUNGRY).toBe('Tienes hambre.'); // Hunger.java:39
+    expect(MSG_STARVING).toBe('¡Te estás muriendo de hambre!'); // Hunger.java:40
     expect(MSG_BURNS_UP).toBe('¡%s se quema!'); // Burning.java:45
     expect(MSG_COMBO).toBe('¡combo de %d golpes!'); // Combo.java:27
   });

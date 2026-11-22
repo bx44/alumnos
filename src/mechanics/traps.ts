@@ -86,7 +86,7 @@ export interface TrapHero extends BlobChar {
 export interface TrapMob extends BlobChar {
   kind: 'mob';
   id: number;
-  def: { dr: number };
+  def: { dr: number; id?: string };
   state: 'sleeping' | 'wandering' | 'hunting' | 'fleeing' | 'passive';
   target: number;
   /** NPC invulnerability (NPC.damage is a no-op, NPC.java:45-47). */
@@ -189,6 +189,22 @@ export function damageFromTrap(
     // Mob.damage subclass hooks (Brute.damage enrage, Brute.java:173-184):
     // trap damage is a damage call like any other.
     ch.onDamaged?.(ctx);
+  }
+  // King$Undead.damage (King.java:284-289): al enano no-muerto, el gas
+  // tóxico que lo lastima se le limpia de encima.
+  //
+  //   super.damage( dmg, src );
+  //   if (src instanceof ToxicGas) ((ToxicGas)src).clear( pos );
+  //
+  // Allá el clear corre siempre, también cuando el golpe lo mata, porque va
+  // después de super.damage. Por eso aquí tampoco se pregunta si murió.
+  if (sourceTag === 'toxic_gas' && (ch as TrapMob).def?.id === 'king_undead') {
+    const pos = ch.pos;
+    for (const blob of ctx.level.blobs) {
+      if (blob.kind === 'toxic' && blob.cur[pos] > 0) {
+        blob.cur[pos] = 0;
+      }
+    }
   }
 }
 

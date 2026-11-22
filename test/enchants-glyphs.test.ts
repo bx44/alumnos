@@ -223,17 +223,17 @@ describe('enchantment selection', () => {
 
   test('exact enchantment names', () => {
     const names: Record<EnchantmentId, string> = {
-      fire: 'blazing',
-      poison: 'venomous',
-      death: 'grim',
-      paralysis: 'stunning',
-      leech: 'vampiric',
-      slow: 'chilling',
-      shock: 'shocking',
-      instability: 'unstable',
-      horror: 'eldritch',
-      luck: 'lucky',
-      tempering: 'tempered',
+      fire: 'ardiente',
+      poison: 'venenosa',
+      death: 'siniestra',
+      paralysis: 'aturdidora',
+      leech: 'vampírica',
+      slow: 'helada',
+      shock: 'eléctrica',
+      instability: 'inestable',
+      horror: 'arcana',
+      luck: 'afortunada',
+      tempering: 'templada',
     };
     for (const [id, name] of Object.entries(names) as [EnchantmentId, string][]) {
       expect(ENCHANTMENT_INFO[id].name).toBe(name);
@@ -476,7 +476,7 @@ describe('enchantment procs', () => {
     const fx2 = makeFx(makeRng());
     weaponAttackProc(fx2, makeChar(), makeChar(), 5, w2);
     expect(fx2.logs).toHaveLength(1);
-    expect(fx2.logs[0]).toBe(TXT_GOING_TO_BREAK.replace('%s', 'sword'));
+    expect(fx2.logs[0]).toBe(TXT_GOING_TO_BREAK.replace('%s', 'espada'));
   });
 
   test('weaponAttackProc logs the break line when durability hits 0', () => {
@@ -484,7 +484,7 @@ describe('enchantment procs', () => {
     const fx = makeFx(makeRng());
     weaponAttackProc(fx, makeChar(), makeChar(), 5, w);
     expect(w.durability).toBe(0);
-    expect(fx.logs.some((m) => m === TXT_HAS_BROKEN.replace('%s', 'sword'))).toBe(true);
+    expect(fx.logs.some((m) => m === TXT_HAS_BROKEN.replace('%s', 'espada'))).toBe(true);
   });
 });
 
@@ -868,11 +868,11 @@ describe('durability', () => {
 
   test('exact durability log lines', () => {
     // Item.java:58-59 TXT_BROKEN / TXT_GONNA_BREAK.
-    expect(TXT_GOING_TO_BREAK.replace('%s', 'dagger')).toBe(
-      'Because of frequent use, your dagger is going to break soon.',
+    expect(TXT_GOING_TO_BREAK.replace('%s', 'daga')).toBe(
+      'De tanto usarlo, tu daga se va a romper pronto.',
     );
-    expect(TXT_HAS_BROKEN.replace('%s', 'dagger')).toBe(
-      'De tanto usarlo, tu dagger se rompió.',
+    expect(TXT_HAS_BROKEN.replace('%s', 'daga')).toBe(
+      'De tanto usarlo, tu daga se rompió.',
     );
   });
 
@@ -962,7 +962,7 @@ describe('scroll of upgrade', () => {
     expect(gear.level).toBe(beforeLevel);
     expect(gear.durability).toBe(maxDurability('weapon', beforeLevel));
     expect(gear.cursed).toBe(true);
-    expect(logs.some((m) => m.includes('certainly looks better now'))).toBe(true);
+    expect(logs.some((m) => m.includes('se ve mucho mejor'))).toBe(true);
   });
 });
 

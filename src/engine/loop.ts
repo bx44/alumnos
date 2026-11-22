@@ -278,7 +278,7 @@ export class Game {
     if (i === this.level.stairsUp) {
       if (this.level.sealed) {
         // Boss-arena seal (SewerBossLevel.seal): the stairs are gone.
-        this.logMsg('The dungeon is sealed shut!');
+        this.logMsg('¡El piso se cerró!');
         return false;
       }
       this.ascend();

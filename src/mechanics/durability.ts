@@ -46,7 +46,7 @@ export const DURABILITY_WARNING_LEVEL = 1 / 6;
 
 /** GLog.w text when durability crosses the warning threshold (Item.java:59). */
 export const TXT_GOING_TO_BREAK =
-  'Because of frequent use, your %s is going to break soon.';
+  'De tanto usarlo, tu %s se va a romper pronto.';
 /** GLog.n text when an item breaks (Item.java:58). */
 export const TXT_HAS_BROKEN = 'De tanto usarlo, tu %s se rompió.';
 /** GLog.w when an upgrade erases a weapon enchantment

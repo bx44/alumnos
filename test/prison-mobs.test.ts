@@ -113,7 +113,7 @@ describe('prison mob stats (Java ground truth)', () => {
     expect(d.dr).toBe(4);
     expect(d.exp).toBe(6);
     expect(d.maxLvl).toBe(14);
-    expect(d.name).toBe('gnoll shaman');
+    expect(d.name).toBe('gnoll chamán');
     expect(d.sprite).toBe('mob_shaman');
     expect(d.resistances).toContain('lightning'); // Shaman.java:135-143
   });
@@ -129,7 +129,7 @@ describe('prison mob stats (Java ground truth)', () => {
     expect(d.flying).toBe(true);
     expect(d.exp).toBe(7);
     expect(d.maxLvl).toBe(15);
-    expect(d.name).toBe('vampire bat');
+    expect(d.name).toBe('murciélago vampiro');
     expect(d.resistances).toContain('leech'); // Bat.java:88-96
   });
 
@@ -142,7 +142,7 @@ describe('prison mob stats (Java ground truth)', () => {
     expect(d.dr).toBe(8);
     expect(d.exp).toBe(8);
     expect(d.maxLvl).toBe(15);
-    expect(d.name).toBe('gnoll brute');
+    expect(d.name).toBe('gnoll bruto');
     expect(d.immunities).toContain('terror'); // Brute.java:196-204
   });
 
@@ -157,7 +157,7 @@ describe('prison mob stats (Java ground truth)', () => {
     expect(d.hp).toBe(120);
     expect(d.exp).toBe(20);
     expect(d.maxLvl).toBe(30);
-    expect(d.name).toBe('Tengu');
+    expect(d.name).toBe('el Bilbul');
     expect(d.sprite).toBe('mob_tengu');
     expect(d.resistances).toEqual(
       expect.arrayContaining(['toxic_gas', 'poison', 'death', 'psionic_blast']),
@@ -167,7 +167,7 @@ describe('prison mob stats (Java ground truth)', () => {
   test('mutations: albino HP 15 (Albino.java:29), bandit = thief stats (Bandit.java), shielded def 20/dr 10 (Shielded.java:25-46)', () => {
     const albino = MOB_DEFS.albino!;
     expect(albino.hp).toBe(15);
-    expect(albino.name).toBe('albino rat');
+    expect(albino.name).toBe('rata albina');
     expect(albino.exp).toBe(1); // Rat EXP (Albino overrides HP only)
     expect(albino.maxLvl).toBe(5);
     const bandit = MOB_DEFS.bandit!;
@@ -175,14 +175,14 @@ describe('prison mob stats (Java ground truth)', () => {
     expect(bandit.atk).toBe(MOB_DEFS.thief!.atk);
     expect(bandit.exp).toBe(5);
     expect(bandit.maxLvl).toBe(10);
-    expect(bandit.name).toBe('crazy bandit');
+    expect(bandit.name).toBe('bandido loco');
     const shielded = MOB_DEFS.shielded!;
     expect(shielded.def).toBe(20);
     expect(shielded.dr).toBe(10);
     expect(shielded.hp).toBe(40); // Brute HP otherwise
     expect(shielded.exp).toBe(8);
     expect(shielded.maxLvl).toBe(15);
-    expect(shielded.name).toBe('shielded brute');
+    expect(shielded.name).toBe('bruto con escudo');
   });
 
   test('MOB_EXP entries single-source the defs', () => {
@@ -372,7 +372,7 @@ describe('brute', () => {
     brute.hp = 9;
     (brute as unknown as { onDamaged(ctx: ActionContext): void }).onDamaged(c.ctx);
     expect((brute as unknown as { enraged: boolean }).enraged).toBe(true);
-    expect(c.logs.some((l) => l.includes('becomes enraged!'))).toBe(true); // TXT_ENRAGED
+    expect(c.logs.some((l) => l.includes('se enfurece'))).toBe(true); // TXT_ENRAGED
   });
 
   test('enraged die is 10-40, calm die is 8-18 (Brute.java:156-160)', () => {
@@ -459,7 +459,7 @@ describe('rare mutations', () => {
     const lvl = makeLevel();
     const c = makeCtx(lvl);
     const shielded = addMob(c, 'shielded', 2, 5);
-    expect(shielded.defenseVerb()).toBe('blocked'); // Shielded.java:38-40
+    expect(shielded.defenseVerb()).toBe('bloqueó'); // Shielded.java:38-40
     // Inherits Brute's loot (Shielded has no override): Gold @ 0.5
     // (Brute.java:144-145). Statistical: 30 kills, P(no gold) ~= 1e-9.
     let goldDrops = 0;
@@ -477,14 +477,14 @@ describe('rare mutations', () => {
   test('defense verbs: bat "evaded" (Bat.java:64-66), default "dodged" (Char.java:227-229)', () => {
     const lvl = makeLevel();
     const c = makeCtx(lvl);
-    expect(addMob(c, 'bat', 2, 5).defenseVerb()).toBe('evaded');
-    expect(addMob(c, 'brute', 3, 5).defenseVerb()).toBe('dodged');
+    expect(addMob(c, 'bat', 2, 5).defenseVerb()).toBe('esquivó');
+    expect(addMob(c, 'brute', 3, 5).defenseVerb()).toBe('esquivó');
     // Vanilla miss text: "%s %s your attack" (Char.java:69).
     const bat = c.mobs[0]!;
     bat.enemySeen = true;
     const acc0 = 0;
     strikeHeroVsMob(c.ctx, c.hero, bat, acc0, () => 5);
-    expect(c.logs.some((l) => l.includes('evaded your attack'))).toBe(true);
+    expect(c.logs.some((l) => l.includes('esquivó tu ataque'))).toBe(true);
   });
 });
 

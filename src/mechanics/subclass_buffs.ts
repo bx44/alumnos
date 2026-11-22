@@ -117,7 +117,7 @@ export function comboHit(count: number, damage: number): ComboHitResult {
       count: next,
       bonus: Math.floor((damage * (next - 2)) / 5),
       duration: 1.41 - next / 10,
-      log: `${next} hit combo!`,
+      log: comboMessage(next),
       badgeCount: next,
     };
   }

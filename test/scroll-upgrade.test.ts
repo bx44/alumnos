@@ -210,10 +210,10 @@ describe('upgrade mechanics (Item.java / Armor.java / MeleeWeapon.java)', () => 
 
   test('gearDisplayName adds the vanilla +N suffix', () => {
     expect(gearDisplayName({ name: 'espada corta', level: 0 })).toBe(
-      'short sword',
+      'espada corta',
     );
     expect(gearDisplayName({ name: 'espada corta', level: 2 })).toBe(
-      'short sword +2',
+      'espada corta +2',
     );
   });
 });
@@ -233,7 +233,7 @@ describe('reading a Scroll of Upgrade', () => {
     expect(c.hero.weapon!.level).toBe(1);
     expect(c.hero.inventory[slotOf(c.hero, 'scroll_upgrade')].qty).toBe(1);
     expect(
-      c.logs.some((m) => m.includes('short sword +1 certainly looks better')),
+      c.logs.some((m) => m.includes('espada corta +1') && m.includes('se ve mucho mejor')),
     ).toBe(true);
   });
 
@@ -247,7 +247,7 @@ describe('reading a Scroll of Upgrade', () => {
     expect(c.hero.armor!.level).toBe(1);
     expect(c.hero.armor!.str).toBe(8);
     expect(
-      c.logs.some((m) => m.includes('cloth armor +1 certainly looks better')),
+      c.logs.some((m) => m.includes('armadura de tela +1') && m.includes('se ve mucho mejor')),
     ).toBe(true);
   });
 
@@ -259,7 +259,7 @@ describe('reading a Scroll of Upgrade', () => {
     const slot = slotOf(c.hero, 'scroll_upgrade');
     useInventorySlot(c.ctx, c.hero, slot);
     expect(slotOf(c.hero, 'scroll_upgrade')).toBe(slot);
-    expect(c.logs.some((m) => m.includes('nothing to upgrade'))).toBe(true);
+    expect(c.logs.some((m) => m.includes('No traes nada que mejorar'))).toBe(true);
   });
 
   test('M1 placeholder scroll is inert (not a real scroll id)', () => {

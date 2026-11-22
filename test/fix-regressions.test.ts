@@ -189,7 +189,7 @@ describe('bump-attack (Hero.handle)', () => {
     expect(hero.x).toBe(2);
     expect(hero.y).toBe(2);
     // ...and attacked it (hit or miss always logs; a hit wakes the rat).
-    expect(g.log.some((l) => /You (hit|miss)/.test(l))).toBe(true);
+    expect(g.log.some((l) => /pegas|falla|You (hit|miss)/.test(l))).toBe(true);
     expect(rat.state).not.toBe('sleeping');
   });
 });

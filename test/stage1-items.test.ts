@@ -180,8 +180,8 @@ describe('bags, misc, and overpriced ration', () => {
   test('bags: price 50, type bag, no use action', () => {
     for (const [id, name] of [
       ['seed_pouch', 'bolsa de semillas'],
-      ['scroll_holder', 'scroll holder'],
-      ['wand_holster', 'wand holster'],
+      ['scroll_holder', 'portapergaminos'],
+      ['wand_holster', 'funda de varitas'],
     ] as const) {
       const def = getItem(id);
       expect(def.name).toBe(name);

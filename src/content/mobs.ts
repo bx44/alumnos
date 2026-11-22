@@ -734,7 +734,7 @@ export class ContentMob extends Actor implements MobActor {
    * Default "dodged" (Char.java:227-229).
    */
   defenseVerb(): string {
-    return 'dodged';
+    return 'esquivó';
   }
 
   mobDamageRoll(rng: MechanicsRng): number {
@@ -1093,7 +1093,7 @@ export class ThiefMob extends ContentMob {
 export class BatMob extends ContentMob {
   /** Bat.defenseVerb (Bat.java:64-66). */
   override defenseVerb(): string {
-    return 'evaded';
+    return 'esquivó';
   }
 
   override attackProc(
@@ -1187,7 +1187,7 @@ export class BruteMob extends ContentMob {
       this.enraged = true;
       this.enrageDebt = 1;
       if (ctx.level.visible[this.pos]) {
-        ctx.log(`${this.name} becomes enraged!`); // TXT_ENRAGED, Brute.java:131
+        ctx.log(`¡${this.name} se enfurece!`); // TXT_ENRAGED, Brute.java:131
       }
     }
   }
@@ -1209,7 +1209,7 @@ export class BruteMob extends ContentMob {
 export class ShieldedMob extends BruteMob {
   /** Shielded.defenseVerb (Shielded.java:38-40). */
   override defenseVerb(): string {
-    return 'blocked';
+    return 'bloqueó';
   }
 }
 
@@ -1360,7 +1360,7 @@ export class ElementalMob extends ContentMob {
 export class MonkMob extends ContentMob {
   /** Monk.defenseVerb (Monk.java:74-76). */
   override defenseVerb(): string {
-    return 'parried';
+    return 'paró';
   }
 
   override attackProc(

@@ -293,7 +293,7 @@ describe('buy flow (WndTradeItem.buy, WndTradeItem.java:201-212)', () => {
     expect(hero.gold).toBe(800);
     expect(game.level.items).toHaveLength(0);
     expect(hero.inventory).toEqual([{ itemId: 'potion_healing', qty: 1 }]);
-    expect(log).toEqual(["You've bought potion of healing for 200g."]);
+    expect(log).toEqual(["Compraste poción de curación por 200 de oro."]);
   });
 
   test('buy is refused when the purse is short (the button is disabled in vanilla)', () => {
@@ -352,7 +352,7 @@ describe('sell flow (WndTradeItem.sell/sellOne, WndTradeItem.java:168-195)', () 
     const hero = game.hero as unknown as { gold: number; inventory: ItemStack[] };
     expect(hero.gold).toBe(20);
     expect(hero.inventory).toEqual([{ itemId: 'potion_healing', qty: 2 }]);
-    expect(log).toEqual(["You've sold your potion of healing for 20g."]);
+    expect(log).toEqual(["Vendiste poción de curación por 20 de oro."]);
   });
 
   test('sell-all pays the whole-stack price and removes the stack', () => {
@@ -362,7 +362,7 @@ describe('sell flow (WndTradeItem.sell/sellOne, WndTradeItem.java:168-195)', () 
     const hero = game.hero as unknown as { gold: number; inventory: ItemStack[] };
     expect(hero.gold).toBe(65);
     expect(hero.inventory).toHaveLength(0);
-    expect(log).toEqual(["You've sold your potion of healing for 60g."]);
+    expect(log).toEqual(["Vendiste poción de curación por 60 de oro."]);
   });
 
   test('sell-one on a single item sells it all', () => {

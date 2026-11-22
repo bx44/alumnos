@@ -184,7 +184,7 @@ describe('undead stats (King$Undead, King.java:222-316)', () => {
     expect(UNDEAD_EXP).toBe(0);
     expect(UNDEAD_DEF.maxLvl).toBe(UNDEAD_MAX_LVL);
     expect(UNDEAD_MAX_LVL).toBe(30);
-    expect(UNDEAD_DEF.name).toBe('undead dwarf');
+    expect(UNDEAD_DEF.name).toBe('enano no-muerto');
     expect(UNDEAD_DEF.sprite).toBe('mob_undead');
   });
 
@@ -245,21 +245,21 @@ describe('undead stats (King$Undead, King.java:222-316)', () => {
 // --- name logic ---
 
 describe('king name (King.java:55)', () => {
-  test('"King of Dwarves" at deepest floor; "undead King of Dwarves" otherwise', () => {
-    expect(kingDisplayName(20, 20)).toBe('King of Dwarves');
-    expect(kingDisplayName(20, 22)).toBe('undead King of Dwarves');
-    expect(kingDisplayName(20, null)).toBe('King of Dwarves');
+  test('"el Rey de los Enanos" en el piso mas hondo; "no-muerto" en los demas', () => {
+    expect(kingDisplayName(20, 20)).toBe('el Rey de los Enanos');
+    expect(kingDisplayName(20, 22)).toBe('el Rey de los Enanos no-muerto');
+    expect(kingDisplayName(20, null)).toBe('el Rey de los Enanos');
   });
 
   test('KingMob constructor applies the name rule', () => {
     resetUndeadCount();
     const a = new KingMob(1, 40, 9, 20, 20);
-    expect(a.name).toBe('King of Dwarves');
+    expect(a.name).toBe('el Rey de los Enanos');
     const b = new KingMob(2, 40, 9, 20, 22);
-    expect(b.name).toBe('undead King of Dwarves');
+    expect(b.name).toBe('el Rey de los Enanos no-muerto');
     // default (no meta tracking yet) = first descent = deepest
     const c = new KingMob(3, 40, 9, 20);
-    expect(c.name).toBe('King of Dwarves');
+    expect(c.name).toBe('el Rey de los Enanos');
   });
 });
 
@@ -472,7 +472,7 @@ describe('arena entry (CityBossLevel.java:176-200)', () => {
     expect(king.state).toBe('hunting');
     expect(c.mobs).toContain(king);
     expect(c.logs).toContain('¡Cómo te atreves!');
-    expect(king.name).toBe('King of Dwarves');
+    expect(king.name).toBe('el Rey de los Enanos');
   });
 
   test('spawnKingArena: silent when the spawn cell is not visible', () => {
@@ -489,7 +489,7 @@ describe('arena entry (CityBossLevel.java:176-200)', () => {
     const level = makeLevel();
     const c = makeCtx(level);
     const king = spawnKingArena(c.ctx, 40);
-    expect(king.name).toBe('undead King of Dwarves');
+    expect(king.name).toBe('el Rey de los Enanos no-muerto');
     setKingDeepestFloor(null);
   });
 });

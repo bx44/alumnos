@@ -15,55 +15,17 @@
  * base (Potion 20, Scroll 15); weapons/armor are identified in shop stock
  * (ShopPainter.java) and price at the tier formula.
  */
-import type { ArmorDef, WeaponDef } from '../mechanics/char';
 import { SPRITES } from '../assets/sprites';
 import { ORIGINAL_SPRITES } from '../assets/original_sprites';
-import { POTION_DEFS } from './potions.js';
-import { SCROLL_DEFS } from './scrolls.js';
+// Catalog data only — not potions.ts/scrolls.ts — to avoid the init cycle
+// items → potions → hero → items (Bun: Cannot access POTION_DEFS before initialization).
+import { POTION_DEFS } from './potion_defs.js';
+import { SCROLL_DEFS } from './scroll_defs.js';
 import { HONEYPOT_DEF } from './honeypot.js';
 import { WAND_SPECS } from '../mechanics/wands.js';
 import { RING_SPECS } from '../mechanics/rings.js';
-
-export type ItemType =
-  | 'weapon'
-  | 'armor'
-  | 'missile'
-  | 'potion'
-  | 'food'
-  | 'scroll'
-  | 'gold'
-  | 'key'
-  | 'dewdrop'
-  | 'seed'
-  | 'bag'
-  | 'misc'
-  | 'quest'
-  | 'wand'
-  | 'ring';
-
-export interface ItemDef {
-  /** Catalog id. Gold drops encode the amount as `gold:<n>` (see Gold below). */
-  id: string;
-  name: string;
-  /** Key into the art director's SPRITES atlas. */
-  sprite: string;
-  type: ItemType;
-  /** Stacks merge in the inventory (Item.stackable). */
-  stackable: boolean;
-  desc: string;
-  /** Melee stats (type 'weapon'). */
-  weapon?: WeaponDef;
-  /** Armor stats (type 'armor'). */
-  armor?: ArmorDef;
-  /** Hunger energy restored (type 'food'; Food.energy, Food.java:41). */
-  energy?: number;
-  /**
-   * Shop price in gold (Item.price() in vanilla; STAGE 1: populated for the
-   * shop system — the hero SELLS at price() and BUYS shop stock at
-   * price()*5*(depth/5+1) per WndTradeItem.java:168-199.
-   */
-  price?: number;
-}
+export type { ItemType, ItemDef } from './item_types.js';
+import type { ItemDef } from './item_types.js';
 
 /** DarkGold (DarkGold.java): stackable quest ore, non-upgradable, always
  *  identified; price() = quantity (DarkGold.java:63-65). The blacksmith's

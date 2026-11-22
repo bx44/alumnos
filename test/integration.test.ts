@@ -210,7 +210,7 @@ describe('Milestone 1 integration', () => {
     // hero survived the run (did not die)
     expect(game.gameOver).toBe(false);
     // Goo present on depth 5
-    const goo = game.mobs.find((m) => m.name.toLowerCase() === 'goo');
+    const goo = game.mobs.find((m) => m.name === 'el Shiamún');
     expect(goo).toBeDefined();
     expect(goo!.isAlive()).toBe(true);
     // wake Goo and trigger seal (Goo seals on its first move)
@@ -268,7 +268,7 @@ describe('Milestone 1 integration', () => {
     const dBefore = game.level.depth;
     bot.doIntent({ kind: 'ascend' });
     expect(game.level.depth).toBe(dBefore);
-    expect(game.log.some((l) => l.includes('sealed'))).toBe(true);
+    expect(game.log.some((l) => l.includes('El piso se cerró'))).toBe(true);
     h2.pos = saved;
   });
 
@@ -277,7 +277,7 @@ describe('Milestone 1 integration', () => {
     const { game, hero } = bot;
     // fast-forward to depth 5
     for (let d = 1; d <= 4; d++) (game as any).descend();
-    const goo = game.mobs.find((m) => m.name.toLowerCase() === 'goo')!;
+    const goo = game.mobs.find((m) => m.name === 'el Shiamún')!;
     const h = hero() as unknown as ContentHero;
     h.hp = h.ht = 100000; // scripted kill: verify mechanics, not difficulty
     // wake Goo: place adjacent, attack once, then retreat so Goo moves (seal triggers on move)

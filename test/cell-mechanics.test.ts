@@ -104,7 +104,7 @@ describe('chasm', () => {
     expect(c.hero.pos).toBe(hy * level.w + hx);
     expect(
       c.logs.some((l) =>
-        l.includes('Do you really want to jump into the chasm?'),
+        l.includes('aventarte al abismo') || l.includes('aventar al abismo'),
       ),
     ).toBe(true);
   });
@@ -124,7 +124,7 @@ describe('chasm', () => {
     expect(c.hero.pos).toBe(hy * level.w + hx); // never steps in
     expect(c.hero.buffs.cripple?.left).toBe(10); // Cripple.DURATION
     expect(c.hero.hp).toBe(20 - 8);
-    expect(c.logs.some((l) => l.includes('fall into the chasm'))).toBe(true);
+    expect(c.logs.some((l) => l.includes('caes al abismo'))).toBe(true);
   });
 
   test('a different step disarms the confirmation', () => {
@@ -347,7 +347,7 @@ describe('signs', () => {
     const cost = readSign(c.ctx, c.hero);
     expect(cost).toBe(0);
     expect(level.get(c.hero.x, c.hero.y)).toBe(Terrain.EMBERS);
-    expect(c.logs.some((l) => l.includes('greenish flames'))).toBe(true);
+    expect(c.logs.some((l) => l.includes('llamas verdosas'))).toBe(true);
     // Burned away: a second wait is a plain wait.
     expect(waitTurn(c.ctx, c.hero)).toBe(1);
   });

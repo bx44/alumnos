@@ -137,8 +137,8 @@ describe('Tome of Mastery / Remastery (items/TomeOfMastery.java)', () => {
 
   test('name becomes Tome of Remastery once a subclass is chosen', () => {
     expect(tomeDisplayName('none')).toBe('tomo de maestría');
-    expect(tomeDisplayName('berserker')).toBe('Tome of Remastery');
-    expect(tomeNameFor('gladiator')).toBe('Tome of Remastery');
+    expect(tomeDisplayName('berserker')).toBe('tomo de remastería');
+    expect(tomeNameFor('gladiator')).toBe('tomo de remastería');
   });
 
   test('first read offers both choices; reread offers only the other (respec)', () => {

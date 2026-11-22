@@ -125,8 +125,8 @@ export function kingDisplayName(
   deepestFloor: number | null,
 ): string {
   return deepestFloor === null || depth === deepestFloor
-    ? 'King of Dwarves'
-    : 'undead King of Dwarves';
+    ? 'el Rey de los Enanos'
+    : 'el Rey de los Enanos no-muerto';
 }
 
 /**
