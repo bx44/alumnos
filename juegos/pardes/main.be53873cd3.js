@@ -3834,6 +3834,367 @@ var ORIGINAL_SPRITES = {
   bufficon_sacrifice: { w: 7, h: 7, rgba: "IkRm/yJEZv8iRGb/RIju/yJEZv8iRGb/IkRm/yJEZv8iRGb/u8z//yJEZv8iRGb/IkRm/yJEZv8iRGb/IkRm/yJEZv+7zP//RIju/yJEZv8iRGb/IkRm/0SI7v+7zP//u8z//7vM//9EiO7/IkRm/yJEZv9EiO7/u8z//7vM//+7zP//u8z//yJEZv8iRGb/RIju/7vM//+7zP//u8z//0SI7v8iRGb/IkRm/yJEZv9EiO7/RIju/0SI7v8iRGb/IkRm/w==" }
 };
 
+// src/content/potion_defs.ts
+var POTION_CLASS_ORDER = [
+  "potion_healing",
+  "potion_experience",
+  "potion_toxicgas",
+  "potion_liquidflame",
+  "potion_strength",
+  "potion_paralyticgas",
+  "potion_levitation",
+  "potion_mindvision",
+  "potion_purity",
+  "potion_invisibility",
+  "potion_might",
+  "potion_frost"
+];
+var POTION_ID_SET = new Set(POTION_CLASS_ORDER);
+function isPotionId(id) {
+  return POTION_ID_SET.has(id);
+}
+function def(id, name, sprite, desc) {
+  return {
+    id,
+    name,
+    sprite,
+    type: "potion",
+    stackable: true,
+    desc,
+    price: 20
+  };
+}
+var POTION_DEFS = {
+  potion_experience: def("potion_experience", "Potion of Experience", "item_potion_experience", "The storied experiences of multitudes of battles reduced to vapours, " + "this draught will instantly raise your experience level."),
+  potion_toxicgas: def("potion_toxicgas", "Potion of Toxic Gas", "item_potion_toxicgas", "Uncorking or shattering this pressurized glass will cause its contents " + "to explode into a deadly cloud of toxic green gas. You might choose " + "to fling this potion at distant enemies instead of uncorking it by hand."),
+  potion_liquidflame: def("potion_liquidflame", "Potion of Liquid Flame", "item_potion_liquidflame", "This flask contains an unstable compound which will burst violently " + "into flame upon exposure to open air."),
+  potion_paralyticgas: def("potion_paralyticgas", "Potion of Paralytic Gas", "item_potion_paralyticgas", "Uncorking or shattering this pressurized glass will cause its contents " + "to explode into a cloud of paralyzing gas. You might choose to fling " + "this potion at distant enemies instead of uncorking it by hand."),
+  potion_levitation: def("potion_levitation", "Potion of Levitation", "item_potion_levitation", "This curious solution will fill you with buoyancy. If you drink it, " + "you will begin to float."),
+  potion_mindvision: def("potion_mindvision", "Potion of Mind Vision", "item_potion_mindvision", "After drinking this, your mind will become attuned to the psychic " + "signature of distant creatures, enabling you to sense biological " + "presences through walls. Also this potion will permit you to see " + "through nearby walls and darkness."),
+  potion_purity: def("potion_purity", "Potion of Purification", "item_potion_purity", "This cloudy fluid will disperse any noxious clouds of gas which may be " + "plaguing your vicinity. When you drink it, any gas effects afflicting " + "you will be neutralized."),
+  potion_invisibility: def("potion_invisibility", "Potion of Invisibility", "item_potion_invisibility", "Drinking this potion will render you temporarily invisible. Enemies " + "will be unable to see you, although any action you take (such as " + "attacking) will dispel the effect."),
+  potion_might: def("potion_might", "Potion of Might", "item_potion_might", "This powerful liquid will course through your muscles, permanently " + "increasing your strength by one point and health by five points."),
+  potion_frost: def("potion_frost", "Potion of Frost", "item_potion_frost", "Upon exposure to open air, the fluid will evaporate, releasing an icy " + "blast.")
+};
+
+// src/content/scroll_defs.ts
+var SCROLL_CLASS_ORDER = [
+  "scroll_identify",
+  "scroll_magicmapping",
+  "scroll_recharging",
+  "scroll_removecurse",
+  "scroll_teleportation",
+  "scroll_challenge",
+  "scroll_terror",
+  "scroll_lullaby",
+  "scroll_psionicblast",
+  "scroll_mirrorimage",
+  "scroll_upgrade",
+  "scroll_enchantment"
+];
+var SCROLL_ID_SET = new Set(SCROLL_CLASS_ORDER);
+function isScrollId(id) {
+  return SCROLL_ID_SET.has(id);
+}
+function def2(id, name, sprite, desc) {
+  return {
+    id,
+    name,
+    sprite,
+    type: "scroll",
+    stackable: true,
+    desc,
+    price: 15
+  };
+}
+var SCROLL_DEFS = {
+  scroll_identify: def2("scroll_identify", "Scroll of Identify", "item_scroll_identify", "Permanently reveals all of the secrets of a single item."),
+  scroll_teleportation: def2("scroll_teleportation", "Scroll of Teleportation", "item_scroll_teleportation", "The spell on this parchment will teleport the reader to a random " + "location on the current level."),
+  scroll_removecurse: def2("scroll_removecurse", "Scroll of Remove Curse", "item_scroll_removecurse", "The incantation on this scroll will instantly strip from the reader's " + "weapon, armor, rings and carried items any evil enchantments that " + "might prevent the wearer from removing them."),
+  scroll_recharging: def2("scroll_recharging", "Scroll of Recharging", "item_scroll_recharging", "The spell on this scroll will instantly recharge all of the wands " + "the reader has."),
+  scroll_magicmapping: def2("scroll_magicmapping", "Scroll of Magic Mapping", "item_scroll_magicmapping", "When this scroll is read, an image of crystal clarity will be etched " + "into your memory, alerting you to the precise layout of the level " + "and revealing all hidden secrets. The locations of items and " + "creatures will remain unknown."),
+  scroll_challenge: def2("scroll_challenge", "Scroll of Challenge", "item_scroll_challenge", "When this scroll is read, it lets out a challenging cry that " + "compels all of the creatures on the level to pay attention to the " + "reader."),
+  scroll_terror: def2("scroll_terror", "Scroll of Terror", "item_scroll_terror", "A fearsome magic will course through your enemies when this scroll " + "is read, causing them to flee from your presence in terror."),
+  scroll_lullaby: def2("scroll_lullaby", "Scroll of Lullaby", "item_scroll_lullaby", "Soothing notes will drift from this scroll, sending all nearby " + "creatures into a deep slumber."),
+  scroll_psionicblast: def2("scroll_psionicblast", "Scroll of Psionic Blast", "item_scroll_psionicblast", "This scroll contains a devastating blast of psychic energy. It will " + "damage and stun all creatures on the level that can see the reader, " + "but it will also blind and damage the reader."),
+  scroll_mirrorimage: def2("scroll_mirrorimage", "Scroll of Mirror Image", "item_scroll_mirrorimage", "The incantation on this scroll will create illusory duplicates of " + "the reader, which will needle and distract the enemies."),
+  scroll_enchantment: def2("scroll_enchantment", "Scroll of Enchantment", "item_scroll_enchantment", "This scroll is able to imbue a weapon or a suit of armor with a " + "magical enchantment, or to strengthen an enchantment which " + "already exists on the item.")
+};
+
+// src/core/turn.ts
+var TICK = 1;
+
+class Actor {
+  static TICK = TICK;
+  time = 0;
+  getSpeed() {
+    return 1;
+  }
+  getTimeScale() {
+    return 1;
+  }
+}
+
+class Scheduler {
+  heap = [];
+  seq = 0;
+  order = new Map;
+  now = 0;
+  get count() {
+    return this.heap.length;
+  }
+  add(a) {
+    if (this.order.has(a))
+      return;
+    this.order.set(a, this.seq++);
+    this.push(a);
+  }
+  remove(a) {
+    if (!this.order.has(a))
+      return;
+    this.order.delete(a);
+    const i = this.heap.indexOf(a);
+    if (i >= 0) {
+      const last = this.heap.pop();
+      if (i < this.heap.length) {
+        this.heap[i] = last;
+        this.bubbleDown(i);
+        this.bubbleUp(i);
+      }
+    }
+  }
+  contains(a) {
+    return this.order.has(a);
+  }
+  clear() {
+    this.heap = [];
+    this.order.clear();
+    this.seq = 0;
+    this.now = 0;
+  }
+  peek() {
+    return this.heap[0];
+  }
+  next() {
+    const m = this.pop();
+    if (!m)
+      throw new Error("Scheduler: no actors");
+    this.order.delete(m);
+    this.now = m.time;
+    return m;
+  }
+  spend(taker, cost) {
+    const timeScale = taker.getTimeScale?.() ?? 1;
+    taker.time = this.now + cost / Math.max(0.01, taker.getSpeed()) / timeScale;
+    this.add(taker);
+  }
+  less(a, b) {
+    if (a.time !== b.time)
+      return a.time < b.time;
+    return (this.order.get(a) ?? 0) < (this.order.get(b) ?? 0);
+  }
+  push(a) {
+    this.heap.push(a);
+    this.bubbleUp(this.heap.length - 1);
+  }
+  pop() {
+    const top = this.heap[0];
+    const last = this.heap.pop();
+    if (top !== undefined && last !== undefined && this.heap.length > 0) {
+      this.heap[0] = last;
+      this.bubbleDown(0);
+    }
+    return top;
+  }
+  bubbleUp(i) {
+    while (i > 0) {
+      const p = i - 1 >> 1;
+      if (!this.less(this.heap[i], this.heap[p]))
+        break;
+      [this.heap[i], this.heap[p]] = [this.heap[p], this.heap[i]];
+      i = p;
+    }
+  }
+  bubbleDown(i) {
+    for (;; ) {
+      const l = i * 2 + 1;
+      const r = l + 1;
+      let m = i;
+      if (l < this.heap.length && this.less(this.heap[l], this.heap[m]))
+        m = l;
+      if (r < this.heap.length && this.less(this.heap[r], this.heap[m]))
+        m = r;
+      if (m === i)
+        break;
+      [this.heap[i], this.heap[m]] = [this.heap[m], this.heap[i]];
+      i = m;
+    }
+  }
+}
+
+// src/core/path.ts
+function findPath(grid, passable, sx, sy, tx, ty, maxExpand = 8192) {
+  if (!grid.inBounds(tx, ty) || !passable(tx, ty))
+    return null;
+  if (sx === tx && sy === ty)
+    return [];
+  const start = grid.idx(sx, sy);
+  const target = grid.idx(tx, ty);
+  const open = [start];
+  const came = new Map;
+  const g = new Map([[start, 0]]);
+  const closed = new Set;
+  const h = (i) => {
+    const p = grid.xy(i);
+    return Math.max(Math.abs(p.x - tx), Math.abs(p.y - ty));
+  };
+  const f = (i) => (g.get(i) ?? Infinity) + h(i);
+  let expanded = 0;
+  while (open.length > 0 && expanded++ < maxExpand) {
+    let bi = 0;
+    for (let i = 1;i < open.length; i++) {
+      if (f(open[i]) < f(open[bi]))
+        bi = i;
+    }
+    const cur = open.splice(bi, 1)[0];
+    if (cur === target) {
+      const path = [];
+      let c = cur;
+      while (c !== undefined && c !== start) {
+        path.push(grid.xy(c));
+        c = came.get(c);
+      }
+      path.reverse();
+      return path;
+    }
+    closed.add(cur);
+    const p = grid.xy(cur);
+    for (const n of grid.neighbors8(p.x, p.y)) {
+      if (!passable(n.x, n.y))
+        continue;
+      const ni = grid.idx(n.x, n.y);
+      if (closed.has(ni))
+        continue;
+      const ng = (g.get(cur) ?? Infinity) + 1;
+      if (ng < (g.get(ni) ?? Infinity)) {
+        g.set(ni, ng);
+        came.set(ni, cur);
+        if (!open.includes(ni))
+          open.push(ni);
+      }
+    }
+  }
+  return null;
+}
+
+// src/dungeon/prisonBoss.ts
+function pressArenaCell(level, rng, cell, hooks) {
+  if (level.enteredArena)
+    return;
+  const arena = level.bossArena;
+  if (!arena)
+    return;
+  const w = level.w;
+  const x = cell % w;
+  const y = Math.floor(cell / w);
+  if (x < arena.l || x > arena.r || y < arena.t || y > arena.b)
+    return;
+  level.enteredArena = true;
+  let pos = -1;
+  for (let tries = 0;tries < 64 && pos < 0; tries++) {
+    const px = arena.l + 1 + rng.int(0, arena.r - arena.l - 1);
+    const py = arena.t + 1 + rng.int(0, arena.b - arena.t - 1);
+    const p = py * w + px;
+    if (p !== cell && !hooks.occupied(p))
+      pos = p;
+  }
+  if (pos >= 0)
+    hooks.spawn(pos);
+  if (level.arenaDoorCell >= 0) {
+    level.set(level.arenaDoorCell % w, Math.floor(level.arenaDoorCell / w), 3 /* DOOR_LOCKED */);
+  }
+}
+function onItemDropped(level, itemId) {
+  if (level.keyDropped || !level.bossArena)
+    return;
+  if (itemId !== "skeleton_key")
+    return;
+  level.keyDropped = true;
+  if (level.arenaDoorCell >= 0) {
+    const w = level.w;
+    level.set(level.arenaDoorCell % w, Math.floor(level.arenaDoorCell / w), 2 /* DOOR */);
+  }
+}
+
+// src/dungeon/cavesBoss.ts
+function pressArenaCell2(level, rng, cell, hooks) {
+  if (level.enteredArena)
+    return;
+  const arena = level.bossArena;
+  if (!arena)
+    return;
+  const w = level.w;
+  const x = cell % w;
+  const y = Math.floor(cell / w);
+  const outside = x < arena.l - 1 || x > arena.r + 1 || y < arena.t - 1 || y > arena.b + 1;
+  if (!outside)
+    return;
+  level.enteredArena = true;
+  let pos = -1;
+  for (let tries = 0;tries < 4096 && pos < 0; tries++) {
+    const p = rng.int(0, level.size);
+    const px = p % w;
+    const py = Math.floor(p / w);
+    const pOutside = px < arena.l - 1 || px > arena.r + 1 || py < arena.t - 1 || py > arena.b + 1;
+    if (pOutside && level.isPassable(px, py) && !level.visible[p] && !hooks.occupied(p)) {
+      pos = p;
+    }
+  }
+  if (pos >= 0)
+    hooks.spawn(pos);
+  if (level.arenaDoorCell >= 0) {
+    level.set(level.arenaDoorCell % w, Math.floor(level.arenaDoorCell / w), 0 /* WALL */);
+  }
+}
+function onItemDropped2(level, itemId) {
+  if (level.keyDropped || !level.bossArena)
+    return;
+  if (itemId !== "skeleton_key")
+    return;
+  level.keyDropped = true;
+  if (level.arenaDoorCell >= 0) {
+    const w = level.w;
+    level.set(level.arenaDoorCell % w, Math.floor(level.arenaDoorCell / w), 1 /* FLOOR */);
+  }
+}
+
+// src/mechanics/combat.ts
+function hitRoll(rng, accuracy, evasion, magic = false) {
+  const acuRoll = rng.float(0, accuracy);
+  const defRoll = rng.float(0, evasion);
+  return (magic ? acuRoll * 2 : acuRoll) >= defRoll;
+}
+function applyDamage(rng, target, dmg, sourceTag) {
+  if (target.hp <= 0)
+    return { hp: target.hp, died: true, paralysisBroken: false };
+  if (sourceTag && target.immunities.includes(sourceTag)) {
+    dmg = 0;
+  } else if (sourceTag && target.resistances.includes(sourceTag)) {
+    dmg = rng.intRange(0, dmg);
+  }
+  let paralysisBroken = false;
+  if (target.paralysed) {
+    if (rng.int(0, dmg) >= rng.int(0, target.hp)) {
+      paralysisBroken = true;
+    }
+  }
+  const hp = target.hp - dmg;
+  return { hp, died: hp <= 0, paralysisBroken };
+}
+function skeletonDeathBurst(rng, damageRoll, victimDr) {
+  return Math.max(0, damageRoll(rng) - rng.intRange(0, Math.floor(victimDr / 2)));
+}
+
 // src/mechanics/buffs.ts
 var BURNING_DURATION = 8;
 var POISON_TRAP_BASE = 4;
@@ -3876,14 +4237,14 @@ function oozeTick(inWater) {
   return { damage: OOZE_DAMAGE, detached: inWater };
 }
 var MSG_BURNS_UP = "¡%s se quema!";
-var MSG_BURNED_TO_DEATH = "You burned to death...";
-var MSG_DIED_FROM_POISON = "You died from poison...";
-var MSG_OOZE_KILLED = "Caustic ooze killed you...";
+var MSG_BURNED_TO_DEATH = "Te quemaste...";
+var MSG_DIED_FROM_POISON = "Te mató el veneno...";
+var MSG_OOZE_KILLED = "La baba cáustica te mató...";
 var MSG_BLED_TO_DEATH = "Te desangraste...";
-var MSG_STARVED_TO_DEATH = "You starved to death...";
-var MSG_HUNGRY = "You are hungry.";
-var MSG_STARVING = "You are starving!";
-var DEATH_MESSAGE_RE = /you burned to death\.\.\.|you died from poison\.\.\.|caustic ooze killed you\.\.\.|you bled to death\.\.\.|you starved to death\.\.\.|you died from a toxic gas\.\.|you fell to death\.\.\./i;
+var MSG_STARVED_TO_DEATH = "Te moriste de hambre...";
+var MSG_HUNGRY = "Tienes hambre.";
+var MSG_STARVING = "¡Te estás muriendo de hambre!";
+var DEATH_MESSAGE_RE = /te quemaste\.\.\.|te mató el veneno\.\.\.|la baba cáustica te mató\.\.\.|te desangraste\.\.\.|te moriste de hambre\.\.\.|te mató el gas tóxico\.|te caíste y te mataste\.\.\./i;
 function buffDeathMessage(kind) {
   switch (kind) {
     case "burning":
@@ -3922,235 +4283,6 @@ function burningInventoryTick(rng, stacks, isScroll, isMysteryMeat) {
     }
   }
   return null;
-}
-
-// src/mechanics/blobs.ts
-function isSolidForBlob(t) {
-  return t === 0 /* WALL */ || t === 2 /* DOOR */ || t === 3 /* DOOR_LOCKED */ || t === 4 /* DOOR_SECRET */ || t === 37 /* BARRICADE */ || t === 15 /* STATUE */ || t === 17 /* BOOKSHELF */ || t === 5 /* EXIT_LOCKED */;
-}
-function isFlamableForBlob(t) {
-  return t === 10 /* GRASS */ || t === 39 /* HIGH_GRASS */ || t === 2 /* DOOR */ || t === 37 /* BARRICADE */ || t === 17 /* BOOKSHELF */;
-}
-
-class Blob {
-  kind;
-  cur;
-  off;
-  volume = 0;
-  constructor(kind, length) {
-    this.kind = kind;
-    this.cur = new Int32Array(length);
-    this.off = new Int32Array(length);
-  }
-  act(rng, world) {
-    if (this.volume > 0) {
-      this.volume = 0;
-      this.evolve(rng, world);
-      const tmp = this.off;
-      this.off = this.cur;
-      this.cur = tmp;
-    }
-  }
-  evolve(_rng, world) {
-    const { w } = world;
-    const h = world.length / w;
-    const { cur, off } = this;
-    for (let y = 1;y < h - 1; y++) {
-      const from = y * w + 1;
-      const to = from + w - 2;
-      for (let pos = from;pos < to; pos++) {
-        if (!world.solidAt(pos)) {
-          let count = 1;
-          let sum = cur[pos];
-          if (!world.solidAt(pos - 1)) {
-            sum += cur[pos - 1];
-            count++;
-          }
-          if (!world.solidAt(pos + 1)) {
-            sum += cur[pos + 1];
-            count++;
-          }
-          if (!world.solidAt(pos - w)) {
-            sum += cur[pos - w];
-            count++;
-          }
-          if (!world.solidAt(pos + w)) {
-            sum += cur[pos + w];
-            count++;
-          }
-          const value = sum >= count ? Math.floor(sum / count) - 1 : 0;
-          off[pos] = value;
-          this.volume += value;
-        } else {
-          off[pos] = 0;
-        }
-      }
-    }
-  }
-  seed(cell, amount) {
-    this.cur[cell] += amount;
-    this.volume += amount;
-  }
-  clear(cell) {
-    this.volume -= this.cur[cell];
-    this.cur[cell] = 0;
-  }
-}
-
-class FireBlob extends Blob {
-  constructor(length) {
-    super("fire", length);
-  }
-  evolve(_rng, world) {
-    const { w, length } = world;
-    const { cur, off } = this;
-    const from = w + 1;
-    const to = length - w - 1;
-    let observe = false;
-    for (let pos = from;pos < to; pos++) {
-      let fire;
-      if (cur[pos] > 0) {
-        this.burn(world, pos);
-        fire = cur[pos] - 1;
-        if (fire <= 0 && world.flamableAt(pos)) {
-          world.burnOutTile(pos);
-          observe = true;
-        }
-      } else {
-        if (world.flamableAt(pos) && (cur[pos - 1] > 0 || cur[pos + 1] > 0 || cur[pos - w] > 0 || cur[pos + w] > 0)) {
-          fire = 4;
-          this.burn(world, pos);
-        } else {
-          fire = 0;
-        }
-      }
-      this.volume += off[pos] = fire;
-    }
-  }
-  burn(world, pos) {
-    const ch = world.charAt(pos);
-    if (ch !== null) {
-      world.reigniteBurning(ch);
-    }
-  }
-  seed(cell, amount) {
-    if (this.cur[cell] === 0) {
-      this.volume += amount;
-      this.cur[cell] = amount;
-    }
-  }
-}
-var TOXIC_GAS_DEATH_MESSAGE = "You died from a toxic gas..";
-
-class ToxicGasBlob extends Blob {
-  constructor(length) {
-    super("toxic", length);
-  }
-  evolve(rng, world) {
-    super.evolve(rng, world);
-    const levelDamage = 5 + world.depth * 5;
-    for (let i = 0;i < world.length; i++) {
-      if (this.cur[i] > 0) {
-        const ch = world.charAt(i);
-        if (ch !== null) {
-          let damage = Math.floor((ch.ht + levelDamage) / 40);
-          if (rng.int(0, 40) < (ch.ht + levelDamage) % 40) {
-            damage++;
-          }
-          world.damageChar(rng, ch, damage, "toxic_gas", (dead) => {
-            world.log(TOXIC_GAS_DEATH_MESSAGE);
-          });
-        }
-      }
-    }
-    const par = world.blobs.find((b) => b.kind === "paralytic");
-    if (par != null) {
-      const parCur = par.cur;
-      for (let i = 0;i < world.length; i++) {
-        const t = this.cur[i];
-        const p = parCur[i];
-        if (p >= t) {
-          this.volume -= t;
-          this.cur[i] = 0;
-        } else {
-          par.volume -= p;
-          parCur[i] = 0;
-        }
-      }
-    }
-  }
-}
-
-class ParalyticGasBlob extends Blob {
-  constructor(length) {
-    super("paralytic", length);
-  }
-  evolve(_rng, world) {
-    super.evolve(_rng, world);
-    for (let i = 0;i < world.length; i++) {
-      if (this.cur[i] > 0) {
-        const ch = world.charAt(i);
-        if (ch !== null) {
-          world.prolongParalysis(ch, PARALYSIS_DURATION);
-        }
-      }
-    }
-  }
-}
-
-class WebBlob extends Blob {
-  constructor(length) {
-    super("web", length);
-  }
-  evolve(_rng, world) {
-    for (let i = 0;i < world.length; i++) {
-      const offv = this.cur[i] > 0 ? this.cur[i] - 1 : 0;
-      this.off[i] = offv;
-      if (offv > 0) {
-        this.volume += offv;
-        const ch = world.charAt(i);
-        if (ch !== null) {
-          world.prolongRoots(ch);
-        }
-      }
-    }
-  }
-  seed(cell, amount) {
-    const diff = amount - this.cur[cell];
-    if (diff > 0) {
-      this.cur[cell] = amount;
-      this.volume += diff;
-    }
-  }
-}
-function createBlob(kind, length) {
-  switch (kind) {
-    case "fire":
-      return new FireBlob(length);
-    case "toxic":
-      return new ToxicGasBlob(length);
-    case "paralytic":
-      return new ParalyticGasBlob(length);
-    case "web":
-      return new WebBlob(length);
-  }
-}
-function blobOf(blobs, kind) {
-  return blobs.find((b) => b.kind === kind);
-}
-function seedBlob(blobs, kind, cell, amount, length) {
-  let blob = blobOf(blobs, kind);
-  if (!blob) {
-    blob = createBlob(kind, length);
-    blobs.push(blob);
-  }
-  blob.seed(cell, amount);
-  return blob;
-}
-function tickBlobs(rng, world, blobs) {
-  for (const blob of blobs) {
-    blob.act(rng, world);
-  }
 }
 
 // src/mechanics/goo.ts
@@ -4240,7 +4372,7 @@ function charSpeed(ch) {
 
 // src/mechanics/durability.ts
 var DURABILITY_WARNING_LEVEL = 1 / 6;
-var TXT_GOING_TO_BREAK = "Because of frequent use, your %s is going to break soon.";
+var TXT_GOING_TO_BREAK = "De tanto usarlo, tu %s se va a romper pronto.";
 var TXT_HAS_BROKEN = "De tanto usarlo, tu %s se rompió.";
 var TXT_INCOMPATIBLE_WEAPON = "Interaction of different types of magic has negated the enchantment on this weapon!";
 var TXT_INCOMPATIBLE_ARMOR = "Interaction of different types of magic has erased the glyph on this armor!";
@@ -4475,6 +4607,235 @@ function expForKill(mobId, heroLvl) {
   return heroLvl <= m.maxLvl ? m.exp : 0;
 }
 
+// src/mechanics/blobs.ts
+function isSolidForBlob(t) {
+  return t === 0 /* WALL */ || t === 2 /* DOOR */ || t === 3 /* DOOR_LOCKED */ || t === 4 /* DOOR_SECRET */ || t === 37 /* BARRICADE */ || t === 15 /* STATUE */ || t === 17 /* BOOKSHELF */ || t === 5 /* EXIT_LOCKED */;
+}
+function isFlamableForBlob(t) {
+  return t === 10 /* GRASS */ || t === 39 /* HIGH_GRASS */ || t === 2 /* DOOR */ || t === 37 /* BARRICADE */ || t === 17 /* BOOKSHELF */;
+}
+
+class Blob {
+  kind;
+  cur;
+  off;
+  volume = 0;
+  constructor(kind, length) {
+    this.kind = kind;
+    this.cur = new Int32Array(length);
+    this.off = new Int32Array(length);
+  }
+  act(rng, world) {
+    if (this.volume > 0) {
+      this.volume = 0;
+      this.evolve(rng, world);
+      const tmp = this.off;
+      this.off = this.cur;
+      this.cur = tmp;
+    }
+  }
+  evolve(_rng, world) {
+    const { w } = world;
+    const h = world.length / w;
+    const { cur, off } = this;
+    for (let y = 1;y < h - 1; y++) {
+      const from = y * w + 1;
+      const to = from + w - 2;
+      for (let pos = from;pos < to; pos++) {
+        if (!world.solidAt(pos)) {
+          let count = 1;
+          let sum = cur[pos];
+          if (!world.solidAt(pos - 1)) {
+            sum += cur[pos - 1];
+            count++;
+          }
+          if (!world.solidAt(pos + 1)) {
+            sum += cur[pos + 1];
+            count++;
+          }
+          if (!world.solidAt(pos - w)) {
+            sum += cur[pos - w];
+            count++;
+          }
+          if (!world.solidAt(pos + w)) {
+            sum += cur[pos + w];
+            count++;
+          }
+          const value = sum >= count ? Math.floor(sum / count) - 1 : 0;
+          off[pos] = value;
+          this.volume += value;
+        } else {
+          off[pos] = 0;
+        }
+      }
+    }
+  }
+  seed(cell, amount) {
+    this.cur[cell] += amount;
+    this.volume += amount;
+  }
+  clear(cell) {
+    this.volume -= this.cur[cell];
+    this.cur[cell] = 0;
+  }
+}
+
+class FireBlob extends Blob {
+  constructor(length) {
+    super("fire", length);
+  }
+  evolve(_rng, world) {
+    const { w, length } = world;
+    const { cur, off } = this;
+    const from = w + 1;
+    const to = length - w - 1;
+    let observe = false;
+    for (let pos = from;pos < to; pos++) {
+      let fire;
+      if (cur[pos] > 0) {
+        this.burn(world, pos);
+        fire = cur[pos] - 1;
+        if (fire <= 0 && world.flamableAt(pos)) {
+          world.burnOutTile(pos);
+          observe = true;
+        }
+      } else {
+        if (world.flamableAt(pos) && (cur[pos - 1] > 0 || cur[pos + 1] > 0 || cur[pos - w] > 0 || cur[pos + w] > 0)) {
+          fire = 4;
+          this.burn(world, pos);
+        } else {
+          fire = 0;
+        }
+      }
+      this.volume += off[pos] = fire;
+    }
+  }
+  burn(world, pos) {
+    const ch = world.charAt(pos);
+    if (ch !== null) {
+      world.reigniteBurning(ch);
+    }
+  }
+  seed(cell, amount) {
+    if (this.cur[cell] === 0) {
+      this.volume += amount;
+      this.cur[cell] = amount;
+    }
+  }
+}
+var TOXIC_GAS_DEATH_MESSAGE = "You died from a toxic gas..";
+
+class ToxicGasBlob extends Blob {
+  constructor(length) {
+    super("toxic", length);
+  }
+  evolve(rng, world) {
+    super.evolve(rng, world);
+    const levelDamage = 5 + world.depth * 5;
+    for (let i = 0;i < world.length; i++) {
+      if (this.cur[i] > 0) {
+        const ch = world.charAt(i);
+        if (ch !== null) {
+          let damage = Math.floor((ch.ht + levelDamage) / 40);
+          if (rng.int(0, 40) < (ch.ht + levelDamage) % 40) {
+            damage++;
+          }
+          world.damageChar(rng, ch, damage, "toxic_gas", (dead) => {
+            world.log(TOXIC_GAS_DEATH_MESSAGE);
+          });
+        }
+      }
+    }
+    const par = world.blobs.find((b) => b.kind === "paralytic");
+    if (par != null) {
+      const parCur = par.cur;
+      for (let i = 0;i < world.length; i++) {
+        const t = this.cur[i];
+        const p = parCur[i];
+        if (p >= t) {
+          this.volume -= t;
+          this.cur[i] = 0;
+        } else {
+          par.volume -= p;
+          parCur[i] = 0;
+        }
+      }
+    }
+  }
+}
+
+class ParalyticGasBlob extends Blob {
+  constructor(length) {
+    super("paralytic", length);
+  }
+  evolve(_rng, world) {
+    super.evolve(_rng, world);
+    for (let i = 0;i < world.length; i++) {
+      if (this.cur[i] > 0) {
+        const ch = world.charAt(i);
+        if (ch !== null) {
+          world.prolongParalysis(ch, PARALYSIS_DURATION);
+        }
+      }
+    }
+  }
+}
+
+class WebBlob extends Blob {
+  constructor(length) {
+    super("web", length);
+  }
+  evolve(_rng, world) {
+    for (let i = 0;i < world.length; i++) {
+      const offv = this.cur[i] > 0 ? this.cur[i] - 1 : 0;
+      this.off[i] = offv;
+      if (offv > 0) {
+        this.volume += offv;
+        const ch = world.charAt(i);
+        if (ch !== null) {
+          world.prolongRoots(ch);
+        }
+      }
+    }
+  }
+  seed(cell, amount) {
+    const diff = amount - this.cur[cell];
+    if (diff > 0) {
+      this.cur[cell] = amount;
+      this.volume += diff;
+    }
+  }
+}
+function createBlob(kind, length) {
+  switch (kind) {
+    case "fire":
+      return new FireBlob(length);
+    case "toxic":
+      return new ToxicGasBlob(length);
+    case "paralytic":
+      return new ParalyticGasBlob(length);
+    case "web":
+      return new WebBlob(length);
+  }
+}
+function blobOf(blobs, kind) {
+  return blobs.find((b) => b.kind === kind);
+}
+function seedBlob(blobs, kind, cell, amount, length) {
+  let blob = blobOf(blobs, kind);
+  if (!blob) {
+    blob = createBlob(kind, length);
+    blobs.push(blob);
+  }
+  blob.seed(cell, amount);
+  return blob;
+}
+function tickBlobs(rng, world, blobs) {
+  for (const blob of blobs) {
+    blob.act(rng, world);
+  }
+}
+
 // src/content/identification.ts
 var POTION_COLORS = [
   "turquesa",
@@ -4698,117 +5059,6 @@ function isWandRegistered() {
 }
 function knowWand(id) {
   need(wandHandler, "wands").know(id);
-}
-
-// src/core/turn.ts
-var TICK = 1;
-
-class Actor {
-  static TICK = TICK;
-  time = 0;
-  getSpeed() {
-    return 1;
-  }
-  getTimeScale() {
-    return 1;
-  }
-}
-
-class Scheduler {
-  heap = [];
-  seq = 0;
-  order = new Map;
-  now = 0;
-  get count() {
-    return this.heap.length;
-  }
-  add(a) {
-    if (this.order.has(a))
-      return;
-    this.order.set(a, this.seq++);
-    this.push(a);
-  }
-  remove(a) {
-    if (!this.order.has(a))
-      return;
-    this.order.delete(a);
-    const i = this.heap.indexOf(a);
-    if (i >= 0) {
-      const last = this.heap.pop();
-      if (i < this.heap.length) {
-        this.heap[i] = last;
-        this.bubbleDown(i);
-        this.bubbleUp(i);
-      }
-    }
-  }
-  contains(a) {
-    return this.order.has(a);
-  }
-  clear() {
-    this.heap = [];
-    this.order.clear();
-    this.seq = 0;
-    this.now = 0;
-  }
-  peek() {
-    return this.heap[0];
-  }
-  next() {
-    const m = this.pop();
-    if (!m)
-      throw new Error("Scheduler: no actors");
-    this.order.delete(m);
-    this.now = m.time;
-    return m;
-  }
-  spend(taker, cost) {
-    const timeScale = taker.getTimeScale?.() ?? 1;
-    taker.time = this.now + cost / Math.max(0.01, taker.getSpeed()) / timeScale;
-    this.add(taker);
-  }
-  less(a, b) {
-    if (a.time !== b.time)
-      return a.time < b.time;
-    return (this.order.get(a) ?? 0) < (this.order.get(b) ?? 0);
-  }
-  push(a) {
-    this.heap.push(a);
-    this.bubbleUp(this.heap.length - 1);
-  }
-  pop() {
-    const top = this.heap[0];
-    const last = this.heap.pop();
-    if (top !== undefined && last !== undefined && this.heap.length > 0) {
-      this.heap[0] = last;
-      this.bubbleDown(0);
-    }
-    return top;
-  }
-  bubbleUp(i) {
-    while (i > 0) {
-      const p = i - 1 >> 1;
-      if (!this.less(this.heap[i], this.heap[p]))
-        break;
-      [this.heap[i], this.heap[p]] = [this.heap[p], this.heap[i]];
-      i = p;
-    }
-  }
-  bubbleDown(i) {
-    for (;; ) {
-      const l = i * 2 + 1;
-      const r = l + 1;
-      let m = i;
-      if (l < this.heap.length && this.less(this.heap[l], this.heap[m]))
-        m = l;
-      if (r < this.heap.length && this.less(this.heap[r], this.heap[m]))
-        m = r;
-      if (m === i)
-        break;
-      [this.heap[i], this.heap[m]] = [this.heap[m], this.heap[i]];
-      i = m;
-    }
-  }
 }
 
 // src/mechanics/wands.ts
@@ -5141,33 +5391,6 @@ function buildDistanceMap2(w, h, from, passable, maxDistance) {
   return dist;
 }
 
-// src/mechanics/combat.ts
-function hitRoll(rng, accuracy, evasion, magic = false) {
-  const acuRoll = rng.float(0, accuracy);
-  const defRoll = rng.float(0, evasion);
-  return (magic ? acuRoll * 2 : acuRoll) >= defRoll;
-}
-function applyDamage(rng, target, dmg, sourceTag) {
-  if (target.hp <= 0)
-    return { hp: target.hp, died: true, paralysisBroken: false };
-  if (sourceTag && target.immunities.includes(sourceTag)) {
-    dmg = 0;
-  } else if (sourceTag && target.resistances.includes(sourceTag)) {
-    dmg = rng.intRange(0, dmg);
-  }
-  let paralysisBroken = false;
-  if (target.paralysed) {
-    if (rng.int(0, dmg) >= rng.int(0, target.hp)) {
-      paralysisBroken = true;
-    }
-  }
-  const hp = target.hp - dmg;
-  return { hp, died: hp <= 0, paralysisBroken };
-}
-function skeletonDeathBurst(rng, damageRoll, victimDr) {
-  return Math.max(0, damageRoll(rng) - rng.intRange(0, Math.floor(victimDr / 2)));
-}
-
 // src/mechanics/traps.ts
 var TXT_HIDDEN_PLATE_CLICKS = "¡Una placa escondida hace clic!";
 var TXT_ALARM_SOUND = "The trap emits a piercing sound that echoes throughout the dungeon!";
@@ -5232,6 +5455,14 @@ function damageFromTrap(ctx, rng, ch, dmg, sourceTag, onHeroDeath) {
     }
   } else if (ch.kind === "mob") {
     ch.onDamaged?.(ctx);
+  }
+  if (sourceTag === "toxic_gas" && ch.def?.id === "king_undead") {
+    const pos = ch.pos;
+    for (const blob of ctx.level.blobs) {
+      if (blob.kind === "toxic" && blob.cur[pos] > 0) {
+        blob.cur[pos] = 0;
+      }
+    }
   }
 }
 function beckonMob(mob, cell) {
@@ -5503,140 +5734,1507 @@ function mobPressTrapCell(ctx, mob, summon) {
   deactivateTrapCell(level, cell);
 }
 
-// src/core/path.ts
-function findPath(grid, passable, sx, sy, tx, ty, maxExpand = 8192) {
-  if (!grid.inBounds(tx, ty) || !passable(tx, ty))
+// src/mechanics/rings.ts
+var RING_SPECS = [
+  {
+    id: "mending",
+    javaClass: "RingOfMending",
+    name: "Ring of Mending",
+    desc: "This ring increases the body's regenerative properties, allowing " + "one to recover lost health at an accelerated rate. Degraded rings will " + "decrease or even halt one's natural regeneration.",
+    spriteKey: "item_ring_mending",
+    buffKind: "ring_mending"
+  },
+  {
+    id: "detection",
+    javaClass: "RingOfDetection",
+    name: "Ring of Detection",
+    desc: "Wearing this ring will allow the wearer to notice hidden secrets - " + "traps and secret doors - without taking time to search. Degraded rings of detection " + "will dull your senses, making it harder to notice secrets even when actively searching for them.",
+    spriteKey: "item_ring_detection",
+    buffKind: "ring_detection"
+  },
+  {
+    id: "shadows",
+    javaClass: "RingOfShadows",
+    name: "Ring of Shadows",
+    desc: "Enemies will be less likely to notice you if you wear this ring. Degraded rings " + "of shadows will alert enemies who might otherwise not have noticed your presence.",
+    spriteKey: "item_ring_shadows",
+    buffKind: "ring_shadows"
+  },
+  {
+    id: "power",
+    javaClass: "RingOfPower",
+    name: "Ring of Power",
+    desc: "Your wands will become more powerful in the energy field " + "that radiates from this ring. Degraded rings of power will instead weaken your wands.",
+    spriteKey: "item_ring_power",
+    buffKind: "ring_power"
+  },
+  {
+    id: "herbalism",
+    javaClass: "RingOfHerbalism",
+    name: "Ring of Herbalism",
+    desc: "Este anillo te hace más probable sacar rocío y semillas del pasto pisado.",
+    spriteKey: "item_ring_herbalism",
+    buffKind: "ring_herbalism"
+  },
+  {
+    id: "accuracy",
+    javaClass: "RingOfAccuracy",
+    name: "Ring of Accuracy",
+    desc: "Este anillo te hace más probable atinarle al enemigo.",
+    spriteKey: "item_ring_accuracy",
+    buffKind: "ring_accuracy"
+  },
+  {
+    id: "evasion",
+    javaClass: "RingOfEvasion",
+    name: "Ring of Evasion",
+    desc: "Este anillo te hace más probable esquivar los golpes.",
+    spriteKey: "item_ring_evasion",
+    buffKind: "ring_evasion"
+  },
+  {
+    id: "satiety",
+    javaClass: "RingOfSatiety",
+    name: "Ring of Satiety",
+    desc: "Wearing this ring you can go without food longer. Degraded rings of satiety will cause the opposite effect.",
+    spriteKey: "item_ring_satiety",
+    buffKind: "ring_satiety"
+  },
+  {
+    id: "haste",
+    javaClass: "RingOfHaste",
+    name: "Ring of Haste",
+    desc: "This ring accelerates the wearer's flow of time, allowing one to perform all actions a little faster.",
+    spriteKey: "item_ring_haste",
+    buffKind: "ring_haste"
+  },
+  {
+    id: "haggler",
+    javaClass: "RingOfHaggler",
+    name: "Ring of Haggler",
+    desc: "In fact this ring doesn't provide any magic effect, but it demonstrates " + "to shopkeepers and vendors, that the owner of the ring is a member of " + "The Thieves' Guild. Usually they are glad to give a discount in exchange " + "for temporary immunity guarantee. Upgrading this ring won't give any additional " + "bonuses.",
+    spriteKey: "item_ring_haggler",
+    buffKind: "ring_haggler",
+    fixedPlusOne: true
+  },
+  {
+    id: "elements",
+    javaClass: "RingOfElements",
+    name: "Ring of Elements",
+    desc: "This ring provides resistance to different elements, such as fire, " + "electricity, gases etc. Also it decreases duration of negative effects.",
+    spriteKey: "item_ring_elements",
+    buffKind: "ring_elements"
+  },
+  {
+    id: "thorns",
+    javaClass: "RingOfThorns",
+    name: "Ring of Thorns",
+    desc: "Though this ring doesn't provide real thorns, an enemy that attacks you " + "will itself be wounded by a fraction of the damage that it inflicts. " + "Upgrading this ring won't give any additional bonuses.",
+    spriteKey: "item_ring_thorns",
+    buffKind: "ring_thorns",
+    fixedPlusOne: true
+  }
+];
+
+// src/content/rings.ts
+function ringSpec(id) {
+  const spec = RING_SPECS.find((s) => s.id === id);
+  if (!spec)
+    throw new Error(`unknown ring id: ${id}`);
+  return spec;
+}
+var RING_GEMS = [
+  "diamond",
+  "opal",
+  "garnet",
+  "ruby",
+  "amethyst",
+  "topaz",
+  "onyx",
+  "tourmaline",
+  "emerald",
+  "sapphire",
+  "quartz",
+  "agate"
+];
+var RING_PRICE_BASE = 80;
+var TICKS_TO_KNOW = 200;
+var ringStates = new Map;
+var ringSeq = 0;
+var ringSlots = [null, null];
+function parseRingId(itemId) {
+  const hash = itemId.indexOf("#");
+  const base = hash === -1 ? itemId : itemId.slice(0, hash);
+  if (!base.startsWith("ring_of_"))
     return null;
-  if (sx === tx && sy === ty)
-    return [];
-  const start = grid.idx(sx, sy);
-  const target = grid.idx(tx, ty);
-  const open = [start];
-  const came = new Map;
-  const g = new Map([[start, 0]]);
-  const closed = new Set;
-  const h = (i) => {
-    const p = grid.xy(i);
-    return Math.max(Math.abs(p.x - tx), Math.abs(p.y - ty));
+  const ringId = base.slice("ring_of_".length);
+  if (!RING_SPECS.some((s) => s.id === ringId))
+    return null;
+  return { ringId, instanceId: hash === -1 ? null : itemId };
+}
+function isRingId(itemId) {
+  return parseRingId(itemId) !== null;
+}
+function getRingState(instanceId) {
+  return ringStates.get(instanceId);
+}
+function createRing(rng, ringId, opts = {}) {
+  const spec = ringSpec(ringId);
+  const instanceId = `ring_of_${ringId}#${++ringSeq}`;
+  let level = 0;
+  let cursed = false;
+  if (spec.fixedPlusOne) {
+    level = 1;
+  } else if (opts.randomize) {
+    const lvl = rng.int(1, 3);
+    if (rng.float(0, 1) < 0.3) {
+      level = -lvl;
+      cursed = true;
+    } else {
+      level = lvl;
+    }
+  }
+  const st = {
+    instanceId,
+    ringId,
+    level,
+    cursed,
+    cursedKnown: false,
+    ticksToKnow: TICKS_TO_KNOW,
+    regenAcc: 0
   };
-  const f = (i) => (g.get(i) ?? Infinity) + h(i);
-  let expanded = 0;
-  while (open.length > 0 && expanded++ < maxExpand) {
-    let bi = 0;
-    for (let i = 1;i < open.length; i++) {
-      if (f(open[i]) < f(open[bi]))
-        bi = i;
+  ringStates.set(instanceId, st);
+  if (spec.fixedPlusOne)
+    identifyRingType(ringId);
+  return instanceId;
+}
+function ringEffectiveLevel(state) {
+  return state.level;
+}
+var localGemLabels = new Map;
+var localKnown = new Set;
+function ensureLocalLabels(rng) {
+  if (localGemLabels.size > 0)
+    return;
+  const gems = [...RING_GEMS];
+  const r = rng ?? { float: (a, b) => a + Math.random() * (b - a) };
+  for (let i = gems.length - 1;i > 0; i--) {
+    const j = Math.floor(r.float(0, i + 1));
+    [gems[i], gems[j]] = [gems[j], gems[i]];
+  }
+  RING_SPECS.forEach((spec, i) => localGemLabels.set(spec.javaClass, gems[i]));
+}
+function isRingTypeKnown(ringId) {
+  const spec = ringSpec(ringId);
+  ensureLocalLabels();
+  return localKnown.has(spec.javaClass);
+}
+function identifyRingType(ringId) {
+  const spec = ringSpec(ringId);
+  ensureLocalLabels();
+  localKnown.add(spec.javaClass);
+}
+function ringGemLabel(ringId) {
+  ensureLocalLabels();
+  return localGemLabels.get(ringSpec(ringId).javaClass) ?? "diamond";
+}
+function registerRingIdClasses() {
+  registerRingClasses({
+    classes: RING_SPECS.map((s) => s.javaClass),
+    labels: RING_GEMS,
+    images: RING_SPECS.map((s) => s.spriteKey)
+  });
+}
+function equippedRings() {
+  return [ringSlots[0], ringSlots[1]];
+}
+function equippedRingStates() {
+  return [
+    ringSlots[0] ? ringStates.get(ringSlots[0]) ?? null : null,
+    ringSlots[1] ? ringStates.get(ringSlots[1]) ?? null : null
+  ];
+}
+function equippedRingLevels(hero, ringId) {
+  const out = [];
+  for (const st of equippedRingStates()) {
+    if (st && st.ringId === ringId)
+      out.push(ringEffectiveLevel(st));
+  }
+  return out;
+}
+function ringBonus(hero, ringId) {
+  return equippedRingLevels(hero, ringId).reduce((s, l) => s + l, 0);
+}
+function syncRingBuffs(hero) {
+  for (const spec of RING_SPECS) {
+    const key = spec.buffKind;
+    const levels = equippedRingLevels(hero, spec.id);
+    if (levels.length === 0) {
+      delete hero.buffs[key];
+    } else {
+      hero.buffs[key] = {
+        kind: key,
+        left: Infinity,
+        level: levels.reduce((s, l) => s + l, 0)
+      };
     }
-    const cur = open.splice(bi, 1)[0];
-    if (cur === target) {
-      const path = [];
-      let c = cur;
-      while (c !== undefined && c !== start) {
-        path.push(grid.xy(c));
-        c = came.get(c);
-      }
-      path.reverse();
-      return path;
+  }
+}
+function equipRing(ctx, hero, slot) {
+  const stack = hero.inventory[slot];
+  if (!stack || !isRingId(stack.itemId))
+    return 0;
+  const st = getRingState(stack.itemId);
+  if (!st)
+    return 0;
+  const finger = ringSlots[0] === null ? 1 : ringSlots[1] === null ? 2 : 0;
+  if (finger === 0)
+    return 0;
+  removeFromInventory(hero, slot, 1);
+  ringSlots[finger - 1] = st.instanceId;
+  st.cursedKnown = true;
+  if (st.cursed) {
+    ctx.log(`${ringDisplayName(st.ringId)} te aprieta el dedo y duele`);
+  }
+  syncRingBuffs(hero);
+  return finger;
+}
+function unequipRing(ctx, hero, finger) {
+  const instanceId = ringSlots[finger - 1];
+  if (!instanceId)
+    return false;
+  const st = ringStates.get(instanceId);
+  if (!st)
+    return false;
+  if (st.cursed) {
+    ctx.log(`¡No te puedes quitar ${ringDisplayName(st.ringId)}!`);
+    return false;
+  }
+  ringSlots[finger - 1] = null;
+  addToInventory(hero, instanceId, 1);
+  syncRingBuffs(hero);
+  return true;
+}
+function powerRingBonus(hero) {
+  return ringBonus(hero, "power");
+}
+function ringDisplayName(ringId) {
+  const spec = ringSpec(ringId);
+  if (isRingTypeKnown(ringId))
+    return spec.name;
+  return `${ringGemLabel(ringId)} ring`;
+}
+function ringDisplayDesc(ringId) {
+  const spec = ringSpec(ringId);
+  if (isRingTypeKnown(ringId))
+    return spec.desc;
+  return `This metal band is adorned with a large ${ringGemLabel(ringId)} gem ` + "that glitters in the darkness. Who knows what effect it has when worn?";
+}
+function ringDisplaySprite(ringId) {
+  const spec = ringSpec(ringId);
+  if (isRingTypeKnown(ringId))
+    return spec.spriteKey;
+  return spec.spriteKey;
+}
+function ringPrice(state) {
+  let price = RING_PRICE_BASE;
+  if (state.cursed && state.cursedKnown)
+    price = Math.floor(price / 2);
+  const levelKnown = isRingTypeKnown(state.ringId);
+  const level = ringEffectiveLevel(state);
+  if (levelKnown) {
+    if (level > 0) {
+      price *= level + 1;
+    } else if (level < 0) {
+      price = Math.floor(price / (1 - level));
     }
-    closed.add(cur);
-    const p = grid.xy(cur);
-    for (const n of grid.neighbors8(p.x, p.y)) {
-      if (!passable(n.x, n.y))
-        continue;
-      const ni = grid.idx(n.x, n.y);
-      if (closed.has(ni))
-        continue;
-      const ng = (g.get(cur) ?? Infinity) + 1;
-      if (ng < (g.get(ni) ?? Infinity)) {
-        g.set(ni, ng);
-        came.set(ni, cur);
-        if (!open.includes(ni))
-          open.push(ni);
+  }
+  return Math.max(1, price);
+}
+function ringItemDefFor(defId) {
+  const parsed = parseRingId(defId);
+  if (!parsed || !parsed.instanceId)
+    return null;
+  const st = ringStates.get(parsed.instanceId);
+  if (!st)
+    return null;
+  return {
+    id: parsed.instanceId,
+    name: ringDisplayName(st.ringId),
+    desc: ringDisplayDesc(st.ringId),
+    sprite: ringDisplaySprite(st.ringId),
+    type: "misc",
+    stackable: false,
+    price: ringPrice(st)
+  };
+}
+function normalizeRingPickup(rng, itemId) {
+  const parsed = parseRingId(itemId);
+  if (!parsed)
+    return itemId;
+  if (parsed.instanceId)
+    return parsed.instanceId;
+  return createRing(rng, parsed.ringId, { randomize: true });
+}
+registerRingIdClasses();
+
+// src/content/wands.ts
+var wandStates = new Map;
+var wandSeq = 0;
+function registerWandIdClasses() {
+  const randomized = WAND_SPECS.filter((s) => s.id !== "magic_missile");
+  registerWandClasses({
+    classes: randomized.map((s) => s.className),
+    labels: WAND_WOODS,
+    images: randomized.map((s) => s.sprite)
+  });
+}
+function parseWandId(itemId) {
+  const hash = itemId.indexOf("#");
+  const base = hash === -1 ? itemId : itemId.slice(0, hash);
+  if (!base.startsWith("wand_of_"))
+    return null;
+  const wandId = base.slice("wand_of_".length);
+  if (!WAND_SPECS.some((s) => s.id === wandId))
+    return null;
+  return {
+    wandId,
+    instanceId: hash === -1 ? null : itemId
+  };
+}
+function isWandId(itemId) {
+  return parseWandId(itemId) !== null;
+}
+function getWandState(instanceId) {
+  return wandStates.get(instanceId);
+}
+function createWand(rng, wandId, opts = {}) {
+  const spec = wandSpec(wandId);
+  const instanceId = `wand_of_${wandId}#${++wandSeq}`;
+  let level = 0;
+  if (opts.randomize) {
+    if (rng.float(0, 1) < 0.5) {
+      level++;
+      if (rng.float(0, 1) < 0.15)
+        level++;
+    }
+  }
+  level += opts.upgrades ?? 0;
+  const maxCharges = wandMaxCharges(spec.initialCharges, level);
+  wandStates.set(instanceId, {
+    instanceId,
+    wandId,
+    level,
+    levelKnown: false,
+    cursed: false,
+    cursedKnown: false,
+    curCharges: maxCharges,
+    maxCharges,
+    usagesToKnow: USAGES_TO_KNOW,
+    chargeKnown: false,
+    rechargeAcc: 0
+  });
+  return instanceId;
+}
+function wandEffectiveLevel(state) {
+  return state.level;
+}
+function wandZapPower(hero, state, charging) {
+  const eLevel = wandEffectiveLevel(state);
+  return wandPower(eLevel, powerRingBonus(hero), charging);
+}
+var WAND_WOODS = [
+  "holly",
+  "yew",
+  "ebony",
+  "cherry",
+  "teak",
+  "rowan",
+  "ash",
+  "birch",
+  "willow",
+  "oak",
+  "elm",
+  "elder"
+];
+function wandDisplayName(wandId) {
+  const spec = wandSpec(wandId);
+  if (spec.wood === null)
+    return spec.name;
+  if (isWandKnown(spec.className))
+    return spec.name;
+  return `${wandLabel(spec.className)} wand`;
+}
+function wandDisplayDesc(wandId) {
+  const spec = wandSpec(wandId);
+  if (spec.wood === null || isWandKnown(spec.className))
+    return spec.desc;
+  return "This wand is of a type you don’t know yet.";
+}
+function wandDisplaySprite(wandId) {
+  const spec = wandSpec(wandId);
+  if (spec.wood === null)
+    return spec.sprite;
+  if (isWandKnown(spec.className))
+    return spec.sprite;
+  return wandImage(spec.className);
+}
+function wandPrice(state) {
+  let price = 50;
+  if (state.cursed && state.cursedKnown)
+    price = Math.floor(price / 2);
+  if (state.levelKnown) {
+    if (state.level > 0) {
+      price *= state.level + 1;
+    } else if (state.level < 0) {
+      price = Math.floor(price / (1 - state.level));
+    }
+  }
+  return Math.max(1, price);
+}
+function wandItemDef(instanceId) {
+  const parsed = parseWandId(instanceId);
+  if (!parsed || !parsed.instanceId)
+    return null;
+  const st = wandStates.get(parsed.instanceId);
+  if (!st)
+    return null;
+  const spec = wandSpec(st.wandId);
+  return {
+    id: parsed.instanceId,
+    name: wandDisplayName(st.wandId),
+    desc: wandDisplayDesc(st.wandId),
+    sprite: wandDisplaySprite(st.wandId),
+    type: "misc",
+    stackable: false,
+    price: wandPrice(st)
+  };
+}
+function normalizeWandPickup(rng, itemId) {
+  const parsed = parseWandId(itemId);
+  if (!parsed)
+    return itemId;
+  if (parsed.instanceId)
+    return parsed.instanceId;
+  return createWand(rng, parsed.wandId, { randomize: true });
+}
+function identifyWandType(wandId, log = () => {}) {
+  const spec = wandSpec(wandId);
+  if (spec.wood === null || isWandKnown(spec.className))
+    return;
+  knowWand(spec.className);
+  log(txtWandIdentified(spec.name));
+}
+function resolveZap(ctx, hero, state, targetCell, fx) {
+  if (targetCell === hero.pos) {
+    ctx.log(TXT_SELF_TARGET);
+    return { ok: false, reason: "self-target" };
+  }
+  const spec = wandSpec(state.wandId);
+  const ball = ballisticaCast(ballisticaWorldOf(ctx), hero.pos, targetCell, true, spec.hitChars);
+  applyZapEffect(ctx, hero, state, ball, fx);
+  state.curCharges--;
+  state.chargeKnown = true;
+  state.usagesToKnow--;
+  if (state.usagesToKnow <= 0)
+    identifyWandType(state.wandId, ctx.log);
+  return { ok: true, spent: 1 };
+}
+function createWandReward(rng, wandId) {
+  return createWand(rng, wandId, { randomize: true, upgrades: 1 });
+}
+var WandFxNoop = () => {};
+function beamPassable(t) {
+  switch (t) {
+    case 0 /* WALL */:
+    case 8 /* CHASM */:
+    case 4 /* DOOR_SECRET */:
+    case 3 /* DOOR_LOCKED */:
+    case 5 /* EXIT_LOCKED */:
+    case 37 /* BARRICADE */:
+    case 15 /* STATUE */:
+    case 17 /* BOOKSHELF */:
+    case 14 /* PEDESTAL */:
+    case 13 /* ALCHEMY */:
+    case 18 /* CHEST */:
+    case 19 /* CHEST_LOCKED */:
+    case 16 /* TOMB */:
+      return false;
+    default:
+      return true;
+  }
+}
+function beamLosBlocking(t) {
+  switch (t) {
+    case 0 /* WALL */:
+    case 2 /* DOOR */:
+    case 4 /* DOOR_SECRET */:
+    case 3 /* DOOR_LOCKED */:
+    case 39 /* HIGH_GRASS */:
+    case 37 /* BARRICADE */:
+      return true;
+    default:
+      return false;
+  }
+}
+function solidAt(level, pos) {
+  const t = level.tiles[pos];
+  return !beamPassable(t) && t !== 2 /* DOOR */ && t !== 4 /* DOOR_SECRET */;
+}
+function ballisticaWorldOf(ctx) {
+  const level = ctx.level;
+  const w = level.w;
+  const hero = heroOf(ctx);
+  return {
+    w,
+    h: level.h,
+    beamPassableAt: (pos) => beamPassable(level.tiles[pos]),
+    losBlockingAt: (pos) => beamLosBlocking(level.tiles[pos]),
+    charAt: (pos) => hero.isAlive() && hero.pos === pos || ctx.mobs.some((m) => m.isAlive() && m.y * w + m.x === pos)
+  };
+}
+function isZapCharAlive(ch) {
+  return ch.isAlive();
+}
+function asTrapChar(ch) {
+  if (ch instanceof ContentHero)
+    return ch;
+  return Object.assign(ch, { kind: "mob" });
+}
+function damageZapChar(ctx, target, amount, source) {
+  if (target instanceof ContentHero) {
+    const applied = applyDamage(ctx.rng, {
+      hp: target.hp,
+      ht: target.ht,
+      paralysed: target.paralysed,
+      immunities: [],
+      resistances: []
+    }, amount, source);
+    target.hp = applied.hp;
+    if (applied.paralysisBroken)
+      target.paralysed = false;
+  } else {
+    damageMobDirect(ctx, target, amount, source);
+  }
+}
+function prolongBuff(target, kind, duration) {
+  const cur = target.buffs[kind];
+  target.buffs[kind] = { kind, left: (cur ? cur.left : 0) + duration };
+}
+function elementsLevelOf(ch) {
+  if (ch instanceof ContentHero) {
+    const b = ch.buffs["ring_elements"];
+    return b ? b.level ?? 0 : null;
+  }
+  return null;
+}
+function randomRespawnCell(ctx, hero) {
+  const level = ctx.level;
+  const n = level.w * level.h;
+  for (let i = 0;i < 10; i++) {
+    const cell = ctx.rng.int(0, n);
+    const x = cell % level.w;
+    const y = Math.floor(cell / level.w);
+    if (!isRespawnPassable(level, x, y))
+      continue;
+    if (level.visible[cell])
+      continue;
+    if (hero.pos === cell)
+      continue;
+    if (charAtPos(ctx, cell))
+      continue;
+    return cell;
+  }
+  return -1;
+}
+function isRespawnPassable(level, x, y) {
+  if (x < 0 || y < 0 || x >= level.w || y >= level.h)
+    return false;
+  return beamPassable(level.tiles[y * level.w + x]);
+}
+function healDewdrop(ctx, hero, qty) {
+  const value = 1 + Math.floor((ctx.level.depth - 1) / 5);
+  const effect = Math.min(hero.ht - hero.hp, value * qty);
+  if (effect > 0) {
+    hero.hp += effect;
+    ctx.log(`+${effect}HP`);
+  }
+}
+function effectMagicMissile(ctx, hero, power, ball, fx) {
+  const target = charAtPos(ctx, ball.cell);
+  if (target) {
+    damageZapChar(ctx, target, magicMissileDamage(ctx.rng, power), "wand");
+  }
+  fx({ kind: "missile", from: hero.pos, to: ball.cell });
+}
+function effectFirebolt(ctx, hero, power, ball, fx) {
+  const level = ctx.level;
+  for (let i = 1;i < ball.distance - 1; i++) {
+    const c = ball.trace[i];
+    if (isFlamableForBlob(level.tiles[c])) {
+      seedBlob(level.blobs, "fire", c, 4, level.w * level.h);
+    }
+  }
+  seedBlob(level.blobs, "fire", ball.cell, 1, level.w * level.h);
+  const target = charAtPos(ctx, ball.cell);
+  if (target) {
+    damageZapChar(ctx, target, fireboltDamage(ctx.rng, power), "wand");
+    if (isZapCharAlive(target) && target.buffs["burning"]) {
+      const full = BURNING_DURATION * elementsDurationFactor(elementsLevelOf(target));
+      target.buffs["burning"] = { kind: "burning", left: full };
+    }
+  }
+  fx({ kind: "missile", from: hero.pos, to: ball.cell });
+}
+function effectLightning(ctx, hero, power, ball, fx) {
+  const level = ctx.level;
+  const w = level.w;
+  const affected = new Set;
+  const points = [hero.pos];
+  const hit = (ch, damage) => {
+    if (damage < 1)
+      return;
+    affected.add(ch);
+    const inWater = level.tiles[ch.pos] === 9 /* WATER */ && !ch.flying;
+    damageZapChar(ctx, ch, inWater ? damage * 2 : damage, "lightning");
+    points.push(ch.pos);
+    const ns = [];
+    const cx = ch.pos % w;
+    const cy = Math.floor(ch.pos / w);
+    for (let dy = -1;dy <= 1; dy++) {
+      for (let dx = -1;dx <= 1; dx++) {
+        if (dx === 0 && dy === 0)
+          continue;
+        const nx = cx + dx;
+        const ny = cy + dy;
+        if (nx < 0 || ny < 0 || nx >= w || ny >= level.h)
+          continue;
+        const n = charAtPos(ctx, ny * w + nx);
+        if (n && isZapCharAlive(n) && !affected.has(n))
+          ns.push(n);
       }
+    }
+    if (ns.length > 0)
+      hit(ctx.rng.pick(ns), lightningChainDamage(ctx.rng, damage));
+  };
+  const first = charAtPos(ctx, ball.cell);
+  if (first && isZapCharAlive(first)) {
+    hit(first, lightningInitialDamage(ctx.rng, power));
+  } else {
+    points.push(ball.cell);
+  }
+  fx({ kind: "strike", points });
+  if (!hero.isAlive()) {
+    ctx.log("Te mataste con tu propia varita de rayos...");
+  }
+}
+function effectDisintegration(ctx, _hero, power, rawLevel, ball, fx) {
+  const level = ctx.level;
+  const effDistance = Math.min(ball.distance, disintegrationMaxDistance(rawLevel));
+  let terrainAffected = false;
+  const chars = [];
+  for (let i = 1;i < effDistance; i++) {
+    const c = ball.trace[i];
+    const ch = charAtPos(ctx, c);
+    if (ch && isZapCharAlive(ch))
+      chars.push(ch);
+    const t = level.tiles[c];
+    if (t === 2 /* DOOR */) {
+      setLevelTile(level, c, 38 /* EMBERS */);
+      terrainAffected = true;
+    } else if (t === 39 /* HIGH_GRASS */) {
+      setLevelTile(level, c, 10 /* GRASS */);
+      terrainAffected = true;
+    }
+  }
+  for (const ch of chars) {
+    damageZapChar(ctx, ch, disintegrationDamage(ctx.rng, power, chars.length), "wand");
+  }
+  fx({ kind: "beam", cells: ball.trace.slice(0, effDistance) });
+}
+function setLevelTile(level, pos, t) {
+  level.tiles[pos] = t;
+}
+function effectAvalanche(ctx, hero, power, ball, fx) {
+  const level = ctx.level;
+  const size = avalancheSize(power);
+  const dist = buildDistanceMap2(level.w, level.h, ball.cell, (pos) => !solidAt(level, pos), size);
+  const n = level.w * level.h;
+  const burst = [];
+  for (let i = 0;i < n; i++) {
+    const d = dist[i];
+    if (d === Infinity)
+      continue;
+    burst.push(i);
+    const ch = charAtPos(ctx, i);
+    if (ch && isZapCharAlive(ch)) {
+      damageZapChar(ctx, ch, avalancheDamage(ctx.rng, size, d), "wand");
+      if (isZapCharAlive(ch) && avalancheParalyzes(ctx.rng, d)) {
+        prolongBuff(ch, "paralysis", avalancheParalysisDuration(ctx.rng));
+      }
+    }
+    pressTrapCell(ctx, i, ch && isZapCharAlive(ch) ? asTrapChar(ch) : null, (mobId, pos) => {
+      const mob = buildMob(mobId, nextMobId(), pos, level.w);
+      mob.state = "wandering";
+      ctx.addMob(mob, 2);
+    });
+  }
+  fx({ kind: "burst", cells: burst });
+}
+function effectPoison(ctx, hero, power, ball, _fx) {
+  const target = charAtPos(ctx, ball.cell);
+  if (target && isZapCharAlive(target)) {
+    const dur = poisonWandDuration(power) * elementsDurationFactor(elementsLevelOf(target));
+    target.buffs["poison"] = { kind: "poison", left: dur };
+  } else {
+    ctx.log(TXT_NOTHING_HAPPENED);
+  }
+}
+function effectAmok(ctx, hero, power, ball, _fx) {
+  const target = charAtPos(ctx, ball.cell);
+  if (target && isZapCharAlive(target)) {
+    if (target instanceof ContentHero) {
+      prolongBuff(target, "vertigo", vertigoDuration(elementsLevelOf(target)));
+    } else {
+      prolongBuff(target, "amok", amokDuration(power));
+    }
+  } else {
+    ctx.log(TXT_NOTHING_HAPPENED);
+  }
+}
+function effectSlowness(ctx, _hero, power, ball, _fx) {
+  const target = charAtPos(ctx, ball.cell);
+  if (target && isZapCharAlive(target)) {
+    prolongBuff(target, "slow", slowDuration(elementsLevelOf(target)) / 3 + power);
+  } else {
+    ctx.log(TXT_NOTHING_HAPPENED);
+  }
+}
+function effectBlink(ctx, hero, power, ball, fx) {
+  const dest = blinkDestinationCell(ball.trace, ball.distance, power, charAtPos(ctx, ball.cell) != null);
+  const from = hero.pos;
+  hero.pos = dest;
+  fx({ kind: "missile", from, to: dest });
+}
+function effectTeleportation(ctx, hero, _power, ball, _fx) {
+  const target = charAtPos(ctx, ball.cell);
+  if (target && isZapCharAlive(target)) {
+    if (target instanceof ContentHero) {
+      identifyWandType("teleportation", ctx.log);
+      let cell = -1;
+      for (let count = 11;count > 0; count--) {
+        cell = randomRespawnCell(ctx, hero);
+        if (cell !== -1)
+          break;
+      }
+      if (cell !== -1) {
+        hero.pos = cell;
+      } else {
+        ctx.log("¡No hay a dónde aparecerse!");
+      }
+    } else {
+      let pos = -1;
+      for (let count = 11;count > 0; count--) {
+        pos = randomRespawnCell(ctx, hero);
+        if (pos !== -1)
+          break;
+      }
+      if (pos === -1) {
+        ctx.log("¡No hay a dónde aparecerse!");
+      } else {
+        target.pos = pos;
+        ctx.log(`${hero.name} teleported ${target.name} to somewhere`);
+      }
+    }
+  } else {
+    ctx.log(TXT_NOTHING_HAPPENED);
+  }
+}
+function effectFlock(ctx, hero, power, ball, fx) {
+  const level = ctx.level;
+  const n = flockSheepCount(power);
+  let cell = ball.cell;
+  if (charAtPos(ctx, cell) != null && ball.distance > 2) {
+    cell = ball.trace[ball.distance - 2];
+  }
+  const occupied = new Set;
+  if (hero.isAlive())
+    occupied.add(hero.pos);
+  for (const m of ctx.mobs)
+    if (m.isAlive())
+      occupied.add(m.y * level.w + m.x);
+  const positions = flockSheepPositions(level.w, level.h, cell, (pos) => beamPassable(level.tiles[pos]), (pos) => occupied.has(pos), n);
+  const lifespan = flockLifespan(power, ctx.rng);
+  for (const pos of positions) {
+    spawnFlockSheep(ctx, pos, lifespan);
+  }
+  fx({ kind: "sheep", cells: positions });
+}
+function effectRegrowth(ctx, _hero, power, ball, _fx) {
+  const level = ctx.level;
+  for (let i = 1;i < ball.distance - 1; i++) {
+    const c = ball.trace[i];
+    const t = level.tiles[c];
+    if (t === 1 /* FLOOR */ || t === 38 /* EMBERS */) {
+      setLevelTile(level, c, 10 /* GRASS */);
+    }
+  }
+  const cell = ball.cell;
+  const t = level.tiles[cell];
+  if (t === 1 /* FLOOR */ || t === 38 /* EMBERS */ || t === 10 /* GRASS */ || t === 39 /* HIGH_GRASS */) {
+    seedRegrowthBlob(level.blobs, cell, regrowthSeedAmount(power), level.w * level.h);
+  } else {
+    ctx.log(TXT_NOTHING_HAPPENED);
+  }
+}
+
+class RegrowthBlob extends Blob {
+  constructor(length) {
+    super("regrowth", length);
+  }
+  evolve(_rng, world) {
+    const { length } = world;
+    const { cur, off } = this;
+    for (let pos = 0;pos < length; pos++) {
+      if (cur[pos] > 0) {
+        const grown = cur[pos] > 1;
+        const v = cur[pos] - 1;
+        this.volume += off[pos] = v;
+        const t = world.tileAt(pos);
+        let c1 = t;
+        if (t === 1 /* FLOOR */ || t === 38 /* EMBERS */) {
+          c1 = grown ? 39 /* HIGH_GRASS */ : 10 /* GRASS */;
+        } else if (t === 10 /* GRASS */ && grown) {
+          c1 = 39 /* HIGH_GRASS */;
+        }
+        if (c1 !== t) {
+          world.setTile(pos, c1);
+        }
+      } else {
+        off[pos] = 0;
+      }
+    }
+  }
+}
+function seedRegrowthBlob(blobs, cell, amount, length) {
+  let blob = blobs.find((b) => b instanceof RegrowthBlob);
+  if (!blob) {
+    blob = new RegrowthBlob(length);
+    blobs.push(blob);
+  }
+  blob.seed(cell, amount);
+  return blob;
+}
+function effectReach(ctx, hero, power, ball, _fx) {
+  const level = ctx.level;
+  const reach = reachDistance(ball.distance, power);
+  for (let i = 1;i < reach; i++) {
+    const c = ball.trace[i];
+    const before = level.tiles[c];
+    const ch = charAtPos(ctx, c);
+    if (ch && isZapCharAlive(ch) && !(ch instanceof ContentHero)) {
+      const heroPos = hero.pos;
+      hero.pos = ch.pos;
+      ch.pos = heroPos;
+      break;
+    }
+    const heapIdx = level.items.findIndex((it) => it.pos === c);
+    if (heapIdx !== -1) {
+      const heap = level.items[heapIdx];
+      if (heap.lockedChest)
+        break;
+      level.items.splice(heapIdx, 1);
+      const { defId, qty } = parseItemId(heap.itemId);
+      if (defId === "dewdrop") {
+        healDewdrop(ctx, hero, qty);
+      } else {
+        const pickupId = parseWandId(heap.itemId) != null ? normalizeWandPickup(ctx.rng, heap.itemId) : parseRingId(heap.itemId) != null ? normalizeRingPickup(ctx.rng, heap.itemId) : heap.itemId;
+        addToInventory(hero, pickupId, qty);
+        ctx.log(txtReachTransported(getItem(pickupId).name));
+      }
+      break;
+    }
+    pressTrapCell(ctx, c, null, (mobId, pos) => {
+      const mob = buildMob(mobId, nextMobId(), pos, level.w);
+      mob.state = "wandering";
+      ctx.addMob(mob, 2);
+    });
+    if (before === 40 /* OPEN_DOOR */) {
+      setLevelTile(level, c, 2 /* DOOR */);
+    }
+  }
+}
+function applyZapEffect(ctx, hero, state, ball, fx) {
+  const power = wandZapPower(hero, state, true);
+  switch (state.wandId) {
+    case "magic_missile":
+      return effectMagicMissile(ctx, hero, power, ball, fx);
+    case "firebolt":
+      return effectFirebolt(ctx, hero, power, ball, fx);
+    case "lightning":
+      return effectLightning(ctx, hero, power, ball, fx);
+    case "disintegration":
+      return effectDisintegration(ctx, hero, power, state.level, ball, fx);
+    case "avalanche":
+      return effectAvalanche(ctx, hero, power, ball, fx);
+    case "poison":
+      return effectPoison(ctx, hero, power, ball, fx);
+    case "amok":
+      return effectAmok(ctx, hero, power, ball, fx);
+    case "slowness":
+      return effectSlowness(ctx, hero, power, ball, fx);
+    case "blink":
+      return effectBlink(ctx, hero, power, ball, fx);
+    case "teleportation":
+      return effectTeleportation(ctx, hero, power, ball, fx);
+    case "flock":
+      return effectFlock(ctx, hero, power, ball, fx);
+    case "regrowth":
+      return effectRegrowth(ctx, hero, power, ball, fx);
+    case "reach":
+      return effectReach(ctx, hero, power, ball, fx);
+  }
+}
+var SHEEP_DEF = {
+  id: "sheep",
+  name: "borrego",
+  sprite: "mob_sheep",
+  hp: 1,
+  atk: 0,
+  def: 0,
+  dmgMin: 0,
+  dmgMax: 0,
+  triangular: true,
+  dr: 0,
+  exp: 0,
+  maxLvl: 1,
+  speed: 1,
+  flying: false,
+  ability: null,
+  attackDelay: 1,
+  immunities: [],
+  resistances: []
+};
+var sheepLifespans = new Map;
+function spawnFlockSheep(ctx, pos, lifespan) {
+  const level = ctx.level;
+  const sheep = new ContentMob(nextMobId(), SHEEP_DEF, pos, level.w);
+  sheep.invulnerable = true;
+  sheep.hostile = false;
+  sheep.state = "wandering";
+  sheepLifespans.set(sheep.id, lifespan);
+  ctx.addMob(sheep);
+  pressTrapCell(ctx, pos, asTrapChar(sheep), (mobId, p) => {
+    const mob = buildMob(mobId, nextMobId(), p, level.w);
+    mob.state = "wandering";
+    ctx.addMob(mob, 2);
+  });
+}
+function zapWandFromSlot(ctx, hero, slot, targetCell, fx = WandFxNoop) {
+  const stack = hero.inventory[slot];
+  if (!stack)
+    return 1;
+  const st = getWandState(stack.itemId);
+  if (!st)
+    return 1;
+  const res = resolveZap(ctx, hero, st, targetCell, fx);
+  return res.ok ? res.spent : 1;
+}
+registerWandIdClasses();
+function instanceItemDef(defId) {
+  if (defId.startsWith("wand_of_"))
+    return wandItemDef(defId);
+  return ringItemDefFor(defId);
+}
+registerInstanceResolver((id) => instanceItemDef(id));
+
+// src/content/hero.ts
+class ContentHero extends Actor {
+  kind = "hero";
+  id = 0;
+  pos;
+  w;
+  hp = 20;
+  ht = 20;
+  sprite = "hero_warrior";
+  name = "you";
+  sight = 8;
+  paralysed = false;
+  rooted = false;
+  flying = false;
+  buffs = {};
+  immunities = [];
+  resistances = [];
+  str = 11;
+  weakened = false;
+  lvl = 1;
+  exp = 0;
+  attackSkill = 10;
+  defenseSkill = 5;
+  awareness = 0.1;
+  weapon = null;
+  weaponId = null;
+  armor = null;
+  armorId = null;
+  rangedWeapon = null;
+  darts = 0;
+  subClass = "none";
+  inventory = [];
+  gold = 0;
+  hungerLevel = 0;
+  hungerClock = 0;
+  constructor(pos, w) {
+    super();
+    this.pos = pos;
+    this.w = w;
+  }
+  get x() {
+    return this.pos % this.w;
+  }
+  set x(v) {
+    this.pos = this.y * this.w + v;
+  }
+  get y() {
+    return Math.floor(this.pos / this.w);
+  }
+  set y(v) {
+    this.pos = v * this.w + this.x;
+  }
+  getSpeed() {
+    return heroSpeed(this);
+  }
+  getTimeScale() {
+    return charTimeScale(this);
+  }
+  isAlive() {
+    return this.hp > 0;
+  }
+  act() {
+    throw new Error("ContentHero.act: route through MechanicsHooks.handleHeroIntent");
+  }
+}
+function createStarterHero(pos, w) {
+  const hero = new ContentHero(pos, w);
+  const sword = getItem("shortsword");
+  const armor = getItem("cloth_armor");
+  hero.weapon = sword.weapon ? { ...sword.weapon } : null;
+  hero.weaponId = "shortsword";
+  hero.armor = armor.armor ? { ...armor.armor } : null;
+  hero.armorId = "cloth_armor";
+  hero.inventory.push({ itemId: "ration", qty: 1 });
+  hero.inventory.push({ itemId: "dart", qty: 8 });
+  syncDarts(hero);
+  return hero;
+}
+function syncDarts(hero) {
+  hero.darts = hero.inventory.find((s) => s.itemId === "dart")?.qty ?? 0;
+}
+function addToInventory(hero, itemId, qty, gear) {
+  const def = instanceItemDef(itemId) ?? getItem(itemId);
+  if (qty <= 0)
+    return;
+  if (def.stackable) {
+    const existing = hero.inventory.find((s) => s.itemId === itemId);
+    if (existing) {
+      existing.qty += qty;
+    } else {
+      hero.inventory.push({ itemId, qty });
+    }
+  } else {
+    for (let i = 0;i < qty; i++) {
+      const stack = { itemId, qty: 1 };
+      if (def.weapon || def.armor) {
+        const inst = gear && i === 0 ? gear : {
+          weapon: def.weapon ? { ...def.weapon } : undefined,
+          armor: def.armor ? { ...def.armor } : undefined
+        };
+        if (inst.weapon && inst.weapon.durability === undefined) {
+          initDurability(inst.weapon, "weapon");
+        }
+        if (inst.armor && inst.armor.durability === undefined) {
+          initDurability(inst.armor, "armor");
+        }
+        stack.gear = inst;
+      }
+      hero.inventory.push(stack);
+    }
+  }
+  syncDarts(hero);
+}
+function ensureStackGear(stack) {
+  const def = getItem(stack.itemId);
+  if (!def.weapon && !def.armor)
+    return null;
+  if (!stack.gear) {
+    stack.gear = {
+      weapon: def.weapon ? { ...def.weapon } : undefined,
+      armor: def.armor ? { ...def.armor } : undefined
+    };
+  }
+  const g = stack.gear;
+  if (g.weapon && g.weapon.durability === undefined) {
+    initDurability(g.weapon, "weapon");
+  }
+  if (g.armor && g.armor.durability === undefined) {
+    initDurability(g.armor, "armor");
+  }
+  return g;
+}
+function removeFromInventory(hero, slot, qty = 1) {
+  const stack = hero.inventory[slot];
+  if (!stack || qty <= 0)
+    return null;
+  const take = Math.min(qty, stack.qty);
+  const removed = { itemId: stack.itemId, qty: take };
+  if (stack.gear && take >= stack.qty) {
+    removed.gear = stack.gear;
+  }
+  stack.qty -= take;
+  if (stack.qty <= 0) {
+    hero.inventory.splice(slot, 1);
+  }
+  syncDarts(hero);
+  return removed;
+}
+// src/content/potions.ts
+function affectBuff(buffs, kind, duration) {
+  const cur = buffs[kind];
+  buffs[kind] = cur ? { ...cur, left: cur.left + duration } : { kind, left: duration };
+}
+function prolongBuff2(buffs, kind, duration, extra) {
+  const cur = buffs[kind];
+  const next = cur ? { ...cur, left: Math.max(cur.left, duration) } : { kind, left: duration };
+  if (extra?.sourceId !== undefined)
+    next.sourceId = extra.sourceId;
+  buffs[kind] = next;
+}
+function potionFamilyDef() {
+  return {
+    classes: [...POTION_CLASS_ORDER],
+    labels: [...POTION_COLORS],
+    images: [...POTION_IMAGES]
+  };
+}
+function potionSprite(id, fallback) {
+  return identificationReady() ? potionImage(id) : fallback;
+}
+function potionUiInfo(id, knownName, catalogSprite) {
+  if (!isPotionId(id))
+    return null;
+  const known = identificationReady() && isPotionKnown(id);
+  return {
+    name: known ? knownName : `poción ${potionLabel(id)}`,
+    sprite: identificationReady() ? potionImage(id) : catalogSprite,
+    identified: known
+  };
+}
+var HARMFUL_DRINK_IDS = new Set([
+  "potion_liquidflame",
+  "potion_toxicgas",
+  "potion_paralyticgas"
+]);
+var BENEFICIAL_THROW_IDS = new Set([
+  "potion_experience",
+  "potion_healing",
+  "potion_levitation",
+  "potion_mindvision",
+  "potion_strength",
+  "potion_invisibility",
+  "potion_might"
+]);
+var pendingConfirm = null;
+var TIME_TO_DRINK = 1;
+function isKnownSafe(id) {
+  return identificationReady() && isPotionKnown(id);
+}
+function drinkPotion(ctx, hero, slot) {
+  const stack = hero.inventory[slot];
+  if (!stack || !isPotionId(stack.itemId)) {
+    ctx.log("Ahí no traes nada.");
+    return 1;
+  }
+  if (isKnownSafe(stack.itemId) && HARMFUL_DRINK_IDS.has(stack.itemId)) {
+    pendingConfirm = {
+      slot,
+      itemId: stack.itemId,
+      mode: "drink",
+      cell: -1,
+      title: "¡Poción mala!",
+      question: "Are you sure you want to drink it?"
+    };
+    ctx.log("¡Es una poción mala! ¿Seguro que te la quieres tomar?");
+    return 0;
+  }
+  return drinkPotionConfirmed(ctx, hero, slot);
+}
+function drinkPotionConfirmed(ctx, hero, slot) {
+  const stack = hero.inventory[slot];
+  if (!stack || !isPotionId(stack.itemId))
+    return 1;
+  const id = stack.itemId;
+  removeFromInventory(hero, slot, 1);
+  applyDrinkEffect(ctx, hero, id);
+  return TIME_TO_DRINK;
+}
+function applyDrinkEffect(ctx, hero, id) {
+  switch (id) {
+    case "potion_healing": {
+      hero.hp = hero.ht;
+      delete hero.buffs.poison;
+      delete hero.buffs.cripple;
+      delete hero.buffs.bleeding;
+      hero.weakened = false;
+      ctx.log("Tus heridas cierran por completo.");
+      break;
+    }
+    case "potion_strength": {
+      hero.str += 1;
+      ctx.log("Sientes una fuerza nueva en el cuerpo.");
+      break;
+    }
+    case "potion_experience": {
+      const need = maxExp(hero.lvl) - hero.exp;
+      earnExp(hero, need);
+      ctx.log("Te sientes con más tablas.");
+      break;
+    }
+    case "potion_might": {
+      hero.str += 1;
+      hero.ht += 5;
+      hero.hp += 5;
+      ctx.log("Te sientes más fuerte.");
+      break;
+    }
+    case "potion_mindvision": {
+      affectBuff(hero.buffs, "mindvision", 20);
+      break;
+    }
+    case "potion_levitation": {
+      affectBuff(hero.buffs, "levitation", 20);
+      hero.flying = true;
+      delete hero.buffs.roots;
+      ctx.log("¡Te elevas en el aire!");
+      break;
+    }
+    case "potion_invisibility": {
+      affectBuff(hero.buffs, "invisibility", 15);
+      ctx.log("¡Desapareces!");
+      break;
+    }
+    case "potion_purity": {
+      affectBuff(hero.buffs, "gasesimmunity", 5);
+      ctx.log("Te sientes limpio.");
+      break;
+    }
+    default: {
+      shatterPotionAt(ctx, hero, hero.pos, id);
+      break;
+    }
+  }
+  knowPotion(id);
+}
+var TIME_TO_THROW = 1;
+function throwPotion(ctx, hero, slot, cell) {
+  const stack = hero.inventory[slot];
+  if (!stack || !isPotionId(stack.itemId)) {
+    ctx.log("Ahí no traes nada.");
+    return 1;
+  }
+  if (isKnownSafe(stack.itemId) && BENEFICIAL_THROW_IDS.has(stack.itemId)) {
+    pendingConfirm = {
+      slot,
+      itemId: stack.itemId,
+      mode: "throw",
+      cell,
+      title: "Poción buena",
+      question: "Are you sure you want to shatter it?"
+    };
+    ctx.log("Es una poción buena. ¿Seguro que la quieres romper?");
+    return 0;
+  }
+  return throwPotionConfirmed(ctx, hero, slot, cell);
+}
+function throwPotionConfirmed(ctx, hero, slot, cell) {
+  const stack = hero.inventory[slot];
+  if (!stack || !isPotionId(stack.itemId))
+    return 1;
+  const id = stack.itemId;
+  removeFromInventory(hero, slot, 1);
+  const w = ctx.level.w;
+  const x = cell % w;
+  const y = Math.floor(cell / w);
+  const tile = ctx.level.get(x, y);
+  if (cell === hero.pos) {
+    applyDrinkEffect(ctx, hero, id);
+  } else if (tile === 12 /* WELL */ || tile === 8 /* CHASM */) {
+    const fallback = POTION_DEFS[id]?.sprite ?? "potion_red";
+    ctx.level.items.push({
+      pos: cell,
+      itemId: id,
+      sprite: potionSprite(id, fallback)
+    });
+  } else {
+    shatterPotionAt(ctx, hero, cell, id);
+  }
+  return TIME_TO_THROW;
+}
+function shatterPotionAt(ctx, hero, cell, id) {
+  const visible = isCellVisible(ctx, cell);
+  switch (id) {
+    case "potion_toxicgas": {
+      if (visible)
+        knowPotion(id);
+      seedBlob(ctx.level.blobs, "toxic", cell, 1000, ctx.level.w * ctx.level.h);
+      break;
+    }
+    case "potion_paralyticgas": {
+      if (visible)
+        knowPotion(id);
+      seedBlob(ctx.level.blobs, "paralytic", cell, 1000, ctx.level.w * ctx.level.h);
+      break;
+    }
+    case "potion_liquidflame": {
+      if (visible)
+        knowPotion(id);
+      seedBlob(ctx.level.blobs, "fire", cell, 2, ctx.level.w * ctx.level.h);
+      break;
+    }
+    case "potion_frost": {
+      const affected = cellsWithin2(ctx, cell);
+      const anyVisible = affected.some((c) => isCellVisible(ctx, c));
+      if (anyVisible)
+        knowPotion(id);
+      for (const c of affected) {
+        const ch = charAtCell(ctx, hero, c);
+        if (ch) {
+          prolongBuff2(ch.buffs, "frost", 5 * ctx.rng.float(1, 1.5));
+          ch.paralysed = true;
+          delete ch.buffs.burning;
+        }
+      }
+      const fire = ctx.level.blobs.find((b) => b.kind === "fire");
+      if (fire)
+        for (const c of affected)
+          fire.cur[c] = 0;
+      break;
+    }
+    case "potion_purity": {
+      for (const c of cellsWithin2(ctx, cell)) {
+        for (const kind of ["toxic", "paralytic"]) {
+          const blob = ctx.level.blobs.find((b) => b.kind === kind);
+          if (blob && blob.cur[c] > 0) {
+            blob.volume -= blob.cur[c];
+            blob.cur[c] = 0;
+          }
+        }
+      }
+      break;
+    }
+    default:
+      break;
+  }
+}
+function cellsWithin2(ctx, cell) {
+  const w = ctx.level.w;
+  const h = ctx.level.h;
+  const out = [];
+  const dist = new Int32Array(w * h).fill(-1);
+  dist[cell] = 0;
+  const queue = [cell];
+  while (queue.length > 0) {
+    const c = queue.shift();
+    if (dist[c] >= 2)
+      continue;
+    const cx = c % w;
+    const cy = Math.floor(c / w);
+    const dirs = [
+      [1, 0],
+      [-1, 0],
+      [0, 1],
+      [0, -1],
+      [1, 1],
+      [1, -1],
+      [-1, 1],
+      [-1, -1]
+    ];
+    for (const [dx, dy] of dirs) {
+      const nx = cx + dx;
+      const ny = cy + dy;
+      if (nx < 0 || ny < 0 || nx >= w || ny >= h)
+        continue;
+      const n = ny * w + nx;
+      if (dist[n] !== -1)
+        continue;
+      if (isOpaque(ctx, nx, ny))
+        continue;
+      dist[n] = dist[c] + 1;
+      queue.push(n);
+    }
+  }
+  for (let i = 0;i < w * h; i++) {
+    if (dist[i] !== -1)
+      out.push(i);
+  }
+  return out;
+}
+function isOpaque(ctx, x, y) {
+  const t = ctx.level.get(x, y);
+  return t === 0 /* WALL */ || t === 2 /* DOOR */ || t === 4 /* DOOR_SECRET */ || t === 37 /* BARRICADE */;
+}
+function isCellVisible(ctx, cell) {
+  return !!ctx.level.visible[cell];
+}
+function charAtCell(ctx, hero, cell) {
+  if (hero.pos === cell)
+    return hero;
+  const w = ctx.level.w;
+  for (const m of ctx.mobs) {
+    if (m.isAlive() && m.y * w + m.x === cell) {
+      return m;
     }
   }
   return null;
 }
-
-// src/dungeon/prisonBoss.ts
-function pressArenaCell(level, rng, cell, hooks) {
-  if (level.enteredArena)
-    return;
-  const arena = level.bossArena;
-  if (!arena)
-    return;
-  const w = level.w;
-  const x = cell % w;
-  const y = Math.floor(cell / w);
-  if (x < arena.l || x > arena.r || y < arena.t || y > arena.b)
-    return;
-  level.enteredArena = true;
-  let pos = -1;
-  for (let tries = 0;tries < 64 && pos < 0; tries++) {
-    const px = arena.l + 1 + rng.int(0, arena.r - arena.l - 1);
-    const py = arena.t + 1 + rng.int(0, arena.b - arena.t - 1);
-    const p = py * w + px;
-    if (p !== cell && !hooks.occupied(p))
-      pos = p;
+function tickFlavourBuff(buffs, kind) {
+  const b = buffs[kind];
+  if (!b)
+    return false;
+  b.left -= 1;
+  if (b.left <= 0) {
+    delete buffs[kind];
+    return false;
   }
-  if (pos >= 0)
-    hooks.spawn(pos);
-  if (level.arenaDoorCell >= 0) {
-    level.set(level.arenaDoorCell % w, Math.floor(level.arenaDoorCell / w), 3 /* DOOR_LOCKED */);
-  }
+  return true;
 }
-function onItemDropped(level, itemId) {
-  if (level.keyDropped || !level.bossArena)
-    return;
-  if (itemId !== "skeleton_key")
-    return;
-  level.keyDropped = true;
-  if (level.arenaDoorCell >= 0) {
-    const w = level.w;
-    level.set(level.arenaDoorCell % w, Math.floor(level.arenaDoorCell / w), 2 /* DOOR */);
+function tickPotionBuffs(buffs, flags, onSleepEnd) {
+  const hadSleep = !!buffs.sleep;
+  for (const kind of [
+    "frost",
+    "levitation",
+    "invisibility",
+    "mindvision",
+    "gasesimmunity",
+    "terror",
+    "rage",
+    "sleep"
+  ]) {
+    tickFlavourBuff(buffs, kind);
   }
+  if (hadSleep && !buffs.sleep && onSleepEnd)
+    onSleepEnd();
+  if (!buffs.frost && flags.paralysed) {
+    if (!buffs.paralysis)
+      flags.paralysed = false;
+  }
+  if (!buffs.levitation)
+    flags.flying = false;
 }
-
-// src/dungeon/cavesBoss.ts
-function pressArenaCell2(level, rng, cell, hooks) {
-  if (level.enteredArena)
-    return;
-  const arena = level.bossArena;
-  if (!arena)
-    return;
-  const w = level.w;
-  const x = cell % w;
-  const y = Math.floor(cell / w);
-  const outside = x < arena.l - 1 || x > arena.r + 1 || y < arena.t - 1 || y > arena.b + 1;
-  if (!outside)
-    return;
-  level.enteredArena = true;
-  let pos = -1;
-  for (let tries = 0;tries < 4096 && pos < 0; tries++) {
-    const p = rng.int(0, level.size);
-    const px = p % w;
-    const py = Math.floor(p / w);
-    const pOutside = px < arena.l - 1 || px > arena.r + 1 || py < arena.t - 1 || py > arena.b + 1;
-    if (pOutside && level.isPassable(px, py) && !level.visible[p] && !hooks.occupied(p)) {
-      pos = p;
-    }
-  }
-  if (pos >= 0)
-    hooks.spawn(pos);
-  if (level.arenaDoorCell >= 0) {
-    level.set(level.arenaDoorCell % w, Math.floor(level.arenaDoorCell / w), 0 /* WALL */);
-  }
-}
-function onItemDropped2(level, itemId) {
-  if (level.keyDropped || !level.bossArena)
-    return;
-  if (itemId !== "skeleton_key")
-    return;
-  level.keyDropped = true;
-  if (level.arenaDoorCell >= 0) {
-    const w = level.w;
-    level.set(level.arenaDoorCell % w, Math.floor(level.arenaDoorCell / w), 1 /* FLOOR */);
-  }
+function takeFromSlot(hero, slot, n) {
+  const stack = hero.inventory[slot];
+  if (!stack || stack.qty < n)
+    return false;
+  removeFromInventory(hero, slot, n);
+  return true;
 }
 
 // src/mechanics/hunger.ts
@@ -5727,7 +7325,7 @@ function randomEnchantmentId(rng) {
 function immune(ch, kind) {
   return ch.immunities.includes(kind);
 }
-function affectBuff(ch, kind, duration, extra) {
+function affectBuff2(ch, kind, duration, extra) {
   if (immune(ch, kind))
     return;
   const b = ch.buffs[kind];
@@ -5741,7 +7339,7 @@ function affectBuff(ch, kind, duration, extra) {
     ch.buffs[kind] = { kind, left: duration, ...extra };
   }
 }
-function prolongBuff(ch, kind, duration, extra) {
+function prolongBuff3(ch, kind, duration, extra) {
   if (immune(ch, kind))
     return;
   const b = ch.buffs[kind];
@@ -5784,9 +7382,9 @@ function fireProc(fx, _attacker, defender, _damage, level) {
 function horrorProc(fx, attacker, defender, level) {
   if (fx.rng.int(0, level + 5) >= 4) {
     if (defender.kind === "hero") {
-      affectBuff(defender, "vertigo", VERTIGO_DURATION2);
+      affectBuff2(defender, "vertigo", VERTIGO_DURATION2);
     } else {
-      affectBuff(defender, "terror", TERROR_DURATION, {
+      affectBuff2(defender, "terror", TERROR_DURATION, {
         sourceId: attacker.id
       });
     }
@@ -5810,7 +7408,7 @@ function luckProc(fx, attacker, defender, damage, level) {
 }
 function paralysisProc(fx, _attacker, defender, level) {
   if (fx.rng.int(0, level + 8) >= 7) {
-    prolongBuff(defender, "paralysis", fx.rng.float(1, 1.5 + level));
+    prolongBuff3(defender, "paralysis", fx.rng.float(1, 1.5 + level));
   }
 }
 function poisonProc(fx, _attacker, defender, level) {
@@ -5841,7 +7439,7 @@ function shockProc(fx, _attacker, defender, damage, level) {
 }
 function slowProc(fx, _attacker, defender, level) {
   if (fx.rng.int(0, level + 4) >= 3) {
-    prolongBuff(defender, "slow", fx.rng.float(1, 1.5 + level));
+    prolongBuff3(defender, "slow", fx.rng.float(1, 1.5 + level));
   }
 }
 function temperingProc(weapon) {
@@ -5933,15 +7531,15 @@ function affectionProc(fx, attacker, defender, damage, level) {
   const lvl = Math.max(0, Math.min(level, 6));
   if (adjacent(attacker, defender) && fx.rng.int(0, Math.floor(lvl / 2) + 5) >= 4) {
     let duration = fx.rng.intRange(3, 7);
-    affectBuff(attacker, "charm", duration, { sourceId: defender.id });
+    affectBuff2(attacker, "charm", duration, { sourceId: defender.id });
     duration = Math.floor(duration * fx.rng.float(0.5, 1));
-    affectBuff(defender, "charm", duration, { sourceId: attacker.id });
+    affectBuff2(defender, "charm", duration, { sourceId: attacker.id });
   }
   return damage;
 }
 function antiEntropyProc(fx, attacker, defender, damage, level) {
   if (adjacent(attacker, defender) && fx.rng.int(0, level + 6) >= 5) {
-    prolongBuff(attacker, "frost", FROST_DURATION * fx.rng.float(1, 1.5));
+    prolongBuff3(attacker, "frost", FROST_DURATION * fx.rng.float(1, 1.5));
     reigniteBurning(defender, 8);
   }
   return damage;
@@ -5981,7 +7579,7 @@ function displacementProc(fx, _attacker, defender, damage, level, w, h) {
 }
 function entanglementProc(fx, _attacker, defender, damage, level) {
   if (fx.rng.int(0, 4) === 0) {
-    prolongBuff(defender, "roots", 5 - Math.floor(level / 5));
+    prolongBuff3(defender, "roots", 5 - Math.floor(level / 5));
     const armorLevel = 5 * (level + 1);
     const existing = defender.buffs["earthrootArmor"];
     if (existing) {
@@ -6932,7 +8530,7 @@ class ContentMob extends Actor {
     return this.enemySeen && !this.paralysed ? this.def.def : 0;
   }
   defenseVerb() {
-    return "dodged";
+    return "esquivó";
   }
   mobDamageRoll(rng) {
     return rng.normalIntRange(this.def.dmgMin, this.def.dmgMax);
@@ -7156,7 +8754,7 @@ class ThiefMob extends ContentMob {
 
 class BatMob extends ContentMob {
   defenseVerb() {
-    return "evaded";
+    return "esquivó";
   }
   attackProc(_ctx, _hero, damage) {
     const reg = Math.min(damage, this.ht - this.hp);
@@ -7217,7 +8815,7 @@ class BruteMob extends ContentMob {
       this.enraged = true;
       this.enrageDebt = 1;
       if (ctx.level.visible[this.pos]) {
-        ctx.log(`${this.name} becomes enraged!`);
+        ctx.log(`¡${this.name} se enfurece!`);
       }
     }
   }
@@ -7233,7 +8831,7 @@ class BruteMob extends ContentMob {
 
 class ShieldedMob extends BruteMob {
   defenseVerb() {
-    return "blocked";
+    return "bloqueó";
   }
 }
 
@@ -7300,7 +8898,7 @@ class ElementalMob extends ContentMob {
 
 class MonkMob extends ContentMob {
   defenseVerb() {
-    return "parried";
+    return "paró";
   }
   attackProc(ctx, hero, damage) {
     if (ctx.rng.int(0, 6) === 0 && hero.weaponId !== null && hero.weaponId !== "knuckles") {
@@ -7810,1982 +9408,6 @@ class MirrorImageMob extends ContentMob {
   shatterAfterAttack() {
     this.hp = 0;
   }
-}
-
-// src/mechanics/rings.ts
-var RING_SPECS = [
-  {
-    id: "mending",
-    javaClass: "RingOfMending",
-    name: "Ring of Mending",
-    desc: "This ring increases the body's regenerative properties, allowing " + "one to recover lost health at an accelerated rate. Degraded rings will " + "decrease or even halt one's natural regeneration.",
-    spriteKey: "item_ring_mending",
-    buffKind: "ring_mending"
-  },
-  {
-    id: "detection",
-    javaClass: "RingOfDetection",
-    name: "Ring of Detection",
-    desc: "Wearing this ring will allow the wearer to notice hidden secrets - " + "traps and secret doors - without taking time to search. Degraded rings of detection " + "will dull your senses, making it harder to notice secrets even when actively searching for them.",
-    spriteKey: "item_ring_detection",
-    buffKind: "ring_detection"
-  },
-  {
-    id: "shadows",
-    javaClass: "RingOfShadows",
-    name: "Ring of Shadows",
-    desc: "Enemies will be less likely to notice you if you wear this ring. Degraded rings " + "of shadows will alert enemies who might otherwise not have noticed your presence.",
-    spriteKey: "item_ring_shadows",
-    buffKind: "ring_shadows"
-  },
-  {
-    id: "power",
-    javaClass: "RingOfPower",
-    name: "Ring of Power",
-    desc: "Your wands will become more powerful in the energy field " + "that radiates from this ring. Degraded rings of power will instead weaken your wands.",
-    spriteKey: "item_ring_power",
-    buffKind: "ring_power"
-  },
-  {
-    id: "herbalism",
-    javaClass: "RingOfHerbalism",
-    name: "Ring of Herbalism",
-    desc: "Este anillo te hace más probable sacar rocío y semillas del pasto pisado.",
-    spriteKey: "item_ring_herbalism",
-    buffKind: "ring_herbalism"
-  },
-  {
-    id: "accuracy",
-    javaClass: "RingOfAccuracy",
-    name: "Ring of Accuracy",
-    desc: "Este anillo te hace más probable atinarle al enemigo.",
-    spriteKey: "item_ring_accuracy",
-    buffKind: "ring_accuracy"
-  },
-  {
-    id: "evasion",
-    javaClass: "RingOfEvasion",
-    name: "Ring of Evasion",
-    desc: "Este anillo te hace más probable esquivar los golpes.",
-    spriteKey: "item_ring_evasion",
-    buffKind: "ring_evasion"
-  },
-  {
-    id: "satiety",
-    javaClass: "RingOfSatiety",
-    name: "Ring of Satiety",
-    desc: "Wearing this ring you can go without food longer. Degraded rings of satiety will cause the opposite effect.",
-    spriteKey: "item_ring_satiety",
-    buffKind: "ring_satiety"
-  },
-  {
-    id: "haste",
-    javaClass: "RingOfHaste",
-    name: "Ring of Haste",
-    desc: "This ring accelerates the wearer's flow of time, allowing one to perform all actions a little faster.",
-    spriteKey: "item_ring_haste",
-    buffKind: "ring_haste"
-  },
-  {
-    id: "haggler",
-    javaClass: "RingOfHaggler",
-    name: "Ring of Haggler",
-    desc: "In fact this ring doesn't provide any magic effect, but it demonstrates " + "to shopkeepers and vendors, that the owner of the ring is a member of " + "The Thieves' Guild. Usually they are glad to give a discount in exchange " + "for temporary immunity guarantee. Upgrading this ring won't give any additional " + "bonuses.",
-    spriteKey: "item_ring_haggler",
-    buffKind: "ring_haggler",
-    fixedPlusOne: true
-  },
-  {
-    id: "elements",
-    javaClass: "RingOfElements",
-    name: "Ring of Elements",
-    desc: "This ring provides resistance to different elements, such as fire, " + "electricity, gases etc. Also it decreases duration of negative effects.",
-    spriteKey: "item_ring_elements",
-    buffKind: "ring_elements"
-  },
-  {
-    id: "thorns",
-    javaClass: "RingOfThorns",
-    name: "Ring of Thorns",
-    desc: "Though this ring doesn't provide real thorns, an enemy that attacks you " + "will itself be wounded by a fraction of the damage that it inflicts. " + "Upgrading this ring won't give any additional bonuses.",
-    spriteKey: "item_ring_thorns",
-    buffKind: "ring_thorns",
-    fixedPlusOne: true
-  }
-];
-
-// src/content/rings.ts
-function ringSpec(id) {
-  const spec = RING_SPECS.find((s) => s.id === id);
-  if (!spec)
-    throw new Error(`unknown ring id: ${id}`);
-  return spec;
-}
-var RING_GEMS = [
-  "diamond",
-  "opal",
-  "garnet",
-  "ruby",
-  "amethyst",
-  "topaz",
-  "onyx",
-  "tourmaline",
-  "emerald",
-  "sapphire",
-  "quartz",
-  "agate"
-];
-var RING_PRICE_BASE = 80;
-var TICKS_TO_KNOW = 200;
-var ringStates = new Map;
-var ringSeq = 0;
-var ringSlots = [null, null];
-function parseRingId(itemId) {
-  const hash = itemId.indexOf("#");
-  const base = hash === -1 ? itemId : itemId.slice(0, hash);
-  if (!base.startsWith("ring_of_"))
-    return null;
-  const ringId = base.slice("ring_of_".length);
-  if (!RING_SPECS.some((s) => s.id === ringId))
-    return null;
-  return { ringId, instanceId: hash === -1 ? null : itemId };
-}
-function isRingId(itemId) {
-  return parseRingId(itemId) !== null;
-}
-function getRingState(instanceId) {
-  return ringStates.get(instanceId);
-}
-function createRing(rng, ringId, opts = {}) {
-  const spec = ringSpec(ringId);
-  const instanceId = `ring_of_${ringId}#${++ringSeq}`;
-  let level = 0;
-  let cursed = false;
-  if (spec.fixedPlusOne) {
-    level = 1;
-  } else if (opts.randomize) {
-    const lvl = rng.int(1, 3);
-    if (rng.float(0, 1) < 0.3) {
-      level = -lvl;
-      cursed = true;
-    } else {
-      level = lvl;
-    }
-  }
-  const st = {
-    instanceId,
-    ringId,
-    level,
-    cursed,
-    cursedKnown: false,
-    ticksToKnow: TICKS_TO_KNOW,
-    regenAcc: 0
-  };
-  ringStates.set(instanceId, st);
-  if (spec.fixedPlusOne)
-    identifyRingType(ringId);
-  return instanceId;
-}
-function ringEffectiveLevel(state) {
-  return state.level;
-}
-var localGemLabels = new Map;
-var localKnown = new Set;
-function ensureLocalLabels(rng) {
-  if (localGemLabels.size > 0)
-    return;
-  const gems = [...RING_GEMS];
-  const r = rng ?? { float: (a, b) => a + Math.random() * (b - a) };
-  for (let i = gems.length - 1;i > 0; i--) {
-    const j = Math.floor(r.float(0, i + 1));
-    [gems[i], gems[j]] = [gems[j], gems[i]];
-  }
-  RING_SPECS.forEach((spec, i) => localGemLabels.set(spec.javaClass, gems[i]));
-}
-function isRingTypeKnown(ringId) {
-  const spec = ringSpec(ringId);
-  ensureLocalLabels();
-  return localKnown.has(spec.javaClass);
-}
-function identifyRingType(ringId) {
-  const spec = ringSpec(ringId);
-  ensureLocalLabels();
-  localKnown.add(spec.javaClass);
-}
-function ringGemLabel(ringId) {
-  ensureLocalLabels();
-  return localGemLabels.get(ringSpec(ringId).javaClass) ?? "diamond";
-}
-function registerRingIdClasses() {
-  registerRingClasses({
-    classes: RING_SPECS.map((s) => s.javaClass),
-    labels: RING_GEMS,
-    images: RING_SPECS.map((s) => s.spriteKey)
-  });
-}
-function equippedRings() {
-  return [ringSlots[0], ringSlots[1]];
-}
-function equippedRingStates() {
-  return [
-    ringSlots[0] ? ringStates.get(ringSlots[0]) ?? null : null,
-    ringSlots[1] ? ringStates.get(ringSlots[1]) ?? null : null
-  ];
-}
-function equippedRingLevels(hero, ringId) {
-  const out = [];
-  for (const st of equippedRingStates()) {
-    if (st && st.ringId === ringId)
-      out.push(ringEffectiveLevel(st));
-  }
-  return out;
-}
-function ringBonus(hero, ringId) {
-  return equippedRingLevels(hero, ringId).reduce((s, l) => s + l, 0);
-}
-function syncRingBuffs(hero) {
-  for (const spec of RING_SPECS) {
-    const key = spec.buffKind;
-    const levels = equippedRingLevels(hero, spec.id);
-    if (levels.length === 0) {
-      delete hero.buffs[key];
-    } else {
-      hero.buffs[key] = {
-        kind: key,
-        left: Infinity,
-        level: levels.reduce((s, l) => s + l, 0)
-      };
-    }
-  }
-}
-function equipRing(ctx, hero, slot) {
-  const stack = hero.inventory[slot];
-  if (!stack || !isRingId(stack.itemId))
-    return 0;
-  const st = getRingState(stack.itemId);
-  if (!st)
-    return 0;
-  const finger = ringSlots[0] === null ? 1 : ringSlots[1] === null ? 2 : 0;
-  if (finger === 0)
-    return 0;
-  removeFromInventory(hero, slot, 1);
-  ringSlots[finger - 1] = st.instanceId;
-  st.cursedKnown = true;
-  if (st.cursed) {
-    ctx.log(`${ringDisplayName(st.ringId)} te aprieta el dedo y duele`);
-  }
-  syncRingBuffs(hero);
-  return finger;
-}
-function unequipRing(ctx, hero, finger) {
-  const instanceId = ringSlots[finger - 1];
-  if (!instanceId)
-    return false;
-  const st = ringStates.get(instanceId);
-  if (!st)
-    return false;
-  if (st.cursed) {
-    ctx.log(`¡No te puedes quitar ${ringDisplayName(st.ringId)}!`);
-    return false;
-  }
-  ringSlots[finger - 1] = null;
-  addToInventory(hero, instanceId, 1);
-  syncRingBuffs(hero);
-  return true;
-}
-function powerRingBonus(hero) {
-  return ringBonus(hero, "power");
-}
-function ringDisplayName(ringId) {
-  const spec = ringSpec(ringId);
-  if (isRingTypeKnown(ringId))
-    return spec.name;
-  return `${ringGemLabel(ringId)} ring`;
-}
-function ringDisplayDesc(ringId) {
-  const spec = ringSpec(ringId);
-  if (isRingTypeKnown(ringId))
-    return spec.desc;
-  return `This metal band is adorned with a large ${ringGemLabel(ringId)} gem ` + "that glitters in the darkness. Who knows what effect it has when worn?";
-}
-function ringDisplaySprite(ringId) {
-  const spec = ringSpec(ringId);
-  if (isRingTypeKnown(ringId))
-    return spec.spriteKey;
-  return spec.spriteKey;
-}
-function ringPrice(state) {
-  let price = RING_PRICE_BASE;
-  if (state.cursed && state.cursedKnown)
-    price = Math.floor(price / 2);
-  const levelKnown = isRingTypeKnown(state.ringId);
-  const level = ringEffectiveLevel(state);
-  if (levelKnown) {
-    if (level > 0) {
-      price *= level + 1;
-    } else if (level < 0) {
-      price = Math.floor(price / (1 - level));
-    }
-  }
-  return Math.max(1, price);
-}
-function ringItemDefFor(defId) {
-  const parsed = parseRingId(defId);
-  if (!parsed || !parsed.instanceId)
-    return null;
-  const st = ringStates.get(parsed.instanceId);
-  if (!st)
-    return null;
-  return {
-    id: parsed.instanceId,
-    name: ringDisplayName(st.ringId),
-    desc: ringDisplayDesc(st.ringId),
-    sprite: ringDisplaySprite(st.ringId),
-    type: "misc",
-    stackable: false,
-    price: ringPrice(st)
-  };
-}
-function normalizeRingPickup(rng, itemId) {
-  const parsed = parseRingId(itemId);
-  if (!parsed)
-    return itemId;
-  if (parsed.instanceId)
-    return parsed.instanceId;
-  return createRing(rng, parsed.ringId, { randomize: true });
-}
-registerRingIdClasses();
-
-// src/content/wands.ts
-var wandStates = new Map;
-var wandSeq = 0;
-function registerWandIdClasses() {
-  const randomized = WAND_SPECS.filter((s) => s.id !== "magic_missile");
-  registerWandClasses({
-    classes: randomized.map((s) => s.className),
-    labels: WAND_WOODS,
-    images: randomized.map((s) => s.sprite)
-  });
-}
-function parseWandId(itemId) {
-  const hash = itemId.indexOf("#");
-  const base = hash === -1 ? itemId : itemId.slice(0, hash);
-  if (!base.startsWith("wand_of_"))
-    return null;
-  const wandId = base.slice("wand_of_".length);
-  if (!WAND_SPECS.some((s) => s.id === wandId))
-    return null;
-  return {
-    wandId,
-    instanceId: hash === -1 ? null : itemId
-  };
-}
-function isWandId(itemId) {
-  return parseWandId(itemId) !== null;
-}
-function getWandState(instanceId) {
-  return wandStates.get(instanceId);
-}
-function createWand(rng, wandId, opts = {}) {
-  const spec = wandSpec(wandId);
-  const instanceId = `wand_of_${wandId}#${++wandSeq}`;
-  let level = 0;
-  if (opts.randomize) {
-    if (rng.float(0, 1) < 0.5) {
-      level++;
-      if (rng.float(0, 1) < 0.15)
-        level++;
-    }
-  }
-  level += opts.upgrades ?? 0;
-  const maxCharges = wandMaxCharges(spec.initialCharges, level);
-  wandStates.set(instanceId, {
-    instanceId,
-    wandId,
-    level,
-    levelKnown: false,
-    cursed: false,
-    cursedKnown: false,
-    curCharges: maxCharges,
-    maxCharges,
-    usagesToKnow: USAGES_TO_KNOW,
-    chargeKnown: false,
-    rechargeAcc: 0
-  });
-  return instanceId;
-}
-function wandEffectiveLevel(state) {
-  return state.level;
-}
-function wandZapPower(hero, state, charging) {
-  const eLevel = wandEffectiveLevel(state);
-  return wandPower(eLevel, powerRingBonus(hero), charging);
-}
-var WAND_WOODS = [
-  "holly",
-  "yew",
-  "ebony",
-  "cherry",
-  "teak",
-  "rowan",
-  "ash",
-  "birch",
-  "willow",
-  "oak",
-  "elm",
-  "elder"
-];
-function wandDisplayName(wandId) {
-  const spec = wandSpec(wandId);
-  if (spec.wood === null)
-    return spec.name;
-  if (isWandKnown(spec.className))
-    return spec.name;
-  return `${wandLabel(spec.className)} wand`;
-}
-function wandDisplayDesc(wandId) {
-  const spec = wandSpec(wandId);
-  if (spec.wood === null || isWandKnown(spec.className))
-    return spec.desc;
-  return "This wand is of a type you don’t know yet.";
-}
-function wandDisplaySprite(wandId) {
-  const spec = wandSpec(wandId);
-  if (spec.wood === null)
-    return spec.sprite;
-  if (isWandKnown(spec.className))
-    return spec.sprite;
-  return wandImage(spec.className);
-}
-function wandPrice(state) {
-  let price = 50;
-  if (state.cursed && state.cursedKnown)
-    price = Math.floor(price / 2);
-  if (state.levelKnown) {
-    if (state.level > 0) {
-      price *= state.level + 1;
-    } else if (state.level < 0) {
-      price = Math.floor(price / (1 - state.level));
-    }
-  }
-  return Math.max(1, price);
-}
-function wandItemDef(instanceId) {
-  const parsed = parseWandId(instanceId);
-  if (!parsed || !parsed.instanceId)
-    return null;
-  const st = wandStates.get(parsed.instanceId);
-  if (!st)
-    return null;
-  const spec = wandSpec(st.wandId);
-  return {
-    id: parsed.instanceId,
-    name: wandDisplayName(st.wandId),
-    desc: wandDisplayDesc(st.wandId),
-    sprite: wandDisplaySprite(st.wandId),
-    type: "misc",
-    stackable: false,
-    price: wandPrice(st)
-  };
-}
-function normalizeWandPickup(rng, itemId) {
-  const parsed = parseWandId(itemId);
-  if (!parsed)
-    return itemId;
-  if (parsed.instanceId)
-    return parsed.instanceId;
-  return createWand(rng, parsed.wandId, { randomize: true });
-}
-function identifyWandType(wandId, log = () => {}) {
-  const spec = wandSpec(wandId);
-  if (spec.wood === null || isWandKnown(spec.className))
-    return;
-  knowWand(spec.className);
-  log(txtWandIdentified(spec.name));
-}
-function resolveZap(ctx, hero, state, targetCell, fx) {
-  if (targetCell === hero.pos) {
-    ctx.log(TXT_SELF_TARGET);
-    return { ok: false, reason: "self-target" };
-  }
-  const spec = wandSpec(state.wandId);
-  const ball = ballisticaCast(ballisticaWorldOf(ctx), hero.pos, targetCell, true, spec.hitChars);
-  applyZapEffect(ctx, hero, state, ball, fx);
-  state.curCharges--;
-  state.chargeKnown = true;
-  state.usagesToKnow--;
-  if (state.usagesToKnow <= 0)
-    identifyWandType(state.wandId, ctx.log);
-  return { ok: true, spent: 1 };
-}
-function createWandReward(rng, wandId) {
-  return createWand(rng, wandId, { randomize: true, upgrades: 1 });
-}
-var WandFxNoop = () => {};
-function beamPassable(t) {
-  switch (t) {
-    case 0 /* WALL */:
-    case 8 /* CHASM */:
-    case 4 /* DOOR_SECRET */:
-    case 3 /* DOOR_LOCKED */:
-    case 5 /* EXIT_LOCKED */:
-    case 37 /* BARRICADE */:
-    case 15 /* STATUE */:
-    case 17 /* BOOKSHELF */:
-    case 14 /* PEDESTAL */:
-    case 13 /* ALCHEMY */:
-    case 18 /* CHEST */:
-    case 19 /* CHEST_LOCKED */:
-    case 16 /* TOMB */:
-      return false;
-    default:
-      return true;
-  }
-}
-function beamLosBlocking(t) {
-  switch (t) {
-    case 0 /* WALL */:
-    case 2 /* DOOR */:
-    case 4 /* DOOR_SECRET */:
-    case 3 /* DOOR_LOCKED */:
-    case 39 /* HIGH_GRASS */:
-    case 37 /* BARRICADE */:
-      return true;
-    default:
-      return false;
-  }
-}
-function solidAt(level, pos) {
-  const t = level.tiles[pos];
-  return !beamPassable(t) && t !== 2 /* DOOR */ && t !== 4 /* DOOR_SECRET */;
-}
-function ballisticaWorldOf(ctx) {
-  const level = ctx.level;
-  const w = level.w;
-  const hero = heroOf(ctx);
-  return {
-    w,
-    h: level.h,
-    beamPassableAt: (pos) => beamPassable(level.tiles[pos]),
-    losBlockingAt: (pos) => beamLosBlocking(level.tiles[pos]),
-    charAt: (pos) => hero.isAlive() && hero.pos === pos || ctx.mobs.some((m) => m.isAlive() && m.y * w + m.x === pos)
-  };
-}
-function isZapCharAlive(ch) {
-  return ch.isAlive();
-}
-function asTrapChar(ch) {
-  if (ch instanceof ContentHero)
-    return ch;
-  return Object.assign(ch, { kind: "mob" });
-}
-function damageZapChar(ctx, target, amount, source) {
-  if (target instanceof ContentHero) {
-    const applied = applyDamage(ctx.rng, {
-      hp: target.hp,
-      ht: target.ht,
-      paralysed: target.paralysed,
-      immunities: [],
-      resistances: []
-    }, amount, source);
-    target.hp = applied.hp;
-    if (applied.paralysisBroken)
-      target.paralysed = false;
-  } else {
-    damageMobDirect(ctx, target, amount, source);
-  }
-}
-function prolongBuff2(target, kind, duration) {
-  const cur = target.buffs[kind];
-  target.buffs[kind] = { kind, left: (cur ? cur.left : 0) + duration };
-}
-function elementsLevelOf(ch) {
-  if (ch instanceof ContentHero) {
-    const b = ch.buffs["ring_elements"];
-    return b ? b.level ?? 0 : null;
-  }
-  return null;
-}
-function randomRespawnCell(ctx, hero) {
-  const level = ctx.level;
-  const n = level.w * level.h;
-  for (let i = 0;i < 10; i++) {
-    const cell = ctx.rng.int(0, n);
-    const x = cell % level.w;
-    const y = Math.floor(cell / level.w);
-    if (!isRespawnPassable(level, x, y))
-      continue;
-    if (level.visible[cell])
-      continue;
-    if (hero.pos === cell)
-      continue;
-    if (charAtPos(ctx, cell))
-      continue;
-    return cell;
-  }
-  return -1;
-}
-function isRespawnPassable(level, x, y) {
-  if (x < 0 || y < 0 || x >= level.w || y >= level.h)
-    return false;
-  return beamPassable(level.tiles[y * level.w + x]);
-}
-function healDewdrop(ctx, hero, qty) {
-  const value = 1 + Math.floor((ctx.level.depth - 1) / 5);
-  const effect = Math.min(hero.ht - hero.hp, value * qty);
-  if (effect > 0) {
-    hero.hp += effect;
-    ctx.log(`+${effect}HP`);
-  }
-}
-function effectMagicMissile(ctx, hero, power, ball, fx) {
-  const target = charAtPos(ctx, ball.cell);
-  if (target) {
-    damageZapChar(ctx, target, magicMissileDamage(ctx.rng, power), "wand");
-  }
-  fx({ kind: "missile", from: hero.pos, to: ball.cell });
-}
-function effectFirebolt(ctx, hero, power, ball, fx) {
-  const level = ctx.level;
-  for (let i = 1;i < ball.distance - 1; i++) {
-    const c = ball.trace[i];
-    if (isFlamableForBlob(level.tiles[c])) {
-      seedBlob(level.blobs, "fire", c, 4, level.w * level.h);
-    }
-  }
-  seedBlob(level.blobs, "fire", ball.cell, 1, level.w * level.h);
-  const target = charAtPos(ctx, ball.cell);
-  if (target) {
-    damageZapChar(ctx, target, fireboltDamage(ctx.rng, power), "wand");
-    if (isZapCharAlive(target) && target.buffs["burning"]) {
-      const full = BURNING_DURATION * elementsDurationFactor(elementsLevelOf(target));
-      target.buffs["burning"] = { kind: "burning", left: full };
-    }
-  }
-  fx({ kind: "missile", from: hero.pos, to: ball.cell });
-}
-function effectLightning(ctx, hero, power, ball, fx) {
-  const level = ctx.level;
-  const w = level.w;
-  const affected = new Set;
-  const points = [hero.pos];
-  const hit = (ch, damage) => {
-    if (damage < 1)
-      return;
-    affected.add(ch);
-    const inWater = level.tiles[ch.pos] === 9 /* WATER */ && !ch.flying;
-    damageZapChar(ctx, ch, inWater ? damage * 2 : damage, "lightning");
-    points.push(ch.pos);
-    const ns = [];
-    const cx = ch.pos % w;
-    const cy = Math.floor(ch.pos / w);
-    for (let dy = -1;dy <= 1; dy++) {
-      for (let dx = -1;dx <= 1; dx++) {
-        if (dx === 0 && dy === 0)
-          continue;
-        const nx = cx + dx;
-        const ny = cy + dy;
-        if (nx < 0 || ny < 0 || nx >= w || ny >= level.h)
-          continue;
-        const n = charAtPos(ctx, ny * w + nx);
-        if (n && isZapCharAlive(n) && !affected.has(n))
-          ns.push(n);
-      }
-    }
-    if (ns.length > 0)
-      hit(ctx.rng.pick(ns), lightningChainDamage(ctx.rng, damage));
-  };
-  const first = charAtPos(ctx, ball.cell);
-  if (first && isZapCharAlive(first)) {
-    hit(first, lightningInitialDamage(ctx.rng, power));
-  } else {
-    points.push(ball.cell);
-  }
-  fx({ kind: "strike", points });
-  if (!hero.isAlive()) {
-    ctx.log("Te mataste con tu propia varita de rayos...");
-  }
-}
-function effectDisintegration(ctx, _hero, power, rawLevel, ball, fx) {
-  const level = ctx.level;
-  const effDistance = Math.min(ball.distance, disintegrationMaxDistance(rawLevel));
-  let terrainAffected = false;
-  const chars = [];
-  for (let i = 1;i < effDistance; i++) {
-    const c = ball.trace[i];
-    const ch = charAtPos(ctx, c);
-    if (ch && isZapCharAlive(ch))
-      chars.push(ch);
-    const t = level.tiles[c];
-    if (t === 2 /* DOOR */) {
-      setLevelTile(level, c, 38 /* EMBERS */);
-      terrainAffected = true;
-    } else if (t === 39 /* HIGH_GRASS */) {
-      setLevelTile(level, c, 10 /* GRASS */);
-      terrainAffected = true;
-    }
-  }
-  for (const ch of chars) {
-    damageZapChar(ctx, ch, disintegrationDamage(ctx.rng, power, chars.length), "wand");
-  }
-  fx({ kind: "beam", cells: ball.trace.slice(0, effDistance) });
-}
-function setLevelTile(level, pos, t) {
-  level.tiles[pos] = t;
-}
-function effectAvalanche(ctx, hero, power, ball, fx) {
-  const level = ctx.level;
-  const size = avalancheSize(power);
-  const dist = buildDistanceMap2(level.w, level.h, ball.cell, (pos) => !solidAt(level, pos), size);
-  const n = level.w * level.h;
-  const burst = [];
-  for (let i = 0;i < n; i++) {
-    const d = dist[i];
-    if (d === Infinity)
-      continue;
-    burst.push(i);
-    const ch = charAtPos(ctx, i);
-    if (ch && isZapCharAlive(ch)) {
-      damageZapChar(ctx, ch, avalancheDamage(ctx.rng, size, d), "wand");
-      if (isZapCharAlive(ch) && avalancheParalyzes(ctx.rng, d)) {
-        prolongBuff2(ch, "paralysis", avalancheParalysisDuration(ctx.rng));
-      }
-    }
-    pressTrapCell(ctx, i, ch && isZapCharAlive(ch) ? asTrapChar(ch) : null, (mobId, pos) => {
-      const mob = buildMob(mobId, nextMobId(), pos, level.w);
-      mob.state = "wandering";
-      ctx.addMob(mob, 2);
-    });
-  }
-  fx({ kind: "burst", cells: burst });
-}
-function effectPoison(ctx, hero, power, ball, _fx) {
-  const target = charAtPos(ctx, ball.cell);
-  if (target && isZapCharAlive(target)) {
-    const dur = poisonWandDuration(power) * elementsDurationFactor(elementsLevelOf(target));
-    target.buffs["poison"] = { kind: "poison", left: dur };
-  } else {
-    ctx.log(TXT_NOTHING_HAPPENED);
-  }
-}
-function effectAmok(ctx, hero, power, ball, _fx) {
-  const target = charAtPos(ctx, ball.cell);
-  if (target && isZapCharAlive(target)) {
-    if (target instanceof ContentHero) {
-      prolongBuff2(target, "vertigo", vertigoDuration(elementsLevelOf(target)));
-    } else {
-      prolongBuff2(target, "amok", amokDuration(power));
-    }
-  } else {
-    ctx.log(TXT_NOTHING_HAPPENED);
-  }
-}
-function effectSlowness(ctx, _hero, power, ball, _fx) {
-  const target = charAtPos(ctx, ball.cell);
-  if (target && isZapCharAlive(target)) {
-    prolongBuff2(target, "slow", slowDuration(elementsLevelOf(target)) / 3 + power);
-  } else {
-    ctx.log(TXT_NOTHING_HAPPENED);
-  }
-}
-function effectBlink(ctx, hero, power, ball, fx) {
-  const dest = blinkDestinationCell(ball.trace, ball.distance, power, charAtPos(ctx, ball.cell) != null);
-  const from = hero.pos;
-  hero.pos = dest;
-  fx({ kind: "missile", from, to: dest });
-}
-function effectTeleportation(ctx, hero, _power, ball, _fx) {
-  const target = charAtPos(ctx, ball.cell);
-  if (target && isZapCharAlive(target)) {
-    if (target instanceof ContentHero) {
-      identifyWandType("teleportation", ctx.log);
-      let cell = -1;
-      for (let count = 11;count > 0; count--) {
-        cell = randomRespawnCell(ctx, hero);
-        if (cell !== -1)
-          break;
-      }
-      if (cell !== -1) {
-        hero.pos = cell;
-      } else {
-        ctx.log("¡No hay a dónde aparecerse!");
-      }
-    } else {
-      let pos = -1;
-      for (let count = 11;count > 0; count--) {
-        pos = randomRespawnCell(ctx, hero);
-        if (pos !== -1)
-          break;
-      }
-      if (pos === -1) {
-        ctx.log("¡No hay a dónde aparecerse!");
-      } else {
-        target.pos = pos;
-        ctx.log(`${hero.name} teleported ${target.name} to somewhere`);
-      }
-    }
-  } else {
-    ctx.log(TXT_NOTHING_HAPPENED);
-  }
-}
-function effectFlock(ctx, hero, power, ball, fx) {
-  const level = ctx.level;
-  const n = flockSheepCount(power);
-  let cell = ball.cell;
-  if (charAtPos(ctx, cell) != null && ball.distance > 2) {
-    cell = ball.trace[ball.distance - 2];
-  }
-  const occupied = new Set;
-  if (hero.isAlive())
-    occupied.add(hero.pos);
-  for (const m of ctx.mobs)
-    if (m.isAlive())
-      occupied.add(m.y * level.w + m.x);
-  const positions = flockSheepPositions(level.w, level.h, cell, (pos) => beamPassable(level.tiles[pos]), (pos) => occupied.has(pos), n);
-  const lifespan = flockLifespan(power, ctx.rng);
-  for (const pos of positions) {
-    spawnFlockSheep(ctx, pos, lifespan);
-  }
-  fx({ kind: "sheep", cells: positions });
-}
-function effectRegrowth(ctx, _hero, power, ball, _fx) {
-  const level = ctx.level;
-  for (let i = 1;i < ball.distance - 1; i++) {
-    const c = ball.trace[i];
-    const t = level.tiles[c];
-    if (t === 1 /* FLOOR */ || t === 38 /* EMBERS */) {
-      setLevelTile(level, c, 10 /* GRASS */);
-    }
-  }
-  const cell = ball.cell;
-  const t = level.tiles[cell];
-  if (t === 1 /* FLOOR */ || t === 38 /* EMBERS */ || t === 10 /* GRASS */ || t === 39 /* HIGH_GRASS */) {
-    seedRegrowthBlob(level.blobs, cell, regrowthSeedAmount(power), level.w * level.h);
-  } else {
-    ctx.log(TXT_NOTHING_HAPPENED);
-  }
-}
-
-class RegrowthBlob extends Blob {
-  constructor(length) {
-    super("regrowth", length);
-  }
-  evolve(_rng, world) {
-    const { length } = world;
-    const { cur, off } = this;
-    for (let pos = 0;pos < length; pos++) {
-      if (cur[pos] > 0) {
-        const grown = cur[pos] > 1;
-        const v = cur[pos] - 1;
-        this.volume += off[pos] = v;
-        const t = world.tileAt(pos);
-        let c1 = t;
-        if (t === 1 /* FLOOR */ || t === 38 /* EMBERS */) {
-          c1 = grown ? 39 /* HIGH_GRASS */ : 10 /* GRASS */;
-        } else if (t === 10 /* GRASS */ && grown) {
-          c1 = 39 /* HIGH_GRASS */;
-        }
-        if (c1 !== t) {
-          world.setTile(pos, c1);
-        }
-      } else {
-        off[pos] = 0;
-      }
-    }
-  }
-}
-function seedRegrowthBlob(blobs, cell, amount, length) {
-  let blob = blobs.find((b) => b instanceof RegrowthBlob);
-  if (!blob) {
-    blob = new RegrowthBlob(length);
-    blobs.push(blob);
-  }
-  blob.seed(cell, amount);
-  return blob;
-}
-function effectReach(ctx, hero, power, ball, _fx) {
-  const level = ctx.level;
-  const reach = reachDistance(ball.distance, power);
-  for (let i = 1;i < reach; i++) {
-    const c = ball.trace[i];
-    const before = level.tiles[c];
-    const ch = charAtPos(ctx, c);
-    if (ch && isZapCharAlive(ch) && !(ch instanceof ContentHero)) {
-      const heroPos = hero.pos;
-      hero.pos = ch.pos;
-      ch.pos = heroPos;
-      break;
-    }
-    const heapIdx = level.items.findIndex((it) => it.pos === c);
-    if (heapIdx !== -1) {
-      const heap = level.items[heapIdx];
-      if (heap.lockedChest)
-        break;
-      level.items.splice(heapIdx, 1);
-      const { defId, qty } = parseItemId(heap.itemId);
-      if (defId === "dewdrop") {
-        healDewdrop(ctx, hero, qty);
-      } else {
-        const pickupId = parseWandId(heap.itemId) != null ? normalizeWandPickup(ctx.rng, heap.itemId) : parseRingId(heap.itemId) != null ? normalizeRingPickup(ctx.rng, heap.itemId) : heap.itemId;
-        addToInventory(hero, pickupId, qty);
-        ctx.log(txtReachTransported(getItem(pickupId).name));
-      }
-      break;
-    }
-    pressTrapCell(ctx, c, null, (mobId, pos) => {
-      const mob = buildMob(mobId, nextMobId(), pos, level.w);
-      mob.state = "wandering";
-      ctx.addMob(mob, 2);
-    });
-    if (before === 40 /* OPEN_DOOR */) {
-      setLevelTile(level, c, 2 /* DOOR */);
-    }
-  }
-}
-function applyZapEffect(ctx, hero, state, ball, fx) {
-  const power = wandZapPower(hero, state, true);
-  switch (state.wandId) {
-    case "magic_missile":
-      return effectMagicMissile(ctx, hero, power, ball, fx);
-    case "firebolt":
-      return effectFirebolt(ctx, hero, power, ball, fx);
-    case "lightning":
-      return effectLightning(ctx, hero, power, ball, fx);
-    case "disintegration":
-      return effectDisintegration(ctx, hero, power, state.level, ball, fx);
-    case "avalanche":
-      return effectAvalanche(ctx, hero, power, ball, fx);
-    case "poison":
-      return effectPoison(ctx, hero, power, ball, fx);
-    case "amok":
-      return effectAmok(ctx, hero, power, ball, fx);
-    case "slowness":
-      return effectSlowness(ctx, hero, power, ball, fx);
-    case "blink":
-      return effectBlink(ctx, hero, power, ball, fx);
-    case "teleportation":
-      return effectTeleportation(ctx, hero, power, ball, fx);
-    case "flock":
-      return effectFlock(ctx, hero, power, ball, fx);
-    case "regrowth":
-      return effectRegrowth(ctx, hero, power, ball, fx);
-    case "reach":
-      return effectReach(ctx, hero, power, ball, fx);
-  }
-}
-var SHEEP_DEF = {
-  id: "sheep",
-  name: "borrego",
-  sprite: "mob_sheep",
-  hp: 1,
-  atk: 0,
-  def: 0,
-  dmgMin: 0,
-  dmgMax: 0,
-  triangular: true,
-  dr: 0,
-  exp: 0,
-  maxLvl: 1,
-  speed: 1,
-  flying: false,
-  ability: null,
-  attackDelay: 1,
-  immunities: [],
-  resistances: []
-};
-var sheepLifespans = new Map;
-function spawnFlockSheep(ctx, pos, lifespan) {
-  const level = ctx.level;
-  const sheep = new ContentMob(nextMobId(), SHEEP_DEF, pos, level.w);
-  sheep.invulnerable = true;
-  sheep.hostile = false;
-  sheep.state = "wandering";
-  sheepLifespans.set(sheep.id, lifespan);
-  ctx.addMob(sheep);
-  pressTrapCell(ctx, pos, asTrapChar(sheep), (mobId, p) => {
-    const mob = buildMob(mobId, nextMobId(), p, level.w);
-    mob.state = "wandering";
-    ctx.addMob(mob, 2);
-  });
-}
-function zapWandFromSlot(ctx, hero, slot, targetCell, fx = WandFxNoop) {
-  const stack = hero.inventory[slot];
-  if (!stack)
-    return 1;
-  const st = getWandState(stack.itemId);
-  if (!st)
-    return 1;
-  const res = resolveZap(ctx, hero, st, targetCell, fx);
-  return res.ok ? res.spent : 1;
-}
-registerWandIdClasses();
-function instanceItemDef(defId) {
-  if (defId.startsWith("wand_of_"))
-    return wandItemDef(defId);
-  return ringItemDefFor(defId);
-}
-registerInstanceResolver((id) => instanceItemDef(id));
-
-// src/content/hero.ts
-class ContentHero extends Actor {
-  kind = "hero";
-  id = 0;
-  pos;
-  w;
-  hp = 20;
-  ht = 20;
-  sprite = "hero_warrior";
-  name = "you";
-  sight = 8;
-  paralysed = false;
-  rooted = false;
-  flying = false;
-  buffs = {};
-  immunities = [];
-  resistances = [];
-  str = 11;
-  weakened = false;
-  lvl = 1;
-  exp = 0;
-  attackSkill = 10;
-  defenseSkill = 5;
-  awareness = 0.1;
-  weapon = null;
-  weaponId = null;
-  armor = null;
-  armorId = null;
-  rangedWeapon = null;
-  darts = 0;
-  subClass = "none";
-  inventory = [];
-  gold = 0;
-  hungerLevel = 0;
-  hungerClock = 0;
-  constructor(pos, w) {
-    super();
-    this.pos = pos;
-    this.w = w;
-  }
-  get x() {
-    return this.pos % this.w;
-  }
-  set x(v) {
-    this.pos = this.y * this.w + v;
-  }
-  get y() {
-    return Math.floor(this.pos / this.w);
-  }
-  set y(v) {
-    this.pos = v * this.w + this.x;
-  }
-  getSpeed() {
-    return heroSpeed(this);
-  }
-  getTimeScale() {
-    return charTimeScale(this);
-  }
-  isAlive() {
-    return this.hp > 0;
-  }
-  act() {
-    throw new Error("ContentHero.act: route through MechanicsHooks.handleHeroIntent");
-  }
-}
-function createStarterHero(pos, w) {
-  const hero = new ContentHero(pos, w);
-  const sword = getItem("shortsword");
-  const armor = getItem("cloth_armor");
-  hero.weapon = sword.weapon ? { ...sword.weapon } : null;
-  hero.weaponId = "shortsword";
-  hero.armor = armor.armor ? { ...armor.armor } : null;
-  hero.armorId = "cloth_armor";
-  hero.inventory.push({ itemId: "ration", qty: 1 });
-  hero.inventory.push({ itemId: "dart", qty: 8 });
-  syncDarts(hero);
-  return hero;
-}
-function syncDarts(hero) {
-  hero.darts = hero.inventory.find((s) => s.itemId === "dart")?.qty ?? 0;
-}
-function addToInventory(hero, itemId, qty, gear) {
-  const def = instanceItemDef(itemId) ?? getItem(itemId);
-  if (qty <= 0)
-    return;
-  if (def.stackable) {
-    const existing = hero.inventory.find((s) => s.itemId === itemId);
-    if (existing) {
-      existing.qty += qty;
-    } else {
-      hero.inventory.push({ itemId, qty });
-    }
-  } else {
-    for (let i = 0;i < qty; i++) {
-      const stack = { itemId, qty: 1 };
-      if (def.weapon || def.armor) {
-        const inst = gear && i === 0 ? gear : {
-          weapon: def.weapon ? { ...def.weapon } : undefined,
-          armor: def.armor ? { ...def.armor } : undefined
-        };
-        if (inst.weapon && inst.weapon.durability === undefined) {
-          initDurability(inst.weapon, "weapon");
-        }
-        if (inst.armor && inst.armor.durability === undefined) {
-          initDurability(inst.armor, "armor");
-        }
-        stack.gear = inst;
-      }
-      hero.inventory.push(stack);
-    }
-  }
-  syncDarts(hero);
-}
-function ensureStackGear(stack) {
-  const def = getItem(stack.itemId);
-  if (!def.weapon && !def.armor)
-    return null;
-  if (!stack.gear) {
-    stack.gear = {
-      weapon: def.weapon ? { ...def.weapon } : undefined,
-      armor: def.armor ? { ...def.armor } : undefined
-    };
-  }
-  const g = stack.gear;
-  if (g.weapon && g.weapon.durability === undefined) {
-    initDurability(g.weapon, "weapon");
-  }
-  if (g.armor && g.armor.durability === undefined) {
-    initDurability(g.armor, "armor");
-  }
-  return g;
-}
-function removeFromInventory(hero, slot, qty = 1) {
-  const stack = hero.inventory[slot];
-  if (!stack || qty <= 0)
-    return null;
-  const take = Math.min(qty, stack.qty);
-  const removed = { itemId: stack.itemId, qty: take };
-  if (stack.gear && take >= stack.qty) {
-    removed.gear = stack.gear;
-  }
-  stack.qty -= take;
-  if (stack.qty <= 0) {
-    hero.inventory.splice(slot, 1);
-  }
-  syncDarts(hero);
-  return removed;
-}
-
-// src/content/potions.ts
-function affectBuff2(buffs, kind, duration) {
-  const cur = buffs[kind];
-  buffs[kind] = cur ? { ...cur, left: cur.left + duration } : { kind, left: duration };
-}
-function prolongBuff3(buffs, kind, duration, extra) {
-  const cur = buffs[kind];
-  const next = cur ? { ...cur, left: Math.max(cur.left, duration) } : { kind, left: duration };
-  if (extra?.sourceId !== undefined)
-    next.sourceId = extra.sourceId;
-  buffs[kind] = next;
-}
-var POTION_CLASS_ORDER = [
-  "potion_healing",
-  "potion_experience",
-  "potion_toxicgas",
-  "potion_liquidflame",
-  "potion_strength",
-  "potion_paralyticgas",
-  "potion_levitation",
-  "potion_mindvision",
-  "potion_purity",
-  "potion_invisibility",
-  "potion_might",
-  "potion_frost"
-];
-var POTION_ID_SET = new Set(POTION_CLASS_ORDER);
-function isPotionId(id) {
-  return POTION_ID_SET.has(id);
-}
-function def(id, name, sprite, desc) {
-  return {
-    id,
-    name,
-    sprite,
-    type: "potion",
-    stackable: true,
-    desc,
-    price: 20
-  };
-}
-var POTION_DEFS = {
-  potion_experience: def("potion_experience", "Potion of Experience", "item_potion_experience", "The storied experiences of multitudes of battles reduced to vapours, " + "this draught will instantly raise your experience level."),
-  potion_toxicgas: def("potion_toxicgas", "Potion of Toxic Gas", "item_potion_toxicgas", "Uncorking or shattering this pressurized glass will cause its contents " + "to explode into a deadly cloud of toxic green gas. You might choose " + "to fling this potion at distant enemies instead of uncorking it by hand."),
-  potion_liquidflame: def("potion_liquidflame", "Potion of Liquid Flame", "item_potion_liquidflame", "This flask contains an unstable compound which will burst violently " + "into flame upon exposure to open air."),
-  potion_paralyticgas: def("potion_paralyticgas", "Potion of Paralytic Gas", "item_potion_paralyticgas", "Uncorking or shattering this pressurized glass will cause its contents " + "to explode into a cloud of paralyzing gas. You might choose to fling " + "this potion at distant enemies instead of uncorking it by hand."),
-  potion_levitation: def("potion_levitation", "Potion of Levitation", "item_potion_levitation", "This curious solution will fill you with buoyancy. If you drink it, " + "you will begin to float."),
-  potion_mindvision: def("potion_mindvision", "Potion of Mind Vision", "item_potion_mindvision", "After drinking this, your mind will become attuned to the psychic " + "signature of distant creatures, enabling you to sense biological " + "presences through walls. Also this potion will permit you to see " + "through nearby walls and darkness."),
-  potion_purity: def("potion_purity", "Potion of Purification", "item_potion_purity", "This cloudy fluid will disperse any noxious clouds of gas which may be " + "plaguing your vicinity. When you drink it, any gas effects afflicting " + "you will be neutralized."),
-  potion_invisibility: def("potion_invisibility", "Potion of Invisibility", "item_potion_invisibility", "Drinking this potion will render you temporarily invisible. Enemies " + "will be unable to see you, although any action you take (such as " + "attacking) will dispel the effect."),
-  potion_might: def("potion_might", "Potion of Might", "item_potion_might", "This powerful liquid will course through your muscles, permanently " + "increasing your strength by one point and health by five points."),
-  potion_frost: def("potion_frost", "Potion of Frost", "item_potion_frost", "Upon exposure to open air, the fluid will evaporate, releasing an icy " + "blast.")
-};
-function potionFamilyDef() {
-  return {
-    classes: [...POTION_CLASS_ORDER],
-    labels: [...POTION_COLORS],
-    images: [...POTION_IMAGES]
-  };
-}
-function potionSprite(id, fallback) {
-  return identificationReady() ? potionImage(id) : fallback;
-}
-function potionUiInfo(id, knownName, catalogSprite) {
-  if (!isPotionId(id))
-    return null;
-  const known = identificationReady() && isPotionKnown(id);
-  return {
-    name: known ? knownName : `poción ${potionLabel(id)}`,
-    sprite: identificationReady() ? potionImage(id) : catalogSprite,
-    identified: known
-  };
-}
-var HARMFUL_DRINK_IDS = new Set([
-  "potion_liquidflame",
-  "potion_toxicgas",
-  "potion_paralyticgas"
-]);
-var BENEFICIAL_THROW_IDS = new Set([
-  "potion_experience",
-  "potion_healing",
-  "potion_levitation",
-  "potion_mindvision",
-  "potion_strength",
-  "potion_invisibility",
-  "potion_might"
-]);
-var pendingConfirm = null;
-var TIME_TO_DRINK = 1;
-function isKnownSafe(id) {
-  return identificationReady() && isPotionKnown(id);
-}
-function drinkPotion(ctx, hero, slot) {
-  const stack = hero.inventory[slot];
-  if (!stack || !isPotionId(stack.itemId)) {
-    ctx.log("Ahí no traes nada.");
-    return 1;
-  }
-  if (isKnownSafe(stack.itemId) && HARMFUL_DRINK_IDS.has(stack.itemId)) {
-    pendingConfirm = {
-      slot,
-      itemId: stack.itemId,
-      mode: "drink",
-      cell: -1,
-      title: "¡Poción mala!",
-      question: "Are you sure you want to drink it?"
-    };
-    ctx.log("¡Es una poción mala! ¿Seguro que te la quieres tomar?");
-    return 0;
-  }
-  return drinkPotionConfirmed(ctx, hero, slot);
-}
-function drinkPotionConfirmed(ctx, hero, slot) {
-  const stack = hero.inventory[slot];
-  if (!stack || !isPotionId(stack.itemId))
-    return 1;
-  const id = stack.itemId;
-  removeFromInventory(hero, slot, 1);
-  applyDrinkEffect(ctx, hero, id);
-  return TIME_TO_DRINK;
-}
-function applyDrinkEffect(ctx, hero, id) {
-  switch (id) {
-    case "potion_healing": {
-      hero.hp = hero.ht;
-      delete hero.buffs.poison;
-      delete hero.buffs.cripple;
-      delete hero.buffs.bleeding;
-      hero.weakened = false;
-      ctx.log("Tus heridas cierran por completo.");
-      break;
-    }
-    case "potion_strength": {
-      hero.str += 1;
-      ctx.log("Sientes una fuerza nueva en el cuerpo.");
-      break;
-    }
-    case "potion_experience": {
-      const need = maxExp(hero.lvl) - hero.exp;
-      earnExp(hero, need);
-      ctx.log("Te sientes con más tablas.");
-      break;
-    }
-    case "potion_might": {
-      hero.str += 1;
-      hero.ht += 5;
-      hero.hp += 5;
-      ctx.log("Te sientes más fuerte.");
-      break;
-    }
-    case "potion_mindvision": {
-      affectBuff2(hero.buffs, "mindvision", 20);
-      break;
-    }
-    case "potion_levitation": {
-      affectBuff2(hero.buffs, "levitation", 20);
-      hero.flying = true;
-      delete hero.buffs.roots;
-      ctx.log("¡Te elevas en el aire!");
-      break;
-    }
-    case "potion_invisibility": {
-      affectBuff2(hero.buffs, "invisibility", 15);
-      ctx.log("¡Desapareces!");
-      break;
-    }
-    case "potion_purity": {
-      affectBuff2(hero.buffs, "gasesimmunity", 5);
-      ctx.log("Te sientes limpio.");
-      break;
-    }
-    default: {
-      shatterPotionAt(ctx, hero, hero.pos, id);
-      break;
-    }
-  }
-  knowPotion(id);
-}
-var TIME_TO_THROW = 1;
-function throwPotion(ctx, hero, slot, cell) {
-  const stack = hero.inventory[slot];
-  if (!stack || !isPotionId(stack.itemId)) {
-    ctx.log("Ahí no traes nada.");
-    return 1;
-  }
-  if (isKnownSafe(stack.itemId) && BENEFICIAL_THROW_IDS.has(stack.itemId)) {
-    pendingConfirm = {
-      slot,
-      itemId: stack.itemId,
-      mode: "throw",
-      cell,
-      title: "Poción buena",
-      question: "Are you sure you want to shatter it?"
-    };
-    ctx.log("Es una poción buena. ¿Seguro que la quieres romper?");
-    return 0;
-  }
-  return throwPotionConfirmed(ctx, hero, slot, cell);
-}
-function throwPotionConfirmed(ctx, hero, slot, cell) {
-  const stack = hero.inventory[slot];
-  if (!stack || !isPotionId(stack.itemId))
-    return 1;
-  const id = stack.itemId;
-  removeFromInventory(hero, slot, 1);
-  const w = ctx.level.w;
-  const x = cell % w;
-  const y = Math.floor(cell / w);
-  const tile = ctx.level.get(x, y);
-  if (cell === hero.pos) {
-    applyDrinkEffect(ctx, hero, id);
-  } else if (tile === 12 /* WELL */ || tile === 8 /* CHASM */) {
-    const fallback = POTION_DEFS[id]?.sprite ?? "potion_red";
-    ctx.level.items.push({
-      pos: cell,
-      itemId: id,
-      sprite: potionSprite(id, fallback)
-    });
-  } else {
-    shatterPotionAt(ctx, hero, cell, id);
-  }
-  return TIME_TO_THROW;
-}
-function shatterPotionAt(ctx, hero, cell, id) {
-  const visible = isCellVisible(ctx, cell);
-  switch (id) {
-    case "potion_toxicgas": {
-      if (visible)
-        knowPotion(id);
-      seedBlob(ctx.level.blobs, "toxic", cell, 1000, ctx.level.w * ctx.level.h);
-      break;
-    }
-    case "potion_paralyticgas": {
-      if (visible)
-        knowPotion(id);
-      seedBlob(ctx.level.blobs, "paralytic", cell, 1000, ctx.level.w * ctx.level.h);
-      break;
-    }
-    case "potion_liquidflame": {
-      if (visible)
-        knowPotion(id);
-      seedBlob(ctx.level.blobs, "fire", cell, 2, ctx.level.w * ctx.level.h);
-      break;
-    }
-    case "potion_frost": {
-      const affected = cellsWithin2(ctx, cell);
-      const anyVisible = affected.some((c) => isCellVisible(ctx, c));
-      if (anyVisible)
-        knowPotion(id);
-      for (const c of affected) {
-        const ch = charAtCell(ctx, hero, c);
-        if (ch) {
-          prolongBuff3(ch.buffs, "frost", 5 * ctx.rng.float(1, 1.5));
-          ch.paralysed = true;
-          delete ch.buffs.burning;
-        }
-      }
-      const fire = ctx.level.blobs.find((b) => b.kind === "fire");
-      if (fire)
-        for (const c of affected)
-          fire.cur[c] = 0;
-      break;
-    }
-    case "potion_purity": {
-      for (const c of cellsWithin2(ctx, cell)) {
-        for (const kind of ["toxic", "paralytic"]) {
-          const blob = ctx.level.blobs.find((b) => b.kind === kind);
-          if (blob && blob.cur[c] > 0) {
-            blob.volume -= blob.cur[c];
-            blob.cur[c] = 0;
-          }
-        }
-      }
-      break;
-    }
-    default:
-      break;
-  }
-}
-function cellsWithin2(ctx, cell) {
-  const w = ctx.level.w;
-  const h = ctx.level.h;
-  const out = [];
-  const dist = new Int32Array(w * h).fill(-1);
-  dist[cell] = 0;
-  const queue = [cell];
-  while (queue.length > 0) {
-    const c = queue.shift();
-    if (dist[c] >= 2)
-      continue;
-    const cx = c % w;
-    const cy = Math.floor(c / w);
-    const dirs = [
-      [1, 0],
-      [-1, 0],
-      [0, 1],
-      [0, -1],
-      [1, 1],
-      [1, -1],
-      [-1, 1],
-      [-1, -1]
-    ];
-    for (const [dx, dy] of dirs) {
-      const nx = cx + dx;
-      const ny = cy + dy;
-      if (nx < 0 || ny < 0 || nx >= w || ny >= h)
-        continue;
-      const n = ny * w + nx;
-      if (dist[n] !== -1)
-        continue;
-      if (isOpaque(ctx, nx, ny))
-        continue;
-      dist[n] = dist[c] + 1;
-      queue.push(n);
-    }
-  }
-  for (let i = 0;i < w * h; i++) {
-    if (dist[i] !== -1)
-      out.push(i);
-  }
-  return out;
-}
-function isOpaque(ctx, x, y) {
-  const t = ctx.level.get(x, y);
-  return t === 0 /* WALL */ || t === 2 /* DOOR */ || t === 4 /* DOOR_SECRET */ || t === 37 /* BARRICADE */;
-}
-function isCellVisible(ctx, cell) {
-  return !!ctx.level.visible[cell];
-}
-function charAtCell(ctx, hero, cell) {
-  if (hero.pos === cell)
-    return hero;
-  const w = ctx.level.w;
-  for (const m of ctx.mobs) {
-    if (m.isAlive() && m.y * w + m.x === cell) {
-      return m;
-    }
-  }
-  return null;
-}
-function tickFlavourBuff(buffs, kind) {
-  const b = buffs[kind];
-  if (!b)
-    return false;
-  b.left -= 1;
-  if (b.left <= 0) {
-    delete buffs[kind];
-    return false;
-  }
-  return true;
-}
-function tickPotionBuffs(buffs, flags, onSleepEnd) {
-  const hadSleep = !!buffs.sleep;
-  for (const kind of [
-    "frost",
-    "levitation",
-    "invisibility",
-    "mindvision",
-    "gasesimmunity",
-    "terror",
-    "rage",
-    "sleep"
-  ]) {
-    tickFlavourBuff(buffs, kind);
-  }
-  if (hadSleep && !buffs.sleep && onSleepEnd)
-    onSleepEnd();
-  if (!buffs.frost && flags.paralysed) {
-    if (!buffs.paralysis)
-      flags.paralysed = false;
-  }
-  if (!buffs.levitation)
-    flags.flying = false;
-}
-function takeFromSlot(hero, slot, n) {
-  const stack = hero.inventory[slot];
-  if (!stack || stack.qty < n)
-    return false;
-  removeFromInventory(hero, slot, n);
-  return true;
-}
-
-// src/content/scrolls.ts
-var SCROLL_CLASS_ORDER = [
-  "scroll_identify",
-  "scroll_magicmapping",
-  "scroll_recharging",
-  "scroll_removecurse",
-  "scroll_teleportation",
-  "scroll_challenge",
-  "scroll_terror",
-  "scroll_lullaby",
-  "scroll_psionicblast",
-  "scroll_mirrorimage",
-  "scroll_upgrade",
-  "scroll_enchantment"
-];
-var SCROLL_ID_SET = new Set(SCROLL_CLASS_ORDER);
-function isScrollId(id) {
-  return SCROLL_ID_SET.has(id);
-}
-function def2(id, name, sprite, desc) {
-  return {
-    id,
-    name,
-    sprite,
-    type: "scroll",
-    stackable: true,
-    desc,
-    price: 15
-  };
-}
-var SCROLL_DEFS = {
-  scroll_identify: def2("scroll_identify", "Scroll of Identify", "item_scroll_identify", "Permanently reveals all of the secrets of a single item."),
-  scroll_teleportation: def2("scroll_teleportation", "Scroll of Teleportation", "item_scroll_teleportation", "The spell on this parchment will teleport the reader to a random " + "location on the current level."),
-  scroll_removecurse: def2("scroll_removecurse", "Scroll of Remove Curse", "item_scroll_removecurse", "The incantation on this scroll will instantly strip from the reader's " + "weapon, armor, rings and carried items any evil enchantments that " + "might prevent the wearer from removing them."),
-  scroll_recharging: def2("scroll_recharging", "Scroll of Recharging", "item_scroll_recharging", "The spell on this scroll will instantly recharge all of the wands " + "the reader has."),
-  scroll_magicmapping: def2("scroll_magicmapping", "Scroll of Magic Mapping", "item_scroll_magicmapping", "When this scroll is read, an image of crystal clarity will be etched " + "into your memory, alerting you to the precise layout of the level " + "and revealing all hidden secrets. The locations of items and " + "creatures will remain unknown."),
-  scroll_challenge: def2("scroll_challenge", "Scroll of Challenge", "item_scroll_challenge", "When this scroll is read, it lets out a challenging cry that " + "compels all of the creatures on the level to pay attention to the " + "reader."),
-  scroll_terror: def2("scroll_terror", "Scroll of Terror", "item_scroll_terror", "A fearsome magic will course through your enemies when this scroll " + "is read, causing them to flee from your presence in terror."),
-  scroll_lullaby: def2("scroll_lullaby", "Scroll of Lullaby", "item_scroll_lullaby", "Soothing notes will drift from this scroll, sending all nearby " + "creatures into a deep slumber."),
-  scroll_psionicblast: def2("scroll_psionicblast", "Scroll of Psionic Blast", "item_scroll_psionicblast", "This scroll contains a devastating blast of psychic energy. It will " + "damage and stun all creatures on the level that can see the reader, " + "but it will also blind and damage the reader."),
-  scroll_mirrorimage: def2("scroll_mirrorimage", "Scroll of Mirror Image", "item_scroll_mirrorimage", "The incantation on this scroll will create illusory duplicates of " + "the reader, which will needle and distract the enemies."),
-  scroll_enchantment: def2("scroll_enchantment", "Scroll of Enchantment", "item_scroll_enchantment", "This scroll is able to imbue a weapon or a suit of armor with a " + "magical enchantment, or to strengthen an enchantment which " + "already exists on the item.")
-};
-function scrollFamilyDef() {
-  return {
-    classes: [...SCROLL_CLASS_ORDER],
-    labels: [...SCROLL_RUNES],
-    images: SCROLL_IMAGES.map((img) => img === "item_scroll_odal" ? "scroll_upgrade" : img)
-  };
-}
-function scrollUiInfo(id, knownName, catalogSprite) {
-  if (!isScrollId(id))
-    return null;
-  const known = identificationReady() && isScrollKnown(id);
-  return {
-    name: known ? knownName : `scroll "${scrollRune(id)}"`,
-    sprite: identificationReady() ? scrollImage(id) : catalogSprite,
-    identified: known
-  };
-}
-var TIME_TO_READ = 1;
-function readScroll(ctx, hero, slot) {
-  const stack = hero.inventory[slot];
-  if (!stack || !isScrollId(stack.itemId)) {
-    ctx.log("Ahí no traes nada.");
-    return 1;
-  }
-  const id = stack.itemId;
-  if (hero.buffs.blindness) {
-    ctx.log("¡No puedes leer un pergamino estando ciego!");
-    return 1;
-  }
-  if (id === "scroll_upgrade")
-    return readUpgradeScroll(ctx, hero, slot);
-  if (id === "scroll_identify" || id === "scroll_enchantment") {
-    return openInventoryScroll(ctx, hero, slot, id);
-  }
-  removeFromInventory(hero, slot, 1);
-  doReadEffect(ctx, hero, id);
-  knowScroll(id);
-  return TIME_TO_READ;
-}
-var pendingSelect = null;
-function openInventoryScroll(ctx, hero, slot, id) {
-  const kind = id === "scroll_identify" ? "identify" : "enchant";
-  removeFromInventory(hero, slot, 1);
-  knowScroll(id);
-  const candidates = inventoryScrollCandidates(hero, kind);
-  if (candidates.length === 0) {
-    ctx.log(kind === "identify" ? "You have nothing to identify." : "You have nothing to enchant.");
-    return TIME_TO_READ;
-  }
-  pendingSelect = {
-    kind,
-    candidates,
-    title: kind === "identify" ? "Select an item to identify" : "Select an enchantable item"
-  };
-  return TIME_TO_READ;
-}
-function inventoryScrollCandidates(hero, kind) {
-  const out = [];
-  hero.inventory.forEach((stack, slot) => {
-    if (kind === "identify") {
-      if (isItemUnidentified(stack.itemId))
-        out.push(slot);
-    } else {
-      const t = itemTypeOf(stack.itemId);
-      if (t === "weapon" || t === "armor")
-        out.push(slot);
-    }
-  });
-  return out;
-}
-var itemTypeLookup = () => null;
-function itemTypeOf(id) {
-  return itemTypeLookup(id);
-}
-function isItemUnidentified(id) {
-  if (!identificationReady())
-    return false;
-  if (isPotionId(id))
-    return !isPotionKnown(id);
-  if (isScrollId(id))
-    return !isScrollKnown(id);
-  if (isWandRegistered()) {
-    try {
-      return !isWandKnown(id);
-    } catch {
-      return false;
-    }
-  }
-  return false;
-}
-function uncurseItemId(hero, itemId) {
-  let cleared = false;
-  for (const stack of hero.inventory) {
-    if (stack.itemId !== itemId)
-      continue;
-    const g = ensureStackGear(stack);
-    if (g?.weapon?.cursed) {
-      g.weapon.cursed = false;
-      cleared = true;
-    }
-    if (g?.armor?.cursed) {
-      g.armor.cursed = false;
-      cleared = true;
-    }
-  }
-  if (hero.weaponId === itemId && hero.weapon?.cursed) {
-    hero.weapon.cursed = false;
-    cleared = true;
-  }
-  if (hero.armorId === itemId && hero.armor?.cursed) {
-    hero.armor.cursed = false;
-    cleared = true;
-  }
-  return cleared;
-}
-var defaultEnchantHooks = {
-  uncurse: uncurseItemId,
-  enchantWeapon: (ctx, hero, slot) => {
-    const stack = hero.inventory[slot];
-    const g = stack ? ensureStackGear(stack) : null;
-    if (g?.weapon)
-      enchantWeaponInstance(ctx.rng, g.weapon);
-  },
-  inscribeArmor: (ctx, hero, slot) => {
-    const stack = hero.inventory[slot];
-    const g = stack ? ensureStackGear(stack) : null;
-    if (g?.armor)
-      inscribeArmorInstance(ctx.rng, g.armor);
-  },
-  fixItem: (hero, slot) => {
-    const stack = hero.inventory[slot];
-    const g = stack ? ensureStackGear(stack) : null;
-    if (g?.weapon)
-      fixDurability(g.weapon, "weapon");
-    if (g?.armor)
-      fixDurability(g.armor, "armor");
-  }
-};
-var enchantHooks = defaultEnchantHooks;
-var rechargeImpl = null;
-function readUpgradeScroll(ctx, hero, slot) {
-  knowScroll("scroll_upgrade");
-  const weapon = hero.weapon;
-  const armor = hero.armor;
-  if (!weapon && !armor) {
-    ctx.log("No traes nada que mejorar.");
-    return TIME_TO_READ;
-  }
-  removeFromInventory(hero, slot, 1);
-  if (weapon) {
-    if (isBroken(weapon)) {
-      fixDurability(weapon, "weapon");
-    } else {
-      upgradeWeapon(weapon, ctx.rng, { log: (m) => ctx.log(m) });
-    }
-    ctx.log(`tu ${gearDisplayName(weapon)} se ve mucho mejor`);
-  } else {
-    if (isBroken(armor)) {
-      fixDurability(armor, "armor");
-    } else {
-      upgradeArmor(armor, ctx.rng, { log: (m) => ctx.log(m) });
-    }
-    ctx.log(`tu ${gearDisplayName(armor)} se ve mucho mejor`);
-  }
-  return TIME_TO_READ;
-}
-function doReadEffect(ctx, hero, id) {
-  switch (id) {
-    case "scroll_removecurse":
-      doRemoveCurse(ctx, hero);
-      break;
-    case "scroll_magicmapping":
-      doMagicMapping(ctx, hero);
-      break;
-    case "scroll_teleportation":
-      doTeleportation(ctx, hero);
-      break;
-    case "scroll_recharging":
-      doRecharging(ctx, hero);
-      break;
-    case "scroll_challenge":
-      doChallenge(ctx, hero);
-      break;
-    case "scroll_terror":
-      doTerror(ctx, hero);
-      break;
-    case "scroll_lullaby":
-      doLullaby(ctx, hero);
-      break;
-    case "scroll_psionicblast":
-      doPsionicBlast(ctx, hero);
-      break;
-    case "scroll_mirrorimage":
-      doMirrorImage(ctx, hero);
-      break;
-    default:
-      break;
-  }
-}
-function doRemoveCurse(ctx, hero) {
-  delete hero.buffs.invisibility;
-  let procced = false;
-  for (const stack of hero.inventory) {
-    if (enchantHooks.uncurse(hero, stack.itemId))
-      procced = true;
-  }
-  if (hero.weaponId && enchantHooks.uncurse(hero, hero.weaponId))
-    procced = true;
-  if (hero.armorId && enchantHooks.uncurse(hero, hero.armorId))
-    procced = true;
-  hero.weakened = false;
-  ctx.log(procced ? "Your pack glows with a cleansing light." : "Your pack glows with a cleansing light, but nothing happens.");
-}
-function doMagicMapping(ctx, _hero) {
-  const level = ctx.level;
-  const n = level.w * level.h;
-  for (let i = 0;i < n; i++) {
-    const t = level.getAt(i);
-    if (t === 0 /* WALL */ || t === 8 /* CHASM */) {
-      continue;
-    }
-    level.explored[i] = 1;
-  }
-  for (let i = 0;i < n; i++) {
-    const x = i % level.w;
-    const y = Math.floor(i / level.w);
-    level.revealSecretDoor(x, y);
-    level.revealTrap(x, y);
-  }
-  ctx.log("Entiendes todo lo que te rodea.");
-}
-function doTeleportation(ctx, hero) {
-  const level = ctx.level;
-  for (let i = 0;i < 10; i++) {
-    const cell = randomRespawnCell2(ctx, hero);
-    if (cell !== -1) {
-      hero.pos = cell;
-      ctx.log("¡Te apareces en otro lado!");
-      return;
-    }
-  }
-  ctx.log("El pergamino se apaga.");
-}
-function randomRespawnCell2(ctx, hero) {
-  const level = ctx.level;
-  const n = level.w * level.h;
-  for (let i = 0;i < 10; i++) {
-    const cell = ctx.rng.int(0, n);
-    const x = cell % level.w;
-    const y = Math.floor(cell / level.w);
-    if (!level.isPassable(x, y))
-      continue;
-    if (level.visible[cell])
-      continue;
-    if (hero.pos === cell)
-      continue;
-    if (charAtPos(ctx, cell))
-      continue;
-    return cell;
-  }
-  return -1;
-}
-function doRecharging(_ctx, hero) {
-  if (rechargeImpl)
-    rechargeImpl(hero);
-}
-function doChallenge(ctx, hero) {
-  const w = ctx.level.w;
-  for (const m of ctx.mobs) {
-    const mob = m;
-    if (typeof mob.beckon === "function")
-      mob.beckon(hero.pos);
-    else
-      mob.beckonedTo = hero.pos;
-    if (isMobVisible(ctx, mob.pos)) {
-      const d = chebyshev(hero.pos, mob.pos, w);
-      prolongBuff3(mob.buffs, "rage", d);
-    }
-  }
-  ctx.log("¡Sueltas un grito de reto!");
-}
-function doTerror(ctx, hero) {
-  for (const m of ctx.mobs) {
-    const mob = m;
-    if (isMobVisible(ctx, mob.pos)) {
-      prolongBuff3(mob.buffs, "terror", 10, { sourceId: hero.id });
-      mob.terrorFrom = hero.pos;
-    }
-  }
-  ctx.log("¡Sueltas un grito espantoso!");
-}
-function doLullaby(ctx, hero) {
-  for (const m of ctx.mobs) {
-    const mob = m;
-    if (isMobVisible(ctx, mob.pos)) {
-      affectBuff2(mob.buffs, "sleep", 1.5);
-      mob.putToSleep = true;
-    }
-  }
-  ctx.log("Se oye una melodía que calma.");
-}
-function doPsionicBlast(ctx, hero) {
-  const rng = ctx.rng;
-  const blindFor = rng.int(3, 6);
-  for (const m of ctx.mobs) {
-    const mob = m;
-    if (!isMobVisible(ctx, mob.pos))
-      continue;
-    affectBuff2(mob.buffs, "blindness", blindFor);
-    const dmg = rng.intRange(1, Math.floor(mob.ht * 2 / 3));
-    damageMobDirect(ctx, mob, dmg);
-  }
-  affectBuff2(hero.buffs, "blindness", blindFor);
-  const heroDmg = rng.intRange(1, Math.floor(hero.ht * 2 / 3));
-  hero.hp -= heroDmg;
-  ctx.log("¡Estalla una descarga de energía mental!");
-}
-var MIRROR_IMAGE_COUNT = 3;
-function doMirrorImage(ctx, hero) {
-  const rng = ctx.rng;
-  const w = ctx.level.w;
-  const spawned = [];
-  const candidates = [];
-  const hx = hero.pos % w;
-  const hy = Math.floor(hero.pos / w);
-  for (const [dx, dy] of [
-    [1, 0],
-    [-1, 0],
-    [0, 1],
-    [0, -1],
-    [1, 1],
-    [1, -1],
-    [-1, 1],
-    [-1, -1]
-  ]) {
-    const nx = hx + dx;
-    const ny = hy + dy;
-    if (nx < 0 || ny < 0 || nx >= w || ny >= ctx.level.h)
-      continue;
-    const c = ny * w + nx;
-    const t = ctx.level.get(nx, ny);
-    const okTile = ctx.level.isPassable(nx, ny) || ctx.level.isAvoid(nx, ny);
-    if (!okTile)
-      continue;
-    if (hero.pos === c || charAtPos(ctx, c))
-      continue;
-    candidates.push(c);
-  }
-  const stats = {
-    attackSkill: hero.attackSkill,
-    damage: heroDamageForMirror(rng, hero)
-  };
-  let nImages = 0;
-  while (nImages < MIRROR_IMAGE_COUNT && candidates.length > 0) {
-    const idx = rng.int(0, candidates.length);
-    const cell = candidates.splice(idx, 1)[0];
-    const img = new MirrorImageMob(nextMobId2(), cell, w, stats);
-    ctx.addMob(img, cell);
-    spawned.push(cell);
-    nImages++;
-  }
-  if (nImages === 0)
-    knowScroll("scroll_mirrorimage");
-  else
-    ctx.log("¡Aparecen imágenes de espejo!");
-}
-function heroDamageForMirror(rng, hero) {
-  const weapon = hero.weapon;
-  if (weapon) {
-    const min = weapon.min ?? 1;
-    const max = weapon.max ?? min;
-    return Math.max(1, Math.round((min + max) / 2));
-  }
-  return 1;
-}
-var mirrorIdCounter = -1e5;
-function nextMobId2() {
-  return mirrorIdCounter--;
-}
-function isMobVisible(ctx, pos) {
-  return !!ctx.level.visible[pos];
-}
-function chebyshev(a, b, w) {
-  const dx = Math.abs(a % w - b % w);
-  const dy = Math.abs(Math.floor(a / w) - Math.floor(b / w));
-  return Math.max(dx, dy);
 }
 
 // src/content/honeypot.ts
@@ -10354,6 +9976,394 @@ function parseItemId(id) {
     defId: id.slice(0, colon),
     qty: Number.isFinite(n) && n > 0 ? n : 1
   };
+}
+// src/content/scrolls.ts
+function scrollFamilyDef() {
+  return {
+    classes: [...SCROLL_CLASS_ORDER],
+    labels: [...SCROLL_RUNES],
+    images: SCROLL_IMAGES.map((img) => img === "item_scroll_odal" ? "scroll_upgrade" : img)
+  };
+}
+function scrollUiInfo(id, knownName, catalogSprite) {
+  if (!isScrollId(id))
+    return null;
+  const known = identificationReady() && isScrollKnown(id);
+  return {
+    name: known ? knownName : `scroll "${scrollRune(id)}"`,
+    sprite: identificationReady() ? scrollImage(id) : catalogSprite,
+    identified: known
+  };
+}
+var TIME_TO_READ = 1;
+function readScroll(ctx, hero, slot) {
+  const stack = hero.inventory[slot];
+  if (!stack || !isScrollId(stack.itemId)) {
+    ctx.log("Ahí no traes nada.");
+    return 1;
+  }
+  const id = stack.itemId;
+  if (hero.buffs.blindness) {
+    ctx.log("¡No puedes leer un pergamino estando ciego!");
+    return 1;
+  }
+  if (id === "scroll_upgrade")
+    return readUpgradeScroll(ctx, hero, slot);
+  if (id === "scroll_identify" || id === "scroll_enchantment") {
+    return openInventoryScroll(ctx, hero, slot, id);
+  }
+  removeFromInventory(hero, slot, 1);
+  doReadEffect(ctx, hero, id);
+  knowScroll(id);
+  return TIME_TO_READ;
+}
+var pendingSelect = null;
+function openInventoryScroll(ctx, hero, slot, id) {
+  const kind = id === "scroll_identify" ? "identify" : "enchant";
+  removeFromInventory(hero, slot, 1);
+  knowScroll(id);
+  const candidates = inventoryScrollCandidates(hero, kind);
+  if (candidates.length === 0) {
+    ctx.log(kind === "identify" ? "You have nothing to identify." : "You have nothing to enchant.");
+    return TIME_TO_READ;
+  }
+  pendingSelect = {
+    kind,
+    candidates,
+    title: kind === "identify" ? "Select an item to identify" : "Select an enchantable item"
+  };
+  return TIME_TO_READ;
+}
+function inventoryScrollCandidates(hero, kind) {
+  const out = [];
+  hero.inventory.forEach((stack, slot) => {
+    if (kind === "identify") {
+      if (isItemUnidentified(stack.itemId))
+        out.push(slot);
+    } else {
+      const t = itemTypeOf(stack.itemId);
+      if (t === "weapon" || t === "armor")
+        out.push(slot);
+    }
+  });
+  return out;
+}
+var itemTypeLookup = () => null;
+function itemTypeOf(id) {
+  return itemTypeLookup(id);
+}
+function isItemUnidentified(id) {
+  if (!identificationReady())
+    return false;
+  if (isPotionId(id))
+    return !isPotionKnown(id);
+  if (isScrollId(id))
+    return !isScrollKnown(id);
+  if (isWandRegistered()) {
+    try {
+      return !isWandKnown(id);
+    } catch {
+      return false;
+    }
+  }
+  return false;
+}
+function uncurseItemId(hero, itemId) {
+  let cleared = false;
+  for (const stack of hero.inventory) {
+    if (stack.itemId !== itemId)
+      continue;
+    const g = ensureStackGear(stack);
+    if (g?.weapon?.cursed) {
+      g.weapon.cursed = false;
+      cleared = true;
+    }
+    if (g?.armor?.cursed) {
+      g.armor.cursed = false;
+      cleared = true;
+    }
+  }
+  if (hero.weaponId === itemId && hero.weapon?.cursed) {
+    hero.weapon.cursed = false;
+    cleared = true;
+  }
+  if (hero.armorId === itemId && hero.armor?.cursed) {
+    hero.armor.cursed = false;
+    cleared = true;
+  }
+  return cleared;
+}
+var defaultEnchantHooks = {
+  uncurse: uncurseItemId,
+  enchantWeapon: (ctx, hero, slot) => {
+    const stack = hero.inventory[slot];
+    const g = stack ? ensureStackGear(stack) : null;
+    if (g?.weapon)
+      enchantWeaponInstance(ctx.rng, g.weapon);
+  },
+  inscribeArmor: (ctx, hero, slot) => {
+    const stack = hero.inventory[slot];
+    const g = stack ? ensureStackGear(stack) : null;
+    if (g?.armor)
+      inscribeArmorInstance(ctx.rng, g.armor);
+  },
+  fixItem: (hero, slot) => {
+    const stack = hero.inventory[slot];
+    const g = stack ? ensureStackGear(stack) : null;
+    if (g?.weapon)
+      fixDurability(g.weapon, "weapon");
+    if (g?.armor)
+      fixDurability(g.armor, "armor");
+  }
+};
+var enchantHooks = defaultEnchantHooks;
+var rechargeImpl = null;
+function readUpgradeScroll(ctx, hero, slot) {
+  knowScroll("scroll_upgrade");
+  const weapon = hero.weapon;
+  const armor = hero.armor;
+  if (!weapon && !armor) {
+    ctx.log("No traes nada que mejorar.");
+    return TIME_TO_READ;
+  }
+  removeFromInventory(hero, slot, 1);
+  if (weapon) {
+    if (isBroken(weapon)) {
+      fixDurability(weapon, "weapon");
+    } else {
+      upgradeWeapon(weapon, ctx.rng, { log: (m) => ctx.log(m) });
+    }
+    ctx.log(`tu ${gearDisplayName(weapon)} se ve mucho mejor`);
+  } else {
+    if (isBroken(armor)) {
+      fixDurability(armor, "armor");
+    } else {
+      upgradeArmor(armor, ctx.rng, { log: (m) => ctx.log(m) });
+    }
+    ctx.log(`tu ${gearDisplayName(armor)} se ve mucho mejor`);
+  }
+  return TIME_TO_READ;
+}
+function doReadEffect(ctx, hero, id) {
+  switch (id) {
+    case "scroll_removecurse":
+      doRemoveCurse(ctx, hero);
+      break;
+    case "scroll_magicmapping":
+      doMagicMapping(ctx, hero);
+      break;
+    case "scroll_teleportation":
+      doTeleportation(ctx, hero);
+      break;
+    case "scroll_recharging":
+      doRecharging(ctx, hero);
+      break;
+    case "scroll_challenge":
+      doChallenge(ctx, hero);
+      break;
+    case "scroll_terror":
+      doTerror(ctx, hero);
+      break;
+    case "scroll_lullaby":
+      doLullaby(ctx, hero);
+      break;
+    case "scroll_psionicblast":
+      doPsionicBlast(ctx, hero);
+      break;
+    case "scroll_mirrorimage":
+      doMirrorImage(ctx, hero);
+      break;
+    default:
+      break;
+  }
+}
+function doRemoveCurse(ctx, hero) {
+  delete hero.buffs.invisibility;
+  let procced = false;
+  for (const stack of hero.inventory) {
+    if (enchantHooks.uncurse(hero, stack.itemId))
+      procced = true;
+  }
+  if (hero.weaponId && enchantHooks.uncurse(hero, hero.weaponId))
+    procced = true;
+  if (hero.armorId && enchantHooks.uncurse(hero, hero.armorId))
+    procced = true;
+  hero.weakened = false;
+  ctx.log(procced ? "Your pack glows with a cleansing light." : "Your pack glows with a cleansing light, but nothing happens.");
+}
+function doMagicMapping(ctx, _hero) {
+  const level = ctx.level;
+  const n = level.w * level.h;
+  for (let i = 0;i < n; i++) {
+    const t = level.getAt(i);
+    if (t === 0 /* WALL */ || t === 8 /* CHASM */) {
+      continue;
+    }
+    level.explored[i] = 1;
+  }
+  for (let i = 0;i < n; i++) {
+    const x = i % level.w;
+    const y = Math.floor(i / level.w);
+    level.revealSecretDoor(x, y);
+    level.revealTrap(x, y);
+  }
+  ctx.log("Entiendes todo lo que te rodea.");
+}
+function doTeleportation(ctx, hero) {
+  const level = ctx.level;
+  for (let i = 0;i < 10; i++) {
+    const cell = randomRespawnCell2(ctx, hero);
+    if (cell !== -1) {
+      hero.pos = cell;
+      ctx.log("¡Te apareces en otro lado!");
+      return;
+    }
+  }
+  ctx.log("El pergamino se apaga.");
+}
+function randomRespawnCell2(ctx, hero) {
+  const level = ctx.level;
+  const n = level.w * level.h;
+  for (let i = 0;i < 10; i++) {
+    const cell = ctx.rng.int(0, n);
+    const x = cell % level.w;
+    const y = Math.floor(cell / level.w);
+    if (!level.isPassable(x, y))
+      continue;
+    if (level.visible[cell])
+      continue;
+    if (hero.pos === cell)
+      continue;
+    if (charAtPos(ctx, cell))
+      continue;
+    return cell;
+  }
+  return -1;
+}
+function doRecharging(_ctx, hero) {
+  if (rechargeImpl)
+    rechargeImpl(hero);
+}
+function doChallenge(ctx, hero) {
+  const w = ctx.level.w;
+  for (const m of ctx.mobs) {
+    const mob = m;
+    if (typeof mob.beckon === "function")
+      mob.beckon(hero.pos);
+    else
+      mob.beckonedTo = hero.pos;
+    if (isMobVisible(ctx, mob.pos)) {
+      const d = chebyshev(hero.pos, mob.pos, w);
+      prolongBuff2(mob.buffs, "rage", d);
+    }
+  }
+  ctx.log("¡Sueltas un grito de reto!");
+}
+function doTerror(ctx, hero) {
+  for (const m of ctx.mobs) {
+    const mob = m;
+    if (isMobVisible(ctx, mob.pos)) {
+      prolongBuff2(mob.buffs, "terror", 10, { sourceId: hero.id });
+      mob.terrorFrom = hero.pos;
+    }
+  }
+  ctx.log("¡Sueltas un grito espantoso!");
+}
+function doLullaby(ctx, hero) {
+  for (const m of ctx.mobs) {
+    const mob = m;
+    if (isMobVisible(ctx, mob.pos)) {
+      affectBuff(mob.buffs, "sleep", 1.5);
+      mob.putToSleep = true;
+    }
+  }
+  ctx.log("Se oye una melodía que calma.");
+}
+function doPsionicBlast(ctx, hero) {
+  const rng = ctx.rng;
+  const blindFor = rng.int(3, 6);
+  for (const m of ctx.mobs) {
+    const mob = m;
+    if (!isMobVisible(ctx, mob.pos))
+      continue;
+    affectBuff(mob.buffs, "blindness", blindFor);
+    const dmg = rng.intRange(1, Math.floor(mob.ht * 2 / 3));
+    damageMobDirect(ctx, mob, dmg);
+  }
+  affectBuff(hero.buffs, "blindness", blindFor);
+  const heroDmg = rng.intRange(1, Math.floor(hero.ht * 2 / 3));
+  hero.hp -= heroDmg;
+  ctx.log("¡Estalla una descarga de energía mental!");
+}
+var MIRROR_IMAGE_COUNT = 3;
+function doMirrorImage(ctx, hero) {
+  const rng = ctx.rng;
+  const w = ctx.level.w;
+  const spawned = [];
+  const candidates = [];
+  const hx = hero.pos % w;
+  const hy = Math.floor(hero.pos / w);
+  for (const [dx, dy] of [
+    [1, 0],
+    [-1, 0],
+    [0, 1],
+    [0, -1],
+    [1, 1],
+    [1, -1],
+    [-1, 1],
+    [-1, -1]
+  ]) {
+    const nx = hx + dx;
+    const ny = hy + dy;
+    if (nx < 0 || ny < 0 || nx >= w || ny >= ctx.level.h)
+      continue;
+    const c = ny * w + nx;
+    const t = ctx.level.get(nx, ny);
+    const okTile = ctx.level.isPassable(nx, ny) || ctx.level.isAvoid(nx, ny);
+    if (!okTile)
+      continue;
+    if (hero.pos === c || charAtPos(ctx, c))
+      continue;
+    candidates.push(c);
+  }
+  const stats = {
+    attackSkill: hero.attackSkill,
+    damage: heroDamageForMirror(rng, hero)
+  };
+  let nImages = 0;
+  while (nImages < MIRROR_IMAGE_COUNT && candidates.length > 0) {
+    const idx = rng.int(0, candidates.length);
+    const cell = candidates.splice(idx, 1)[0];
+    const img = new MirrorImageMob(nextMobId2(), cell, w, stats);
+    ctx.addMob(img, cell);
+    spawned.push(cell);
+    nImages++;
+  }
+  if (nImages === 0)
+    knowScroll("scroll_mirrorimage");
+  else
+    ctx.log("¡Aparecen imágenes de espejo!");
+}
+function heroDamageForMirror(rng, hero) {
+  const weapon = hero.weapon;
+  if (weapon) {
+    const min = weapon.min ?? 1;
+    const max = weapon.max ?? min;
+    return Math.max(1, Math.round((min + max) / 2));
+  }
+  return 1;
+}
+var mirrorIdCounter = -1e5;
+function nextMobId2() {
+  return mirrorIdCounter--;
+}
+function isMobVisible(ctx, pos) {
+  return !!ctx.level.visible[pos];
+}
+function chebyshev(a, b, w) {
+  const dx = Math.abs(a % w - b % w);
+  const dy = Math.abs(Math.floor(a / w) - Math.floor(b / w));
+  return Math.max(dx, dy);
 }
 
 // src/content/actions.ts
@@ -14288,7 +14298,7 @@ class Game {
     const i = this.level.idx(this.hero.x, this.hero.y);
     if (i === this.level.stairsUp) {
       if (this.level.sealed) {
-        this.logMsg("The dungeon is sealed shut!");
+        this.logMsg("¡El piso se cerró!");
         return false;
       }
       this.ascend();
