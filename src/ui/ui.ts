@@ -405,6 +405,14 @@ export class UiManager {
 
     // Quick-action slots.
     const L = this.hud.layout(this.view);
+    // La mochila. En el celular este botón es la única forma de abrirla:
+    // la tecla I no existe ahí.
+    if (inRect(L.bagBtn, x, y)) {
+      this.inventory.toggle();
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
     if (inRect(L.potionBtn, x, y)) {
       const potion = readInventory(g).find((i) => i.kind === 'potion');
       if (potion) doItemAction(g, potion, 'use');

@@ -69,6 +69,7 @@ export class LogBuffer {
 export interface HudLayout {
   potionBtn: Rect;
   dartBtn: Rect;
+  bagBtn: Rect;
   topBarH: number;
 }
 
@@ -84,9 +85,15 @@ export class Hud {
   /** Button rects for the UiManager's tap routing. */
   layout(view: View): HudLayout {
     const pad = 10;
-    const dartBtn: Rect = { x: view.w - pad - SLOT, y: view.h - pad - SLOT, w: SLOT, h: SLOT };
-    const potionBtn: Rect = { x: dartBtn.x - 8 - SLOT, y: view.h - pad - SLOT, w: SLOT, h: SLOT };
-    return { potionBtn, dartBtn, topBarH: 64 };
+    // Como en Shattered: la mochila hasta la orilla y los atajos a su
+    // izquierda (Toolbar.java:520, btnInventory pegado a `right`). Sin este
+    // boton, en el celular no hay forma de abrir la mochila: la tecla I no
+    // existe ahi.
+    const y = view.h - pad - SLOT;
+    const bagBtn: Rect = { x: view.w - pad - SLOT, y, w: SLOT, h: SLOT };
+    const dartBtn: Rect = { x: bagBtn.x - 8 - SLOT, y, w: SLOT, h: SLOT };
+    const potionBtn: Rect = { x: dartBtn.x - 8 - SLOT, y, w: SLOT, h: SLOT };
+    return { potionBtn, dartBtn, bagBtn, topBarH: 64 };
   }
 
   draw(
@@ -271,6 +278,7 @@ export class Hud {
       !darts || darts.qty <= 0,
       throwMode,
     );
+    this.drawSlot(ctx, sprites, L.bagBtn, 'seed_pouch', 0, 'Mochila', false);
   }
 
   private drawSlot(
